@@ -4,21 +4,32 @@ import { State } from "./state/State.js";
 // Extiende de sprite y usa el asset "logo"
 export class Player extends Phaser.Physics.Arcade.Sprite {
   constructor(scene, x, y, key) {
+    //INICIALIZANDO VARIABLES---------------------------------------
     super(scene, x, y, key);
     this.scene = scene;
+    this.holdingItem = false;
+    this.itemHolded = null;
 
     this.cursors = this.scene.input.keyboard.createCursorKeys();
 
-    this.stateMachine = new StateMachine("idle");
-    this.stateMachine.addState("idle", new IdleState());
-    this.stateMachine.addState("moving", new MovingState());
-    this.stateMachine.addState("running", new RunningState());
-    this.stateMachine.changeState("idle", { player: this });
+    //MAQUINA DE ESTADO DE MOVIMIENTO -------------------------------
+    this.movingSM = new StateMachine("idle");
+    this.movingSM.addState("idle", new IdleState());
+    this.movingSM.addState("moving", new MovingState());
+    this.movingSM.addState("running", new RunningState());
+    this.movingSM.changeState("idle", { player: this });
 
+    //MAQUINA DE ESTADO DE HOLDEO ------------------------------------
+    this.holdingSM = new StateMachine("none");
+    this.holdingSM.addState("none", new HoldingNothingState())
+    this.holdingSM.addState("ingredient", new HoldingIngredientState())
+    this.holdingSM.changeState("none", {player: this});
+
+    //AÑADIENDO A LA ESCENA ------------------------------------------
     this.scene.add.existing(this); // Agrega el sprite a la escena
     this.scene.physics.add.existing(this);
 
-    // Crear animación idle si no existe
+    //ANIMACION DEL IDLE ----------------------------------------------
     if (!this.scene.anims.exists('bChefIdle')) {
         this.scene.anims.create({
             key: 'bChefIdle',
@@ -28,16 +39,17 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         });
     }
 
-    // Reproducir la animación idle al inicio
     this.play('bChefIdle');
 
+    //ULTIMOS ARREGLOS DE SPRITE -----------------------------------------
     this.setScale(2);
     this.refreshBody()
     this.body.setCollideWorldBounds(true)
   }
 
   update(dt) {
-    this.stateMachine.update(dt);
+    this.movingSM.update(dt);
+    this.holdingSM.update(dt)
   }
 }
 
@@ -57,11 +69,11 @@ class IdleState extends State {
       cursors.up.isDown ||
       cursors.down.isDown
     ) {
-      this.player.stateMachine.changeState("moving", { player: this.player });
+      this.player.movingSM.changeState("moving", { player: this.player });
     }
 
     if (cursors.shift.isDown) {
-      this.player.stateMachine.changeState("running", { player: this.player });
+      this.player.movingSM.changeState("running", { player: this.player });
     }
   }
   finish() {
@@ -88,7 +100,7 @@ class MovingState extends State {
       !cursors.up.isDown &&
       !cursors.down.isDown
     ) {
-      this.player.stateMachine.changeState("idle", { player: this.player });
+      this.player.movingSM.changeState("idle", { player: this.player });
     }
   }
   handleInput(dt) {
@@ -143,5 +155,44 @@ class RunningState extends State {
     this.player.body.setVelocity(0); // reset cada frame
     this.player.clearTint();
     console.log("Exiting Running State");
+  }
+}
+
+class HoldingNothingState extends State {
+  init(params) {
+    this.player = params.player;
+    this.player.holdingItem = false;
+    this.player.itemHolded = null;
+  }
+  update(dt) {
+
+  }
+
+  finish() {
+
+  }
+}
+
+class HoldingIngredientState extends State {
+  init(params) {
+    this.player = params.player;
+    this.ingredient = params.ingredient;
+
+    this.player.holdingItem = true;
+    this.player.itemHolded = this.ingredient;
+
+    this.player.itemHolded.body.x = this.player.body.x;
+    this.player.itemHolded.body.y = this.player.body.y;
+    this.player.itemHolded.setVisible(true)
+  }
+  update(dt) {
+    this.player.itemHolded.body.x = this.player.body.x;
+    this.player.itemHolded.body.y = this.player.body.y;
+  }
+
+  finish() {
+    this.player.holdingItem = false;
+    this.player.itemHolded.destroy();
+    this.player.itemHolded = null;
   }
 }

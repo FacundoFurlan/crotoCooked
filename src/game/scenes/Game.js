@@ -1,6 +1,7 @@
 import { Scene } from "phaser";
 import { Player } from "../Player.js";
 import { Boxes } from "../Boxes.js";
+import { Ingredientes } from "../Ingredientes.js";
 
 export class Game extends Scene {
   constructor() {
@@ -29,7 +30,7 @@ export class Game extends Scene {
 
     //Cajas---------------------------------------------------------------
     this.boxesArray = []
-    this.box1 = new Boxes(this, 300, 100, "pasta", 0x999999, 64);
+    this.box1 = new Boxes(this, 300, 100, "pasta", 0x555555, 64);
     this.physics.add.collider(this.box1, this.player)
     this.boxesArray.push(this.box1);
 
@@ -39,6 +40,7 @@ export class Game extends Scene {
 
     //Cursors
     this.actionKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.J);
+    this.cancelKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.K);
   }
 
   update(t, dt) {
@@ -53,10 +55,19 @@ export class Game extends Scene {
 
     if (Phaser.Input.Keyboard.JustDown(this.actionKey)) {
       if(this.nearestBox.activeBox){
-        const circleColor = this.nearestBox.color;
-        this.newCircle = this.giveCircleTo(this.player, circleColor);
-        this.nearestBox.changeState("anim");
+        this.newCircle = new Ingredientes(this, this.player.x, this.player.y, "tomato", this.nearestBox.color);
+        this.player.holdingSM.changeState("ingredient", {player: this.player, ingredient: this.newCircle})
+        this.nearestBox.stateMachine.changeState("anim",{box: this.nearestBox});
         console.log("Action key pressed!")
+
+      } else{
+        console.log("Action key pressed but no box in range")
+      }
+    }
+
+    if (Phaser.Input.Keyboard.JustDown(this.cancelKey)) {
+      if(this.player.holdingItem){
+        this.player.holdingSM.changeState("none", {player: this.player})
 
       } else{
         console.log("Action key pressed but no box in range")
@@ -87,37 +98,5 @@ export class Game extends Scene {
       if (box === this.nearestBox) box.markAsClosest(true, this.minDist);
       else box.markAsClosest(false, Infinity);
     }
-  }
-  
-  //--------------------------------------todo esto es del circulo ingrediente temporal
-  _getCircleTextureKey(color) {
-    return `circle_${color.toString(16)}`;
-  }
-
-  _ensureCircleTexture(radius = 10, color = 0xffffff) {
-    const key = this._getCircleTextureKey(color);
-    if (!this.textures.exists(key)) {
-      const g = this.add.graphics();
-      g.fillStyle(color, 1);
-      g.fillCircle(radius, radius, radius);
-      g.generateTexture(key, radius * 2, radius * 2);
-      g.destroy();
-    }
-    return key;
-  }
-
-  giveCircleTo(player, color) {
-    const key = this._ensureCircleTexture(10, color);
-    const circle = this.add.image(player.x, player.y - 28, key);
-    circle.setDepth(10);
-    // opcional: un pequeño feedback visual
-    this.tweens.add({
-      targets: circle,
-      y: circle.y - 8,
-      yoyo: true,
-      duration: 120,
-      repeat: 1
-    });
-    return circle;
   }
 }

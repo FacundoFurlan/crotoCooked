@@ -4,8 +4,8 @@ import { StateMachine } from "./state/StateMachine";
 export class Boxes extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, ingredient = "tomato", color = 0xffffff, size = 32){
 
-        const g = scene.add.graphics();
         if(!scene.textures.exists(color.toString(16))){
+            const g = scene.add.graphics();
             g.fillStyle(color, 1);
             g.fillRect(0, 0, size, size);
             g.generateTexture(color.toString(16), size, size);
@@ -72,10 +72,6 @@ export class Boxes extends Phaser.Physics.Arcade.Sprite {
             console.log("Im the closest at: ", dist);
         }
     }
-
-    changeState(newState){
-        this.stateMachine.changeState(newState,{box: this});
-    }
 }
 
 class IdleState extends State {
@@ -117,6 +113,12 @@ class AnimationState extends State {
     }
 
     finish(){
-        this.box.clearTint();
+        if(this.box.distToPlayer < 350 && this.box.closestToPlayer){
+            this.box.activeBox = true;
+            this.box.setTint(0x3399ff)
+        } else {
+            this.box.activeBox = false;
+            this.box.clearTint();
+        }
     }
 }
