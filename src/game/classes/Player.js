@@ -1,5 +1,5 @@
-import { StateMachine } from "./state/StateMachine.js";
-import { State } from "./state/State.js";
+import { StateMachine } from "../state/StateMachine.js";
+import { State } from "../state/State.js";
 
 // Extiende de sprite y usa el asset "logo"
 export class Player extends Phaser.Physics.Arcade.Sprite {
@@ -180,19 +180,17 @@ class HoldingIngredientState extends State {
 
     this.player.holdingItem = true;
     this.player.itemHolded = this.ingredient;
-
-    this.player.itemHolded.body.x = this.player.body.x;
-    this.player.itemHolded.body.y = this.player.body.y;
+    
+    this.player.itemHolded.setPosition(this.player.body.center.x, this.player.body.center.y);
     this.player.itemHolded.setVisible(true)
   }
   update(dt) {
-    this.player.itemHolded.body.x = this.player.body.x;
-    this.player.itemHolded.body.y = this.player.body.y;
+    this.player.itemHolded.setPosition(this.player.body.center.x, this.player.body.center.y);
   }
 
   finish() {
     this.player.holdingItem = false;
-    this.player.itemHolded.destroy();
+    this.player.itemHolded.setVisible(true);
     this.player.itemHolded = null;
   }
 }

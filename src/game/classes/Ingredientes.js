@@ -1,4 +1,4 @@
-import { State } from "./state/State";
+import { State } from "../state/State";
 
 export class Ingredientes extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, kind = "tomato", color = 0xffffff, size = 10){

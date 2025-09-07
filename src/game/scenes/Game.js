@@ -1,7 +1,8 @@
 import { Scene } from "phaser";
-import { Player } from "../Player.js";
-import { Boxes } from "../Boxes.js";
-import { Ingredientes } from "../Ingredientes.js";
+import { Player } from "../classes/Player.js";
+import { Ingredientes } from "../classes/Ingredientes.js";
+import { IngredientBox } from "../classes/IngredientBox.js";
+import { KitchenBox } from "../classes/kitchenBox.js";
 
 export class Game extends Scene {
   constructor() {
@@ -13,6 +14,12 @@ export class Game extends Scene {
 
   init() {
     this.currentCycle = "init";
+
+    this.input.once('pointerdown', () => { //esto es para evitar un warning molesto del audio
+      if (this.sound.context.state === 'suspended') {
+          this.sound.context.resume();
+      }
+    });
   }
 
   preload() {
@@ -29,14 +36,20 @@ export class Game extends Scene {
     this.player = new Player(this, 640, 360, "bchef");
 
     //Cajas---------------------------------------------------------------
-    this.boxesArray = []
-    this.box1 = new Boxes(this, 300, 100, "pasta", 0x555555, 64);
-    this.physics.add.collider(this.box1, this.player)
-    this.boxesArray.push(this.box1);
+    this.boxes = []
 
-    this.box2 = new Boxes(this, 400, 100, "meat", 0xffffff, 64);
+    this.box1 = new IngredientBox(this, 300, 100, "pasta", 0x555555, 64);
+    this.physics.add.collider(this.box1, this.player)
+    this.boxes.push(this.box1);
+
+    this.box2 = new IngredientBox(this, 400, 100, "meat", 0xffffff, 64);
     this.physics.add.collider(this.box2, this.player)
-    this.boxesArray.push(this.box2);
+    this.boxes.push(this.box2);
+    
+    this.kitchenBox1 = new KitchenBox(this, 400, 400, 0xaaaaaa, 128)
+    this.physics.add.collider(this.player, this.kitchenBox1)
+    this.boxes.push(this.kitchenBox1);
+
 
     //Cursors
     this.actionKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.J);
@@ -45,19 +58,20 @@ export class Game extends Scene {
 
   update(t, dt) {
     this.currentCycle = "update";
-    console.log("FR: ", dt/1000)
+    // console.log("FR: ", dt/1000)
     
     this._getClosestBox();
     
-    if (this.player) this.player.update(dt / 1000);
-    if(this.box1) this.box1.update(dt)
-    if(this.box2) this.box2.update(dt)
+    if (this.player) this.player.update(dt);
+    if (this.box1) this.box1.update(dt)
+    if (this.box2) this.box2.update(dt)
+    if (this.kitchenBox1) this.kitchenBox1.update(dt)
 
     if (Phaser.Input.Keyboard.JustDown(this.actionKey)) {
       if(this.nearestBox.activeBox){
-        this.newCircle = new Ingredientes(this, this.player.x, this.player.y, "tomato", this.nearestBox.color);
-        this.player.holdingSM.changeState("ingredient", {player: this.player, ingredient: this.newCircle})
-        this.nearestBox.stateMachine.changeState("anim",{box: this.nearestBox});
+        console.log(typeof(this.nearestBox))
+
+        this.nearestBox.onInteract(this.player)
         console.log("Action key pressed!")
 
       } else{
@@ -70,7 +84,7 @@ export class Game extends Scene {
         this.player.holdingSM.changeState("none", {player: this.player})
 
       } else{
-        console.log("Action key pressed but no box in range")
+        console.log("Cancel key pressed but no box in range")
       }
     }
     
@@ -84,7 +98,7 @@ export class Game extends Scene {
     this.minDist = Infinity;
 
     //buscar la caja más cercana
-    for (const box of this.boxesArray) {
+    for (const box of this.boxes) {
       const d2 = box.getDistSqToPlayer(player);
 
       if (d2 < this.minDist) {
@@ -94,7 +108,7 @@ export class Game extends Scene {
     }
 
     //aplicar estado a las cajas
-    for (const box of this.boxesArray) {
+    for (const box of this.boxes) {
       if (box === this.nearestBox) box.markAsClosest(true, this.minDist);
       else box.markAsClosest(false, Infinity);
     }
