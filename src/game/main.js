@@ -1,5 +1,9 @@
 import { Game as MainGame } from './scenes/Game';
 import { AUTO, Scale,Game, Physics } from 'phaser';
+import { MainMenu } from './scenes/MainMenu';
+import { HUD } from './scenes/HUD';
+import { Victory } from './scenes/Victory';
+import { Defeat } from './scenes/Defeat';
 
 // Find out more information about the Game Config at:
 // https://docs.phaser.io/api-documentation/typedef/types-core#gameconfig
@@ -26,7 +30,11 @@ const config = {
         roundPixels: true,
     },
     scene: [
-        MainGame
+        MainMenu,
+        MainGame,
+        HUD,
+        Victory,
+        Defeat
     ]
 };
 

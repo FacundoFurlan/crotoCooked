@@ -1,8 +1,8 @@
 import { Scene } from "phaser";
 import { Player } from "../classes/Player.js";
-import { Ingredientes } from "../classes/Ingredientes.js";
 import { IngredientBox } from "../classes/IngredientBox.js";
 import { KitchenBox } from "../classes/kitchenBox.js";
+import { Task } from "../classes/Tasks.js";
 
 export class Game extends Scene {
   constructor() {
@@ -50,10 +50,16 @@ export class Game extends Scene {
     this.physics.add.collider(this.player, this.kitchenBox1)
     this.boxes.push(this.kitchenBox1);
 
+    this.pedido1 = new Task(this, 300, 600, 0xaaaaaa, 64)
+    this.physics.add.collider(this.player, this.pedido1)
+    this.boxes.push(this.pedido1);
+
 
     //Cursors
     this.actionKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.J);
     this.cancelKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.K);
+    this.victoryKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.N);
+    this.DefeatKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M);
   }
 
   update(t, dt) {
@@ -66,14 +72,12 @@ export class Game extends Scene {
     if (this.box1) this.box1.update(dt)
     if (this.box2) this.box2.update(dt)
     if (this.kitchenBox1) this.kitchenBox1.update(dt)
+    if (this.pedido1) this.pedido1.update(dt)
 
     if (Phaser.Input.Keyboard.JustDown(this.actionKey)) {
       if(this.nearestBox.activeBox){
-        console.log(typeof(this.nearestBox))
-
         this.nearestBox.onInteract(this.player)
         console.log("Action key pressed!")
-
       } else{
         console.log("Action key pressed but no box in range")
       }
@@ -86,6 +90,13 @@ export class Game extends Scene {
       } else{
         console.log("Cancel key pressed but no box in range")
       }
+    }
+
+    if (Phaser.Input.Keyboard.JustDown(this.victoryKey)) {
+      this.finishLevel();
+    }
+    if (Phaser.Input.Keyboard.JustDown(this.DefeatKey)) {
+      this.onPlayerDeath();
     }
     
   }
@@ -112,5 +123,25 @@ export class Game extends Scene {
       if (box === this.nearestBox) box.markAsClosest(true, this.minDist);
       else box.markAsClosest(false, Infinity);
     }
+  }
+
+  finishLevel() {
+    const score = this.playerScore ?? 0;
+    // Detenemos el HUD y lanzamos la escena de victoria
+    this.scene.stop("HUD");
+    // Opcional: animación de cámara antes de cambiar (fade)
+    this.cameras.main.fadeOut(500, 0, 0, 0);
+    this.cameras.main.once("camerafadeoutcomplete", () => {
+      this.scene.start("Victory", { score: score });
+    });
+  }
+
+  onPlayerDeath(reason) {
+    const score = this.playerScore ?? 0;
+    this.scene.stop("HUD");
+    this.cameras.main.fadeOut(400);
+    this.cameras.main.once("camerafadeoutcomplete", () => {
+      this.scene.start("Defeat", { reason, score });
+    });
   }
 }
