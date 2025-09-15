@@ -36,10 +36,10 @@ export class CircularTimer {
 
         this.progress += dt;
         if (this.progress >= this.duration) {
+            this.stop()
             if(this.onComplete){
                 this.onComplete()
             }
-            this.stop()
         }
         this.draw();
     }

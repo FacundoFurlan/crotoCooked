@@ -3,25 +3,17 @@ import { CircularTimer } from "./CircularTimer.js";
 import { Ingredientes } from "./Ingredientes.js";
 
 export class Task extends Boxes {
-    constructor(scene, x, y, color, size = 48) {
-        // generar textura si no existe
-        if(!scene.textures.exists(color.toString(16))){
-            const g = scene.add.graphics();
-            g.fillStyle(color, 1);
-            g.fillRect(0, 0, size, size);
-            g.generateTexture(color.toString(16), size, size);
-            g.destroy();
-        }
+    constructor(scene, x, y, ingrediente = "carbon_0", size = 48, textureKey = "orden") {
 
-        super(scene, x, y, color.toString(16), size);
+        super(scene, x, y, textureKey, size);
         
         this.scene = scene;
-        this.itemHolded = new Ingredientes(this.scene, x, y);
+        this.textureKey = textureKey;
+        this.ingrediente = ingrediente;
+        this.itemHolded = new Ingredientes(this.scene, x, y, this.ingrediente);
         this.itemHolded.setPosition(this.body.center.x, this.body.center.y);
-        this.itemHolded.setTint(0xff0000)
         this.itemHolded.setVisible(true)
-        this.itemHolded.kind = "cocinado"
-        this.taskDuration = 15000;
+        this.taskDuration = 1500000;
 
         this.circleTimer = new CircularTimer(scene, x, y, 16, this.taskDuration, () => {this.failTask()})
         this.circleTimer.start()
@@ -29,9 +21,9 @@ export class Task extends Boxes {
 
     onInteract(player) {
         if(player.holdingItem){
-            console.log(`%cItem del player: ${player.itemHolded.kind} e item del pedido: ${this.itemHolded.kind}`, "color: aqua")
-            if(player.itemHolded.kind === this.itemHolded.kind){
-                this.setTint(0x00ff00)
+            console.log(player.itemHolded.textureKey)
+            console.log(`%cItem del player: ${player.itemHolded.textureKey} e item del pedido: ${this.itemHolded.textureKey}`, "color: aqua")
+            if(player.itemHolded.textureKey === this.itemHolded.textureKey){
                 this.scene.finishLevel();
             }
         }

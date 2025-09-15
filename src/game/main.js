@@ -9,8 +9,8 @@ import { Defeat } from './scenes/Defeat';
 // https://docs.phaser.io/api-documentation/typedef/types-core#gameconfig
 const config = {
     type: AUTO,
-    width: 1280,
-    height: 720,
+    width: 640, //640
+    height: 360,    //360
     parent: 'game-container',
     backgroundColor: '#028af8',
     scale: {
@@ -21,7 +21,7 @@ const config = {
         default: "arcade",
         arcade: {
             gravity: {y: 0},
-            debug: true
+            debug: false
         }
     },
     render: {

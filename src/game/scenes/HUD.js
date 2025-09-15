@@ -6,11 +6,11 @@ export class HUD extends Phaser.Scene {
     create() {
         const {width} = this.scale;
 
-        this.timeLeft = 60000;
+        this.timeLeft = 600000;
 
         this.timerText = this.add.text(width/2, 20 , "01:00", {
             fontFamily: "Arial",
-            fontSize: "32px",
+            fontSize: "18px",
             color: "#fff"
         }).setOrigin(.5);
 
@@ -24,7 +24,7 @@ export class HUD extends Phaser.Scene {
         })
 
 
-        this.add.text(20, 20, "HUD: Puntaje 0", { fontSize: "32px", color: "#fff", fontFamily: "Arial" });
+        this.add.text(20, 20, "HUD: Puntaje 0", { fontSize: "16px", color: "#fff", fontFamily: "Arial" });
         this.scene.bringToTop("HUD");
     }
 

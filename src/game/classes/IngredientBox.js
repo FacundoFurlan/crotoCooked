@@ -4,20 +4,13 @@ import { Boxes } from "./Boxes.js";
 import { Ingredientes } from "./Ingredientes.js";
 
 export class IngredientBox extends Boxes {
-    constructor(scene, x, y, ingredient = "tomato", color = 0xffffff, size = 32) {
-        // generar textura si no existe
-        if(!scene.textures.exists(color.toString(16))){
-            const g = scene.add.graphics();
-            g.fillStyle(color, 1);
-            g.fillRect(0, 0, size, size);
-            g.generateTexture(color.toString(16), size, size);
-            g.destroy();
-        }
+    constructor(scene, x, y, ingredientKey = "carbon_0", textureKey, size = 32) {
 
-        super(scene, x, y, color.toString(16), size);
+        super(scene, x, y, textureKey, size);
+        this.scene = scene;
+        this.ingredientKey = ingredientKey;
 
-        this.ingredient = ingredient;
-        this.color = color;
+        this.ingredientSprite = this.scene.add.sprite(x,y-7, "ingredientesAtlas", this.scene.ingredientesAtlas[this.ingredientKey].index);
 
         // state machine
         this.stateMachine = new StateMachine("idle");
@@ -32,7 +25,7 @@ export class IngredientBox extends Boxes {
 
     onInteract(player){
         if(this.stateMachine.currentStateName != "anim"){
-            this.newIngredient = new Ingredientes(this.scene, player.x, player.y, "tomato", this.color)
+            this.newIngredient = new Ingredientes(this.scene, player.x, player.y, this.ingredientKey)
             player.holdingSM.changeState("ingredient", {player: player, ingredient: this.newIngredient})
             this.stateMachine.changeState("anim", {box: this});
         }

@@ -16,7 +16,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.movingSM = new StateMachine("idle");
     this.movingSM.addState("idle", new IdleState());
     this.movingSM.addState("moving", new MovingState());
-    this.movingSM.addState("running", new RunningState());
     this.movingSM.changeState("idle", { player: this });
 
     //MAQUINA DE ESTADO DE HOLDEO ------------------------------------
@@ -42,7 +41,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.play('bChefIdle');
 
     //ULTIMOS ARREGLOS DE SPRITE -----------------------------------------
-    this.setScale(2);
+    this.setScale(1.3);
+    console.log(this.getBounds())
+    
     this.refreshBody()
     this.body.setCollideWorldBounds(true)
   }
@@ -71,10 +72,6 @@ class IdleState extends State {
     ) {
       this.player.movingSM.changeState("moving", { player: this.player });
     }
-
-    if (cursors.shift.isDown) {
-      this.player.movingSM.changeState("running", { player: this.player });
-    }
   }
   finish() {
     // FX: Quita tint al salir de idle
@@ -85,10 +82,11 @@ class IdleState extends State {
 
 class MovingState extends State {
   init(params) {
-    this.player = params.player;
-    // FX: Tint verde al entrar en moving
-    this.player.setTint(0x33ff66);
     console.log("Entering Moving State");
+    this.player = params.player;
+
+    this.stepTimer = 0;
+    this.stepInterval = 300;
   }
   update(dt) {
     this.handleInput(dt);
@@ -101,6 +99,12 @@ class MovingState extends State {
       !cursors.down.isDown
     ) {
       this.player.movingSM.changeState("idle", { player: this.player });
+    }
+
+    this.stepTimer += dt;
+    if(this.stepTimer >= this.stepInterval){
+      this.stepTimer = 0;
+      this.player.scene.sound.play("caminar_pasto_0", {volume: .1, rate: Phaser.Math.FloatBetween(.8,1.2)})
     }
   }
   handleInput(dt) {
@@ -118,43 +122,6 @@ class MovingState extends State {
     this.player.body.setVelocity(0); // reset cada frame
     this.player.clearTint();
     console.log("Exiting Moving State");
-  }
-}
-
-class RunningState extends State {
-  init(params) {
-    this.player = params.player;
-    // FX: Tint rojo al entrar en running
-    this.player.setTint(0xff3333);
-    console.log("Entering Running State");
-  }
-  update(dt) {
-    this.handleInput(dt);
-    // Si no se presiona ninguna tecla, vuelve a idle
-    const cursors = this.player.cursors;
-    if (
-      !cursors.left.isDown &&
-      !cursors.right.isDown &&
-      !cursors.up.isDown &&
-      !cursors.down.isDown
-    ) {
-      this.player.stateMachine.changeState("idle", { player: this.player });
-    }
-  }
-  handleInput(dt) {
-    const cursors = this.player.cursors;
-    const speed = 400;
-    if (cursors.left.isDown) this.player.body.setVelocityX(-speed);
-    if (cursors.right.isDown) this.player.body.setVelocityX(speed);
-    if (cursors.up.isDown) this.player.body.setVelocityY(-speed);
-    if (cursors.down.isDown) this.player.body.setVelocityY(speed);
-    this.player.body.velocity.normalize().scale(speed); // opcional, para mover diagonal uniforme
-  }
-  finish() {
-    // FX: Quita tint al salir de running
-    this.player.body.setVelocity(0); // reset cada frame
-    this.player.clearTint();
-    console.log("Exiting Running State");
   }
 }
 
@@ -190,7 +157,7 @@ class HoldingIngredientState extends State {
 
   finish() {
     this.player.holdingItem = false;
-    this.player.itemHolded.setVisible(true);
+    this.player.itemHolded.setVisible(false);
     this.player.itemHolded = null;
   }
 }

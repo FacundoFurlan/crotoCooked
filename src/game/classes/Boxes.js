@@ -1,6 +1,6 @@
 export class Boxes extends Phaser.Physics.Arcade.Sprite {
-  constructor(scene, x, y, texture, size = 32) {
-    super(scene, x, y, texture);
+  constructor(scene, x, y, textureKey, size = 32) {
+    super(scene, x, y, textureKey);
 
     this.scene = scene;
     this.size = size;
