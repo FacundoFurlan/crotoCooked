@@ -1,16 +1,20 @@
 import { StateMachine } from "../state/StateMachine";
 import { State } from "../state/State";
-import { Boxes } from "./Boxes.js";
+import { Interactuables } from "./Interactuables.js";
 import { Ingredientes } from "./Ingredientes.js";
 
-export class IngredientBox extends Boxes {
+export class IngredientBox extends Interactuables {
     constructor(scene, x, y, ingredientKey = "carbon_0", textureKey, size = 32) {
 
         super(scene, x, y, textureKey, size);
         this.scene = scene;
         this.ingredientKey = ingredientKey;
+        console.log(this.ingredientKey)
 
         this.ingredientSprite = this.scene.add.sprite(x,y-7, "ingredientesAtlas", this.scene.ingredientesAtlas[this.ingredientKey].index);
+
+        this.body.setCollideWorldBounds(true);
+        this.body.setImmovable(true);
 
         // state machine
         this.stateMachine = new StateMachine("idle");

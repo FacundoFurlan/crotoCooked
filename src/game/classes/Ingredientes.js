@@ -1,8 +1,9 @@
 import { State } from "../state/State";
+import { Interactuables } from "./Interactuables";
 
-export class Ingredientes extends Phaser.Physics.Arcade.Sprite {
+export class Ingredientes extends Interactuables {
     constructor(scene, x, y, textureKey = "carbon_0", size = 10){
-        super(scene, x, y, "ingredientesAtlas", scene.ingredientesAtlas[textureKey].index);
+        super(scene, x, y, "ingredientesAtlas", 900,scene.ingredientesAtlas[textureKey].index);
         console.log("esto llega a ingredientes: ", textureKey)
 
         this.setVisible(false)
@@ -10,10 +11,12 @@ export class Ingredientes extends Phaser.Physics.Arcade.Sprite {
         this.size = size;
         this.textureKey = textureKey;
         this.dataIngredient = this.scene.ingredientesAtlas[textureKey]
+        this.grabbed = false;
 
+        
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
-
+        
         this.scene.tweens.add({
             targets: this,
             y: this.y - 8,
@@ -21,10 +24,17 @@ export class Ingredientes extends Phaser.Physics.Arcade.Sprite {
             duration: 120,
             repeat: 1
         });
+        this.scene.Interactuables.push(this)
     }
 
     update(dt){
 
+    }
+
+    onInteract(player){
+        if(!this.grabbed && !player.holdingItem){
+            player.holdingSM.changeState("ingredient", {player: player, ingredient: this})
+        }
     }
 
     cook(){

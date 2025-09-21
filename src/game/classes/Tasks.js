@@ -1,8 +1,8 @@
-import { Boxes } from "./Boxes.js";
+import { Interactuables } from "./Interactuables.js";
 import { CircularTimer } from "./CircularTimer.js";
 import { Ingredientes } from "./Ingredientes.js";
 
-export class Task extends Boxes {
+export class Task extends Interactuables {
     constructor(scene, x, y, ingrediente = "carbon_0", size = 48, textureKey = "orden") {
 
         super(scene, x, y, textureKey, size);
@@ -14,6 +14,9 @@ export class Task extends Boxes {
         this.itemHolded.setPosition(this.body.center.x, this.body.center.y);
         this.itemHolded.setVisible(true)
         this.taskDuration = 1500000;
+
+        this.body.setCollideWorldBounds(true);
+        this.body.setImmovable(true);
 
         this.circleTimer = new CircularTimer(scene, x, y, 16, this.taskDuration, () => {this.failTask()})
         this.circleTimer.start()

@@ -3,6 +3,7 @@ import { Player } from "../classes/Player.js";
 import { IngredientBox } from "../classes/IngredientBox.js";
 import { KitchenBox } from "../classes/kitchenBox.js";
 import { Task } from "../classes/Tasks.js";
+import { Asador } from "../classes/asador.js";
 
 export class Game extends Scene {
   constructor() {
@@ -126,48 +127,48 @@ export class Game extends Scene {
     this.player = new Player(this, 640, 360, "bchef");
     
     //Cajas---------------------------------------------------------------
-    this.boxes = []
+    this.Interactuables = []
     this.nearestBox = null;
     
     this.box1 = new IngredientBox(this, 300, 80, this.ingredientesNecesarios[this.randomIndexIngredientesNecesarios], "caja", 10);
     this.physics.add.collider(this.box1, this.player)
-    this.boxes.push(this.box1);
+    this.Interactuables.push(this.box1);
     this.ingredientesNecesarios.splice(this.randomIndexIngredientesNecesarios, 1);
     this.randomIndexIngredientesNecesarios = Math.floor(Math.random() * this.ingredientesNecesarios.length)
     
     this.box2 = new IngredientBox(this, 400, 80, this.ingredientesNecesarios[this.randomIndexIngredientesNecesarios], "caja", 10);
     this.physics.add.collider(this.box2, this.player)
-    this.boxes.push(this.box2);
+    this.Interactuables.push(this.box2);
     this.ingredientesNecesarios.splice(this.randomIndexIngredientesNecesarios, 1);
     this.randomIndexIngredientesNecesarios = Math.floor(Math.random() * this.ingredientesNecesarios.length)
     
     this.box3 = new IngredientBox(this, 200, 80, this.ingredientesNecesarios[this.randomIndexIngredientesNecesarios], "caja", 10);
     this.physics.add.collider(this.box3, this.player)
-    this.boxes.push(this.box3);
+    this.Interactuables.push(this.box3);
     this.ingredientesNecesarios.splice(this.randomIndexIngredientesNecesarios, 1);
     this.randomIndexIngredientesNecesarios = Math.floor(Math.random() * this.ingredientesNecesarios.length)
     
     this.box4 = new IngredientBox(this, 500, 80, this.ingredientesNecesarios[this.randomIndexIngredientesNecesarios], "caja", 10);
     this.physics.add.collider(this.box4, this.player)
-    this.boxes.push(this.box4);
+    this.Interactuables.push(this.box4);
     this.ingredientesNecesarios.splice(this.randomIndexIngredientesNecesarios, 1);
     this.randomIndexIngredientesNecesarios = Math.floor(Math.random() * this.ingredientesNecesarios.length)
     
     this.kitchenBox1 = new KitchenBox(this, 400, 200, "mesa", 30)
     this.physics.add.collider(this.player, this.kitchenBox1)
-    this.boxes.push(this.kitchenBox1);
+    this.Interactuables.push(this.kitchenBox1);
     
     this.kitchenBox2 = new KitchenBox(this, 300, 200, "freidora", 30)
     this.physics.add.collider(this.player, this.kitchenBox2)
-    this.boxes.push(this.kitchenBox2);
+    this.Interactuables.push(this.kitchenBox2);
     
-    this.kitchenBox3 = new KitchenBox(this, 200, 200, "asador", 30)
+    this.kitchenBox3 = new Asador(this, 200, 200, "asador", 30)
     this.physics.add.collider(this.player, this.kitchenBox3)
-    this.boxes.push(this.kitchenBox3);
+    this.Interactuables.push(this.kitchenBox3);
     
     this.pedido1 = new Task(this, 100, 200, this.pedidosDisponibles[this.randomIndexPedidosDisponibles], 30)
     this.physics.add.collider(this.player, this.pedido1)
-    this.boxes.push(this.pedido1);
+    this.Interactuables.push(this.pedido1);
     this.pedidosDisponibles.splice(this.randomIndexPedidosDisponibles, 1);
     this.randomIndexPedidosDisponibles = Math.floor(Math.random() * this.pedidosDisponibles.length)
     
@@ -186,7 +187,7 @@ export class Game extends Scene {
     this._getClosestBox();
     
     if (this.player) this.player.update(dt);
-    this.boxes.forEach(box => { //updatea todas las cajas
+    this.Interactuables.forEach(box => { //updatea todas las cajas
       box.update(dt);
     });
 
@@ -204,7 +205,7 @@ export class Game extends Scene {
         this.player.holdingSM.changeState("none", {player: this.player})
 
       } else{
-        console.log("Cancel key pressed but no box in range")
+        console.log("Cancel key pressed but nothing in the hands")
       }
     }
 
@@ -223,27 +224,30 @@ export class Game extends Scene {
     this.minDist = Infinity;
 
     //buscar la caja más cercana
-    for (const box of this.boxes) {
-      const dActual = box.getDistSqToPlayer(player);
-
-      if (dActual < this.minDist) {
-        this.minDist = dActual;
-        this.nearestBox = box;
-      } else if (dActual === this.minDist) {
-        if(box !== this.nearestBox){
+    for (const box of this.Interactuables) {
+      if(!box.grabbed){
+        const dActual = box.getDistSqToPlayer(player);
+  
+        if (dActual < this.minDist) {
+          this.minDist = dActual;
           this.nearestBox = box;
+        } else if (dActual === this.minDist) {
+          if(box !== this.nearestBox){
+            this.nearestBox = box;
+          }
         }
       }
     }
 
     //aplicar estado a las cajas
-    for (const box of this.boxes) {
+    for (const box of this.Interactuables) {
       if (box === this.nearestBox) box.markAsClosest(true, this.minDist);
       else box.markAsClosest(false, Infinity);
     }
   }
 
   finishLevel() {
+    this.sound.stopAll();
     const score = this.playerScore ?? 0;
     // Detenemos el HUD y lanzamos la escena de victoria
     this.scene.stop("HUD");
@@ -253,8 +257,9 @@ export class Game extends Scene {
       this.scene.start("Victory", { score: score });
     });
   }
-
+  
   onPlayerDeath(reason) {
+    this.sound.stopAll();
     const score = this.playerScore ?? 0;
     this.scene.stop("HUD");
     this.cameras.main.fadeOut(400);

@@ -149,15 +149,17 @@ class HoldingIngredientState extends State {
     this.player.itemHolded = this.ingredient;
     
     this.player.itemHolded.setPosition(this.player.body.center.x, this.player.body.center.y);
+    this.player.itemHolded.grabbed = true;
     this.player.itemHolded.setVisible(true)
   }
   update(dt) {
     this.player.itemHolded.setPosition(this.player.body.center.x, this.player.body.center.y);
   }
-
+  
   finish() {
     this.player.holdingItem = false;
-    this.player.itemHolded.setVisible(false);
+    this.player.itemHolded.setVisible(true);
+    this.player.itemHolded.grabbed = false;
     this.player.itemHolded = null;
   }
 }

@@ -1,17 +1,19 @@
-export class Boxes extends Phaser.Physics.Arcade.Sprite {
-  constructor(scene, x, y, textureKey, size = 32) {
-    super(scene, x, y, textureKey);
+export class Interactuables extends Phaser.Physics.Arcade.Sprite {
+  constructor(scene, x, y, textureKey, size = 32, index = null) {
+    super(scene, x, y, textureKey, index);
 
     this.scene = scene;
     this.size = size;
     this.activeBox = false; // seleccionado/activo
+    this.highlighted = false;
     this.closestToPlayer = false;
     this.distToPlayer = Infinity;
+    this.distForActivation = 15;
+
+    this.fx = this.preFX.addColorMatrix();
 
     scene.add.existing(this);
     scene.physics.add.existing(this);
-    this.body.setCollideWorldBounds(true);
-    this.body.setImmovable(true);
   }
 
     // rect del body (AABB)
@@ -34,19 +36,24 @@ export class Boxes extends Phaser.Physics.Arcade.Sprite {
         if (!player || !player.body) return Infinity;
         const a = this._rectOf(this.body);
         const b = this._rectOf(player.body);
-        return Boxes.distSqAABB(a, b);
+        return Interactuables.distSqAABB(a, b);
     }
 
     markAsClosest(closest, dist) {
         this.closestToPlayer = closest;
         this.distToPlayer = dist;
 
-        if(this.distToPlayer < 25*25 && this.closestToPlayer){
+        if(this.distToPlayer < this.distForActivation*this.distForActivation && this.closestToPlayer){
             this.activeBox = true;
-            this.setTint(0x3399ff);
+
+            if(!this.highlighted){
+                this.fx.brightness(1.1);
+                this.highlighted = true;
+            }
         } else {
             this.activeBox = false;
-            this.clearTint();
+            this.fx.brightness(1)
+            this.highlighted = false;
         }
     }
 

@@ -1,7 +1,7 @@
-import { Boxes } from "./Boxes.js";
+import { Interactuables } from "./Interactuables.js";
 import { CircularTimer } from "./CircularTimer.js";
 
-export class KitchenBox extends Boxes {
+export class KitchenBox extends Interactuables {
     constructor(scene, x, y, textureKey, size = 48) {
 
         super(scene, x, y, textureKey, size);
@@ -13,20 +13,13 @@ export class KitchenBox extends Boxes {
         this.itemHolded = null;
         this.cookDuration = 3000;
 
+        this.body.setCollideWorldBounds(true);
+        this.body.setImmovable(true);
+
         this.actionSound = null;
-        this.needsCoal = false;
-        this.hasCoal = false;
-        this.textureCoal = null;
-        this.timerCoal = null;
-        this.durationCoal = 10000;
         this.textureOn = this.textureKey;
         if(textureKey === "mesa"){
             this.actionSound = this.scene.picarAudio
-        } else if(textureKey === "asador"){
-            this.actionSound = this.scene.coccionAudio
-            this.textureCoal = "asadorOn"
-            this.textureOn = "asadorOn"
-            this.needsCoal = true;
         } else if(textureKey === "freidora"){
             this.actionSound = this.scene.fritarAudio
             this.textureOn = "freidoraOn"
@@ -36,51 +29,50 @@ export class KitchenBox extends Boxes {
     }
 
     onInteract(player) {
-        if(player.itemHolded && player.itemHolded.dataIngredient.index === 2 && !this.hasCoal){
-            console.log("%cEntro por aca", "color: red")
-            this.hasCoal = true;
-            this.timerCoal = 0;
-            this.setTexture(this.textureCoal);
-            player.holdingSM.changeState("none", {player: player})
-            this.startCook()
-        }else if(player.holdingItem && !this.holdingItem){ //si el jugador tiene algo y esto no
-            if(!this.circleTimer.active){
-                if(this.aparatoAccepts[player.itemHolded.textureKey]){
-                    console.log("%cEntro por aca", "color: green")
-                    console.log("se intento poner algo: ", player.itemHolded.dataIngredient.hasNext)
-                    this.itemHolded = player.itemHolded;
-                    this.holdingItem = true;
-                    player.holdingSM.changeState("none", {player: player})
-                    this.itemHolded.setPosition(this.body.center.x, this.body.center.y);
-                    this.itemHolded.setVisible(true)
-                    this.startCook()
-                }
-            }
+         if(player.holdingItem && !this.holdingItem){ //si el jugador tiene algo y esto no
+            this.checkIfItemCompatible(player);
         } else if(!player.holdingItem && this.holdingItem === true){ //si el jugador no tiene nada y esto si
-            
-            if(this.circleTimer.active){
-                this.circleTimer.stop()
-                if(this.actionSound){
-                    this.actionSound.stop();
-                }
-                this.setTexture(this.textureKey)
-            }
-            player.holdingSM.changeState("ingredient", {player: player, ingredient: this.itemHolded});
-            this.itemHolded = null;
-            this.holdingItem = false;
+            this.checkIfItemCanGo(player);
         }
     }
     
+    checkIfItemCompatible(player){
+        if(!this.circleTimer.active){
+            if(this.aparatoAccepts[player.itemHolded.textureKey]){
+                console.log("%cEntro por aca", "color: green")
+                this.scene.tweens.killTweensOf(player.itemHolded);
+                console.log("se intento poner algo: ", player.itemHolded.dataIngredient.hasNext)
+                this.itemHolded = player.itemHolded;
+                this.holdingItem = true;
+                player.holdingSM.changeState("none", {player: player})
+                this.itemHolded.setPosition(this.body.center.x, this.body.center.y);
+                this.itemHolded.setVisible(true)
+                this.startCook()
+            }
+        }
+    }
+
+    checkIfItemCanGo(player){
+        if(this.circleTimer.active){
+            this.circleTimer.stop()
+            if(this.actionSound){
+                this.actionSound.stop();
+            }
+            this.setTexture(this.textureKey)
+        }
+        player.holdingSM.changeState("ingredient", {player: player, ingredient: this.itemHolded});
+        this.itemHolded = null;
+        this.holdingItem = false;
+    }
+
     startCook(){
         if(this.itemHolded && this.itemHolded.dataIngredient.hasNext && this.itemHolded.dataIngredient.isWorkedOn[this.textureKey]){
-            if(!this.needsCoal || (this.needsCoal && this.hasCoal)){
-                console.log("%cSe inicia reloj", "color: aqua")
-                this.circleTimer.start()
-                if(this.actionSound){
-                    this.actionSound.play();
-                }
-                this.setTexture(this.textureOn);
+            console.log("%cSe inicia reloj", "color: aqua")
+            this.circleTimer.start()
+            if(this.actionSound){
+                this.actionSound.play();
             }
+            this.setTexture(this.textureOn);
         }
     }
 
@@ -101,19 +93,7 @@ export class KitchenBox extends Boxes {
 
     update(dt) {
         this.circleTimer.update(dt)
-        if(this.hasCoal){
-            this.timerCoal += dt;
-            if(this.timerCoal > this.durationCoal){
-                this.setTexture(this.textureKey);
-                this.hasCoal = false;
-                if(this.circleTimer.active){
-                    this.circleTimer.stop();
-                    if(this.actionSound){
-                        this.actionSound.stop();
-                    }
-                }
-            }
-        }
+
     }
 
 }
