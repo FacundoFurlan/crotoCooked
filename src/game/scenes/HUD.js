@@ -6,6 +6,29 @@ export class HUD extends Phaser.Scene {
     create() {
         const {width} = this.scale;
 
+        this.currentMode = this.registry.get("mode");
+        if(this.currentMode === 1){
+            this.registry.set("coopPoints", 0)
+            this.pointsText = this.add.text(width-100, 20 , `Puntos: ${this.registry.get("coopPoints")}`, {
+                fontFamily: "Arial",
+                fontSize: "18px",
+                color: "#fff"
+            }).setOrigin(.5);
+        } else if(this.currentMode === 2){
+            this.registry.set("vsPoints1", 0)
+            this.registry.set("vsPoints2", 0)
+            this.pointsText1 = this.add.text(width-100, 20 , `Puntos P1: ${this.registry.get("vsPoints1")}`, {
+                fontFamily: "Arial",
+                fontSize: "18px",
+                color: "#fff"
+            }).setOrigin(.5);
+            this.pointsText2 = this.add.text(width-100, 40 , `Puntos P2: ${this.registry.get("vsPoints2")}`, {
+                fontFamily: "Arial",
+                fontSize: "18px",
+                color: "#fff"
+            }).setOrigin(.5);
+        }
+        
         this.timeLeft = 600000;
 
         this.timerText = this.add.text(width/2, 20 , "01:00", {
@@ -23,8 +46,9 @@ export class HUD extends Phaser.Scene {
             loop: true
         })
 
+        this.pedidosEnCola = 0;
 
-        this.add.text(20, 20, "HUD: Puntaje 0", { fontSize: "16px", color: "#fff", fontFamily: "Arial" });
+        this.pedidosText = this.add.text(20, 20, `Pedidos en cola: ${this.pedidosEnCola}`, { fontSize: "16px", color: "#fff", fontFamily: "Arial" });
         this.scene.bringToTop("HUD");
     }
 
@@ -42,6 +66,29 @@ export class HUD extends Phaser.Scene {
         }
 
         this.updateTimer()
+    }
+
+    addPedidosEnCola(amount){
+        this.pedidosEnCola += amount;
+        this.pedidosText.setText(`Pedidos en cola: ${this.pedidosEnCola}`)
+    }
+
+    updatePoints(){
+        if(this.currentMode === 1){
+            this.pointsText.setText(`Puntos: ${this.registry.get("coopPoints")}`)
+        } else if(this.currentMode === 2){
+            this.pointsText1.setText(`Puntos P1: ${this.registry.get("vsPoints1")}`)
+            this.pointsText2.setText(`Puntos P2: ${this.registry.get("vsPoints2")}`)
+        }
+    }
+
+    subsPedidosEnCola(amount){
+        this.pedidosEnCola -= amount;
+        this.pedidosText.setText(`Pedidos en cola: ${this.pedidosEnCola}`)
+    }
+
+    getPedidosEnCola(){
+        return this.pedidosEnCola;
     }
 
     updateTimer(){

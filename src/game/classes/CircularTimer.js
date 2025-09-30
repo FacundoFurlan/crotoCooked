@@ -50,8 +50,14 @@ export class CircularTimer {
         this.circle.strokeCircle(this.x, this.y, this.radius);
 
         if (this.active) {
-            this.circle.lineStyle(4, 0x00ff00);
             let angle = (this.progress / this.duration) * Phaser.Math.PI2;
+            if((this.progress*100) / this.duration < 50){
+                this.circle.lineStyle(4, 0x00ff00);
+            } else if((this.progress*100) / this.duration < 80){
+                this.circle.lineStyle(4, 0xffbf00);
+            } else {
+                this.circle.lineStyle(4, 0xff0000);
+            }
             this.circle.beginPath();
             this.circle.arc(this.x, this.y, this.radius, -Math.PI/2, -Math.PI/2 + angle, false);
             this.circle.strokePath();

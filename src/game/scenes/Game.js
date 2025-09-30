@@ -26,9 +26,11 @@ export class Game extends Scene {
   preload() {
     this.currentCycle = "preload";
     this.load.setPath("assets");
+    this.currentMode = this.registry.get("mode");
+    console.log(`%cModo de juego: ${this.currentMode}`, "color: yellow")
 
     //SPRITES---------------------------------------
-    this.load.image("background", "grass.jpg");
+    this.load.image("background", "BG_Dia.png");
     this.load.image("mesa", "SS_Mesa.png");
     this.load.image("freidora", "SS_Freidora_0.png");
     this.load.image("freidoraOn", "SS_Freidora_1.png");
@@ -36,6 +38,7 @@ export class Game extends Scene {
     this.load.image("asadorOn", "SS_Asador_1.png");
     this.load.image("caja", "SS_Caja.png");
     this.load.image("orden", "SS_Orden.png");
+    this.load.image("tabla", "SS_Tablones.png");
     
     //AUDIO----------------------------------------
     this.load.audio("caminar_pasto_0", "./audio/PJ_Caminar_Pasto_0.mp3");
@@ -44,7 +47,8 @@ export class Game extends Scene {
     this.load.audio("fritar_0", "./audio/Fritar_0.mp3");
 
     //SPRITESHEETS--------------------------------
-    this.load.spritesheet("bchef", "bCheff1.png",{frameWidth: 20, frameHeight: 36})
+    this.load.spritesheet("player1", "SS_PJ1.png",{frameWidth: 21, frameHeight: 45})
+    this.load.spritesheet("player2", "SS_PJ2.png",{frameWidth: 21, frameHeight: 45})
     this.load.spritesheet("ingredientesAtlas", "SS_Ingredientes.png",{frameWidth: 20, frameHeight: 20})
   }
   
@@ -113,7 +117,6 @@ export class Game extends Scene {
     }
 
     this.pedidosDisponibles = ["papa_2", "pollo_3", "achicoria_1"]
-    this.randomIndexPedidosDisponibles = Math.floor(Math.random() * this.pedidosDisponibles.length)
     
     this.ingredientesNecesarios = ["papa_0", "achicoria_0", "pollo_0", "carbon_0"]
     this.randomIndexIngredientesNecesarios = Math.floor(Math.random() * this.ingredientesNecesarios.length)
@@ -124,58 +127,86 @@ export class Game extends Scene {
     
     //FONDO Y PJ ---------------------------------------------------------
     this.add.image(320, 180, "background");
-    this.player = new Player(this, 640, 360, "bchef");
+    this.barra = this.physics.add.sprite(100, 180, "tabla");
+    this.barra.setImmovable(true);
+    this.barra.body.setSize(this.barra.body.width-10, this.barra.body.height)
+    this.player = new Player(this, 640, 360, "player1");
+    this.player2 = new Player(this, 440, 360, "player2", 2);
+
+    this.physics.add.collider(this.player, this.player2, () => {
+      this.playersTouching = true;
+    }, null, this);
+
+    this.physics.add.collider(this.player, this.barra);
+    this.physics.add.collider(this.player2, this.barra);
     
     //Cajas---------------------------------------------------------------
     this.Interactuables = []
+    this.ingredientesCreadosArray = []
     this.nearestBox = null;
+    this.posicionesPedidos = [45, 135, 225, 315]
     
     this.box1 = new IngredientBox(this, 300, 80, this.ingredientesNecesarios[this.randomIndexIngredientesNecesarios], "caja", 10);
     this.physics.add.collider(this.box1, this.player)
+    this.physics.add.collider(this.box1, this.player2)
     this.Interactuables.push(this.box1);
     this.ingredientesNecesarios.splice(this.randomIndexIngredientesNecesarios, 1);
     this.randomIndexIngredientesNecesarios = Math.floor(Math.random() * this.ingredientesNecesarios.length)
     
     this.box2 = new IngredientBox(this, 400, 80, this.ingredientesNecesarios[this.randomIndexIngredientesNecesarios], "caja", 10);
     this.physics.add.collider(this.box2, this.player)
+    this.physics.add.collider(this.box2, this.player2)
     this.Interactuables.push(this.box2);
     this.ingredientesNecesarios.splice(this.randomIndexIngredientesNecesarios, 1);
     this.randomIndexIngredientesNecesarios = Math.floor(Math.random() * this.ingredientesNecesarios.length)
     
     this.box3 = new IngredientBox(this, 200, 80, this.ingredientesNecesarios[this.randomIndexIngredientesNecesarios], "caja", 10);
     this.physics.add.collider(this.box3, this.player)
+    this.physics.add.collider(this.box3, this.player2)
     this.Interactuables.push(this.box3);
     this.ingredientesNecesarios.splice(this.randomIndexIngredientesNecesarios, 1);
     this.randomIndexIngredientesNecesarios = Math.floor(Math.random() * this.ingredientesNecesarios.length)
     
     this.box4 = new IngredientBox(this, 500, 80, this.ingredientesNecesarios[this.randomIndexIngredientesNecesarios], "caja", 10);
     this.physics.add.collider(this.box4, this.player)
+    this.physics.add.collider(this.box4, this.player2)
     this.Interactuables.push(this.box4);
     this.ingredientesNecesarios.splice(this.randomIndexIngredientesNecesarios, 1);
     this.randomIndexIngredientesNecesarios = Math.floor(Math.random() * this.ingredientesNecesarios.length)
     
-    this.kitchenBox1 = new KitchenBox(this, 400, 200, "mesa", 30)
+    this.kitchenBox1 = new KitchenBox(this, 400, 250, "mesa", 30)
     this.physics.add.collider(this.player, this.kitchenBox1)
+    this.physics.add.collider(this.player2, this.kitchenBox1)
     this.Interactuables.push(this.kitchenBox1);
     
-    this.kitchenBox2 = new KitchenBox(this, 300, 200, "freidora", 30)
+    this.kitchenBox2 = new KitchenBox(this, 300, 250, "freidora", 30)
     this.physics.add.collider(this.player, this.kitchenBox2)
+    this.physics.add.collider(this.player2, this.kitchenBox2)
     this.Interactuables.push(this.kitchenBox2);
     
-    this.kitchenBox3 = new Asador(this, 200, 200, "asador", 30)
+    this.kitchenBox3 = new Asador(this, 200, 250, "asador", 30)
     this.physics.add.collider(this.player, this.kitchenBox3)
+    this.physics.add.collider(this.player2, this.kitchenBox3)
     this.Interactuables.push(this.kitchenBox3);
     
-    this.pedido1 = new Task(this, 100, 200, this.pedidosDisponibles[this.randomIndexPedidosDisponibles], 30)
-    this.physics.add.collider(this.player, this.pedido1)
-    this.Interactuables.push(this.pedido1);
-    this.pedidosDisponibles.splice(this.randomIndexPedidosDisponibles, 1);
-    this.randomIndexPedidosDisponibles = Math.floor(Math.random() * this.pedidosDisponibles.length)
+    this.spawnPedidos();
+    this.spawnPedidos();
+    this.time.addEvent({
+      delay: 5000,
+      callback: () => {
+          this.spawnPedidos();
+      },
+      loop: true
+    });
     
 
     //Cursors
     this.actionKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.J);
-    this.cancelKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.K);
+    this.throwKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.K);
+    this.dashKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.L);
+    this.actionKey2 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
+    this.throwKey2 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
+    this.dashKey2 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.C);
     this.victoryKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.N);
     this.DefeatKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M);
   }
@@ -184,29 +215,68 @@ export class Game extends Scene {
     this.currentCycle = "update";
     // console.log("FR: ", dt/1000)
     
-    this._getClosestBox();
+    this.nearestBox = this._getClosestBox(this.player)
+    this.nearestBox2 = this._getClosestBox(this.player2)
     
     if (this.player) this.player.update(dt);
+    if (this.player2) this.player2.update(dt);
     this.Interactuables.forEach(box => { //updatea todas las cajas
       box.update(dt);
     });
 
+    //PLAYER 1 ----------------------------------------------------------------------------
     if (Phaser.Input.Keyboard.JustDown(this.actionKey)) {
       if(this.nearestBox.activeBox){
         this.nearestBox.onInteract(this.player)
         console.log("Action key pressed!")
       } else{
-        console.log("Action key pressed but no box in range")
+        if(this.player.holdingItem){
+          this.player.holdingSM.changeState("none", {player: this.player})
+    
+        } else{
+          console.log("Cancel key pressed but nothing in the hands")
+        }
       }
     }
 
-    if (Phaser.Input.Keyboard.JustDown(this.cancelKey)) {
-      if(this.player.holdingItem){
-        this.player.holdingSM.changeState("none", {player: this.player})
+    if (Phaser.Input.Keyboard.JustDown(this.throwKey) && this.player.holdingItem) {
+      const itemToThrow = this.player.itemHolded;
+      this.player.holdingSM.changeState("none", {player: this.player});
 
+      const speed = 600;
+      itemToThrow.thrownBy = 1;
+      itemToThrow.body.setVelocity(this.player.lastDirection.x * speed, this.player.lastDirection.y * speed);
+    }
+
+    if (Phaser.Input.Keyboard.JustDown(this.dashKey)) {
+      this.player.dash()
+    }
+    //PLAYER 2 ----------------------------------------------------------------------------
+    if (Phaser.Input.Keyboard.JustDown(this.actionKey2)) {
+      if(this.nearestBox2.activeBox2){
+        this.nearestBox2.onInteract(this.player2)
+        console.log("Action key pressed!")
       } else{
-        console.log("Cancel key pressed but nothing in the hands")
+        if(this.player2.holdingItem){
+          this.player2.holdingSM.changeState("none", {player: this.player2})
+    
+        } else{
+          console.log("Cancel key pressed but nothing in the hands")
+        }
       }
+    }
+
+    if (Phaser.Input.Keyboard.JustDown(this.throwKey2) && this.player2.holdingItem) {
+      const itemToThrow = this.player2.itemHolded;
+      this.player2.holdingSM.changeState("none", {player: this.player2});
+
+      const speed = 600;
+      itemToThrow.thrownBy = 1;
+      itemToThrow.body.setVelocity(this.player2.lastDirection.x * speed, this.player2.lastDirection.y * speed);
+    }
+
+    if (Phaser.Input.Keyboard.JustDown(this.dashKey2)) {
+      this.player2.dash()
     }
 
     if (Phaser.Input.Keyboard.JustDown(this.victoryKey)) {
@@ -215,25 +285,40 @@ export class Game extends Scene {
     if (Phaser.Input.Keyboard.JustDown(this.DefeatKey)) {
       this.onPlayerDeath();
     }
+
+    if (this.playersTouching) {
+      console.log("tocandose");
+      if (this.player.isDashing) {
+        this._pushPlayers(this.player, this.player2);
+      }
+      if (this.player2.isDashing) {
+        this._pushPlayers(this.player2, this.player);
+      }
+      this.playersTouching = false; // reset para la siguiente frame
+    }
     
   }
 
-  _getClosestBox(){
-    const player = this.player; //player reference
-    if (!player || !player.body) return;
-    this.minDist = Infinity;
+  _getClosestBox(player){
+    if(!player || !player.body){
+      return null;
+    }
+
+    let minDist = Infinity;
+    let nearest = null;
+    
 
     //buscar la caja más cercana
     for (const box of this.Interactuables) {
       if(!box.grabbed){
         const dActual = box.getDistSqToPlayer(player);
   
-        if (dActual < this.minDist) {
-          this.minDist = dActual;
-          this.nearestBox = box;
-        } else if (dActual === this.minDist) {
-          if(box !== this.nearestBox){
-            this.nearestBox = box;
+        if (dActual < minDist) {
+          minDist = dActual;
+          nearest = box;
+        } else if (dActual === minDist) {
+          if(box !== nearest){
+            nearest = box;
           }
         }
       }
@@ -241,9 +326,20 @@ export class Game extends Scene {
 
     //aplicar estado a las cajas
     for (const box of this.Interactuables) {
-      if (box === this.nearestBox) box.markAsClosest(true, this.minDist);
-      else box.markAsClosest(false, Infinity);
+      if (box === nearest) box.markAsClosest(true, minDist, player.kind);
+      else box.markAsClosest(false, Infinity, player.kind);
     }
+
+    return nearest;
+  }
+
+  _pushPlayers(p1, p2) {
+    const dir = p1.lastDirection
+    const force = 400;
+
+    p2.pushed = true;
+    p2.pushedTime = 0;
+    p2.body.setVelocity(dir.x * force, dir.y * force);
   }
 
   finishLevel() {
@@ -266,5 +362,29 @@ export class Game extends Scene {
     this.cameras.main.once("camerafadeoutcomplete", () => {
       this.scene.start("Defeat", { reason, score });
     });
+  }
+
+  spawnPedidos(){
+    // busca una posición libre
+    let y = this.posicionesPedidos.find(
+      pos => !this.Interactuables.some(p => p.y === pos && p.availableIngredients)
+    );
+
+    if (!y) { // no hay lugar libre
+      const hud = this.scene.get("HUD");
+      hud.addPedidosEnCola(1);
+    } else{
+      let pedido = new Task(this, 40, y, this.pedidosDisponibles);
+      this.physics.add.collider(this.player, pedido);
+      this.physics.add.collider(this.player2, pedido);
+      this.Interactuables.push(pedido);
+    }
+  }
+
+  checkTaskQueue(){
+    if(this.scene.get("HUD").getPedidosEnCola() > 0){
+      this.spawnPedidos();
+      this.scene.get("HUD").subsPedidosEnCola(1);
+    }
   }
 }

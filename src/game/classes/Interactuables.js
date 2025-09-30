@@ -5,6 +5,7 @@ export class Interactuables extends Phaser.Physics.Arcade.Sprite {
     this.scene = scene;
     this.size = size;
     this.activeBox = false; // seleccionado/activo
+    this.activeBox2 = false; // seleccionado/activo
     this.highlighted = false;
     this.closestToPlayer = false;
     this.distToPlayer = Infinity;
@@ -39,20 +40,23 @@ export class Interactuables extends Phaser.Physics.Arcade.Sprite {
         return Interactuables.distSqAABB(a, b);
     }
 
-    markAsClosest(closest, dist) {
-        this.closestToPlayer = closest;
-        this.distToPlayer = dist;
+    markAsClosest(closest, dist, playerID) {
+        const active = dist < this.distForActivation * this.distForActivation && closest;
 
-        if(this.distToPlayer < this.distForActivation*this.distForActivation && this.closestToPlayer){
-            this.activeBox = true;
+        if (playerID === 1) {
+            this.activeBox = active;
+        } else if (playerID === 2) {
+            this.activeBox2 = active;
+        }
 
-            if(!this.highlighted){
-                this.fx.brightness(1.1);
-                this.highlighted = true;
+        // highlight visual: solo si alguno de los dos la tiene activa
+        if (this.activeBox || this.activeBox2) {
+            if (!this.highlighted) {
+            this.fx.brightness(1.1);
+            this.highlighted = true;
             }
         } else {
-            this.activeBox = false;
-            this.fx.brightness(1)
+            this.fx.brightness(1);
             this.highlighted = false;
         }
     }

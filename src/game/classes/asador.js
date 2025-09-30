@@ -20,9 +20,20 @@ export class Asador extends KitchenBox {
             console.log("%cIngresa Carbon al Asador", "color: red")
             this.hasCoal = true;
             this.timerCoal = 0;
+            const coalReference = player.itemHolded;
+            const indexCoal = this.scene.Interactuables.indexOf(coalReference);
+            const indexIngre = this.scene.ingredientesCreadosArray.indexOf(coalReference);
+            if(indexCoal !== -1){
+                this.scene.Interactuables.splice(indexCoal, 1);
+            }
+            if(indexIngre !== -1){
+                this.scene.ingredientesCreadosArray.splice(indexIngre, 1);
+            }
             this.setTexture(this.textureCoal);
             this.scene.tweens.killTweensOf(player.itemHolded);
             player.holdingSM.changeState("none", {player: player})
+
+            coalReference.destroy();
             this.startCook();
 
         } else if(player.holdingItem && !this.holdingItem){ //si el jugador tiene algo y esto no
