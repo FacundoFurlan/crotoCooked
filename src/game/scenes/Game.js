@@ -4,6 +4,7 @@ import { IngredientBox } from "../classes/IngredientBox.js";
 import { KitchenBox } from "../classes/kitchenBox.js";
 import { Task } from "../classes/Tasks.js";
 import { Asador } from "../classes/asador.js";
+import InputSystem, { INPUT_ACTIONS } from "../../utils/InputSystem.js";
 
 export class Game extends Scene {
   constructor() {
@@ -125,6 +126,21 @@ export class Game extends Scene {
     this.picarAudio = this.sound.add("picar_0", {loop: true})
     this.fritarAudio = this.sound.add("fritar_0", {loop: true})
     
+    //MANEJO DE INPUTS ---------------------------------------------------
+    this.inputSystem = new InputSystem(this.input);
+    this.inputSystem.configureKeyboard({
+      [INPUT_ACTIONS.UP]: [Phaser.Input.Keyboard.KeyCodes.W],
+      [INPUT_ACTIONS.DOWN]: [Phaser.Input.Keyboard.KeyCodes.S],
+      [INPUT_ACTIONS.LEFT]: [Phaser.Input.Keyboard.KeyCodes.A],
+      [INPUT_ACTIONS.RIGHT]: [Phaser.Input.Keyboard.KeyCodes.D]
+    }, "player1");
+    this.inputSystem.configureKeyboard({
+      [INPUT_ACTIONS.UP]: [Phaser.Input.Keyboard.KeyCodes.UP],
+      [INPUT_ACTIONS.DOWN]: [Phaser.Input.Keyboard.KeyCodes.DOWN],
+      [INPUT_ACTIONS.LEFT]: [Phaser.Input.Keyboard.KeyCodes.LEFT],
+      [INPUT_ACTIONS.RIGHT]: [Phaser.Input.Keyboard.KeyCodes.RIGHT]
+    }, "player2");
+
     //FONDO Y PJ ---------------------------------------------------------
     this.add.image(320, 180, "background");
     this.barra = this.physics.add.sprite(100, 180, "tabla");
@@ -295,6 +311,13 @@ export class Game extends Scene {
         this._pushPlayers(this.player2, this.player);
       }
       this.playersTouching = false; // reset para la siguiente frame
+    }
+
+    if (this.inputSystem.isGamepadConnected("player1")) {
+      const debug1 = this.inputSystem.debugGamepad("player1");
+      if (debug1 && debug1.pressedButtons.length > 0) {
+        console.log("P1 Raw gamepad buttons:", debug1.pressedButtons);
+      }
     }
     
   }
