@@ -17,7 +17,7 @@ export class Victory extends Phaser.Scene {
 
     // texto grande
     this.add.text(width/2, height/2 - 60, "¡VICTORIA!", {
-      fontFamily: "Arial",
+      fontFamily: "MyFont",
       fontSize: "48px",
       color: "#ffff00",
       align: "center"
@@ -25,7 +25,7 @@ export class Victory extends Phaser.Scene {
 
     // detalles / puntaje
     this.add.text(width/2, height/2, `Puntaje: ${this.score}`, {
-      fontFamily: "Arial",
+      fontFamily: "MyFont",
       fontSize: "22px",
       color: "#ffffff"
     }).setOrigin(0.5);

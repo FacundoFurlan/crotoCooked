@@ -171,7 +171,7 @@ export default class InputSystem {
       Object.keys(this.mapping[player]).forEach((action) => {
         const keyboardMappings = this.mapping[player][action].keyboard;
         keyboardMappings.forEach((key) => {
-          if (typeof key === "string") {
+          if (typeof key === "string") { //----------------------------------------------------------------------------------------------------
             this.keys[key] = this.input.keyboard.addKey(key);
           } else {
             this.keys[key] = this.input.keyboard.addKey(key);

@@ -14,7 +14,7 @@ export class Defeat extends Phaser.Scene {
     this.add.rectangle(0, 0, width, height, 0x000000, 0.6).setOrigin(0);
 
     this.add.text(width/2, height/2 - 60, "DERROTA", {
-      fontFamily: "Arial",
+      fontFamily: "MyFont",
       fontSize: "48px",
       color: "#ff5555",
       align: "center"

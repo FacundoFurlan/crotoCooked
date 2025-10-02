@@ -13,6 +13,9 @@ const config = {
     height: 360,    //360
     parent: 'game-container',
     backgroundColor: '#028af8',
+    input: {
+        gamepad: true
+    },
     scale: {
         mode: Scale.FIT,
         autoCenter: Scale.CENTER_BOTH

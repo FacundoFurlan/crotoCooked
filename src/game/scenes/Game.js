@@ -319,7 +319,6 @@ export class Game extends Scene {
         console.log("P1 Raw gamepad buttons:", debug1.pressedButtons);
       }
     }
-    
   }
 
   _getClosestBox(player){
