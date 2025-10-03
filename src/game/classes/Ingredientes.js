@@ -24,6 +24,10 @@ export class Ingredientes extends Interactuables {
         this.scene.physics.add.collider(this.scene.player, this, ()=> {
             this.scene.player.setVelocity(this.scene.player.body.velocity.x * .8, this.scene.player.body.velocity.y * .8)
         })
+        this.scene.physics.add.collider(this.scene.player2, this, ()=> {
+            this.scene.player.setVelocity(this.scene.player.body.velocity.x * .8, this.scene.player.body.velocity.y * .8)
+        })
+        this.scene.physics.add.collider(this.scene.barra, this)
         
         this.scene.tweens.add({
             targets: this,
@@ -57,8 +61,8 @@ export class Ingredientes extends Interactuables {
         }
     }
 
-    cook(){
-        this.textureKey = this.dataIngredient.next;
+    cook(cocina){
+        this.textureKey = this.dataIngredient.next[cocina];
         this.dataIngredient = this.scene.ingredientesAtlas[this.textureKey];
         this.setTexture("ingredientesAtlas", this.dataIngredient.index);
     }

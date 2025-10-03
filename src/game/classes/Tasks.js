@@ -30,6 +30,13 @@ export class Task extends Interactuables {
         this.body.setSize(this.body.width+50, this.body.height)
         this.body.setOffset(this.body.offset.x + 50/2, this.body.offset.y)
 
+        this.scene.Interactuables.forEach(other => {
+            if(other !== this){
+                this.scene.physics.add.collider(this, other);
+
+            }
+        });
+
         this.circleTimer = new CircularTimer(scene, x+26, y+33, 8, this.taskDuration, () => {this.failTask()})
         this.circleTimer.start()
     }

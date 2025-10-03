@@ -50,7 +50,7 @@ export class Game extends Scene {
     //SPRITESHEETS--------------------------------
     this.load.spritesheet("player1", "SS_PJ1.png",{frameWidth: 21, frameHeight: 45})
     this.load.spritesheet("player2", "SS_PJ2.png",{frameWidth: 21, frameHeight: 45})
-    this.load.spritesheet("ingredientesAtlas", "SS_Ingredientes.png",{frameWidth: 20, frameHeight: 20})
+    this.load.spritesheet("ingredientesAtlas", "SS_Ingredientes(1).png",{frameWidth: 20, frameHeight: 20})
   }
   
   create() {
@@ -58,68 +58,225 @@ export class Game extends Scene {
 
     //INDICES ATLAS---------------------------------------------------------
     this.ingredientesAtlas = {
-      achicoria_0: {index: 0, hasPrev: false, hasNext: true, prev: null, next: "achicoria_1", isWorkedOn: {mesa: true, freidora: false, asador: false}},
-      achicoria_1: {index: 1, hasPrev: true, hasNext: false, prev: "achicoria_0", next: null, isWorkedOn: {mesa: false, freidora: false, asador: false}},
-      carbon_0: {index: 2, hasPrev: false, hasNext: false, prev: null, next: null, isWorkedOn: {mesa: false, freidora: false, asador: true}},
-      pollo_0: {index: 5, hasPrev: false, hasNext: true, prev: null, next: "pollo_1", isWorkedOn: {mesa: false, freidora: false, asador: true}},
-      pollo_1: {index: 6, hasPrev: true, hasNext: true, prev: "pollo_0", next: "pollo_2", isWorkedOn: {mesa: false, freidora: false, asador: true}},
-      pollo_2: {index: 7, hasPrev: true, hasNext: true, prev: "pollo_1", next: "pollo_3", isWorkedOn: {mesa: false, freidora: false, asador: true}},
-      pollo_3: {index: 8, hasPrev: true, hasNext: true, prev: "pollo_2", next: "pollo_4", isWorkedOn: {mesa: false, freidora: false, asador: true}},
-      pollo_4: {index: 9, hasPrev: true, hasNext: false, prev: "pollo_3", next: null, isWorkedOn: {mesa: false, freidora: false, asador: false}},
-      papa_0: {index: 10, hasPrev: false, hasNext: true, prev: null, next: "papa_1", isWorkedOn: {mesa: true, freidora: false, asador: false}},
-      papa_1: {index: 11, hasPrev: true, hasNext: true, prev: "papa_0", next: "papa_2", isWorkedOn: {mesa: false, freidora: true, asador: false}},
-      papa_2: {index: 12, hasPrev: true, hasNext: true, prev: "papa_1", next: "papa_3", isWorkedOn: {mesa: false, freidora: true, asador: false}},
-      papa_3: {index: 13, hasPrev: true, hasNext: false, prev: "papa_2", next: null, isWorkedOn: {mesa: false, freidora: false, asador: false}},
-    }
+      //POLLO---------
+      polloCrudo_0: {index: 28, next: {asador: "polloAsado_0", mesa: "polloLonja_0"}},
+      polloAsado_0: {index: 29, next: {asador: "polloAsado_1"}},
+      polloAsado_1: {index: 30, next: {asador: "polloAsado_2"}},
+      polloAsado_2: {index: 31, next: {asador: "polloQuemado"}},
+      polloQuemado: {index: 32},
+      polloLonja_0: {index: 36, next: {mesa: "polloPicado_0"}, fusion: {panRallado_0: "milaPollo_0"}},
+      polloPicado_0: {index: 35, fusion: {tapaEmpanada_0: "empaPollo_0"}},
+      
+      //MILANESAS --------------
+      milaPollo_0: {index: 37, next: {freidora: "milaPollo_1"}},
+      milaPollo_1: {index: 38, next: {freidora: "milaPolloQuemado"}, fusion: {panCortado_0: "milaPolloPan_0", panAchicoria_0: "sanMila_0"}},
+      milaPolloQuemado: {index: 39},
+      sanMila_0: {index: 41},
+      milaPolloPan_0: {index:40, fusion: {achicoriaPicada_0: "sanMila_0"}},
+
+      //Asado
+      asadoCrudo_0: {index: 21, next: {asador: "asado_0"}},
+      asado_0: {index: 22, next: {asador: "asado_1"}},
+      asado_1: {index: 23, next: {asador: "asado_2"}},
+      asado_2: {index: 24, next: {asador: "asadoQuemado", mesa: "asadoPicado"}},
+      asadoQuemado: {index: 25},
+      asadoPicado: {index: 26, fusion: {tapaEmpanada_0: "empaCarne_0"}},
+      
+      //Empanadas
+      tapaEmpanada_0: {index: 56, fusion: {asadoPicado: "empaCarne_0", polloPicado_0: "empaPollo_0"}},
+      empaPollo_0: {index: 57, next: {mesa: "empaPollo_1"}},
+      empaPollo_1: {index: 59, next: {freidora: "empaPollo_2"}},
+      empaPollo_2: {index: 61, next: {freidora: "empaPolloQuemado"}},
+      empaPolloQuemado: {index: 33},
+      empaCarne_0: {index: 58, next: {mesa: "empaCarne_1"}},
+      empaCarne_1: {index: 60, next: {freidora: "empaCarne_2"}},
+      empaCarne_2: {index: 62, next: {freidora: "empaCarneQuemado"}},
+      empaCarneQuemado: {index: 34},
+
+      //ACHICORIA ----------
+      achicoriaCruda_0: {index: 0, next: {mesa: "achicoriaPicada_0"}},
+      achicoriaPicada_0: {index: 1, fusion: {panCortado_0: "panAchicoria_0", milaPolloPan_0: "sanMila_0"}},
+      
+      //PAN --------------
+      panCrudo_0: {index: 3, next: {mesa: "panCortado_0"}},
+      panCortado_0: {index: 4, next: {mesa: "panRallado_0"}, fusion: {achicoriaPicada_0: "panAchicoria_0", chorizo_2: "panChorizo_0", bife_2: "panBife_2", lomo_0: "panLomo_0", milaPollo_1: "milaPolloPan_0"}},
+      panAchicoria_0: {index: 6, fusion: {milaPollo_1: "sanMila_0", lomo_0: "sanLomo_0", bife_2: "sanBife_0", chorizo_2: "pancho"}},
+      panRallado_0: {index: 5, fusion: {polloLonja_0: "milaPollo_0"}},
+      
+      //CARBON -----------
+      carbon_0: {index: 2},
+
+      //PAPAS --------------
+      papaCruda_0: {index: 49, next: {table: "papaCortada_0", asador: "papaAsada_0"}},
+      papaCortada_0: {index: 50, next: {freidora: "papaCortada_1"}},
+      papaCortada_1: {index: 51, next: {freidora: "papaCortadaQuemada"}},
+      papaCortadaQuemada: {index: 53},
+      papaAsada_0: {index: 52, next: {asador: "papaAsadaQuemada"}},
+      papaAsadaQuemada: {index: 54},
+
+      //Chorizo
+      chorizoCrudo_0: {index: 42, next: {asador: "chorizo_0"}},
+      chorizo_0: {index: 43, next: {asador: "chorizo_1"}},
+      chorizo_1: {index: 44, next: {asador: "chorizo_2"}},
+      chorizo_2: {index: 45, next: {asador: "chorizoQuemado"}, fusion: {panCortado_0: "panChorizo_0", panAchicoria_0: "pancho"}},
+      chorizoQuemado: {index: 46},
+      panChorizo_0: {index: 47, fusion: {achicoriaPicada_0: "pancho"}},
+      pancho: {index: 48},
+
+      //Bifes
+      bifeCrudo_0: {index: 14, next: {asador: "bife_0"}},
+      bife_0: {index: 15, next: {asador: "bife_1"}},
+      bife_1: {index: 16, next: {asador: "bife_2"}},
+      bife_2: {index: 17, next: {asador: "bifeQuemado"}, fusion: {panCortado_0: "panBife_0", panAchicoria_0: "sanBife_0"}},
+      bifeQuemado: {index: 18},
+      panBife_0: {index: 19, fusion: {achicoriaPicada_0: "sanBife_0"}},
+      sanBife_0: {index: 20},
+      
+      //Lomo
+      lomoCrudo_0: {index: 7, next: {asador: "lomo_0"}},
+      lomo_0: {index: 8, next: {asador: "lomoQuemado"}, fusion: {panCortado_0: "panLomo_0", panAchicoria_0: "sanLomo_0"}},
+      lomoQuemado: {index: 9},
+      panLomo_0: {index: 10, fusion: {achicoriaPicada_0: "sanLomo_0"}},
+      sanLomo_0: {index: 11},
+    } //index: numero de aparicion en atlas
 
     this.aparatosAtlas = {
-      freidora: {accepts: {
-        achicoria_0: false,
-        achicoria_1: false,
-        carbon_0: false,
-        pollo_0: false,
-        pollo_1: false,
-        pollo_2: false,
-        pollo_3: false,
-        pollo_4: false,
-        papa_0: false,
-        papa_1: true,
-        papa_2: true,
-        papa_3: false,
-      }},
       mesa: {accepts: {
-        achicoria_0: true,
-        achicoria_1: true,
+        //POLLO---------
+        polloCrudo_0: true,
+        polloAsado_0: true,
+        polloAsado_1: true,
+        polloAsado_2: true,
+        polloQuemado: true,
+        polloLonja_0: true,
+        polloPicado_0: true,
+        
+        //MILANESAS --------------
+        milaPollo_0: true,
+        milaPollo_1: true,
+        milaPolloQuemado: true,
+        sanMila_0: true,
+        milaPolloPan_0: true,
+
+        //Asado
+        asadoCrudo_0: true,
+        asado_0: true,
+        asado_1: true,
+        asado_2: true,
+        asadoQuemado: true,
+        asadoPicado: true,
+        
+        //Empanadas
+        tapaEmpanada_0: true,
+        empaPollo_0: true,
+        empaPollo_1: true,
+        empaPollo_2: true,
+        empaPolloQuemado: true,
+        empaCarne_0: true,
+        empaCarne_1: true,
+        empaCarne_2: true,
+        empaCarneQuemado: true,
+
+        //ACHICORIA ----------
+        achicoriaCruda_0: true,
+        achicoriaPicada_0: true,
+        
+        //PAN --------------
+        panCrudo_0: true,
+        panCortado_0: true,
+        panAchicoria_0: true,
+        panRallado_0: true,
+        
+        //CARBON -----------
         carbon_0: true,
-        pollo_0: true,
-        pollo_1: true,
-        pollo_2: true,
-        pollo_3: true,
-        pollo_4: true,
-        papa_0: true,
-        papa_1: true,
-        papa_2: true,
-        papa_3: true,
+
+        //PAPAS --------------
+        papaCruda_0: true,
+        papaCortada_0: true,
+        papaCortada_1: true,
+        papaCortadaQuemada: true,
+        papaAsada_0: true,
+        papaAsadaQuemada: true,
+
+        //Chorizo
+        chorizoCrudo_0: true,
+        chorizo_0: true,
+        chorizo_1: true,
+        chorizo_2: true,
+        chorizoQuemado: true,
+        panChorizo_0: true,
+        pancho: true,
+
+        //Bifes
+        bifeCrudo_0: true,
+        bife_0: true,
+        bife_1: true,
+        bife_2: true,
+        bifeQuemado: true,
+        panBife_0: true,
+        sanBife_0: true,
+        
+        //Lomo
+        lomoCrudo_0: true,
+        lomo_0: true,
+        lomoQuemado: true,
+        panLomo_0: true,
+        sanLomo_0: true,
       }},
       asador: {accepts: {
-        achicoria_0: false,
-        achicoria_1: false,
-        carbon_0: false,
-        pollo_0: true,
-        pollo_1: true,
-        pollo_2: true,
-        pollo_3: true,
-        pollo_4: false,
-        papa_0: false,
-        papa_1: false,
-        papa_2: false,
-        papa_3: false,
+        polloCrudo_0: true,
+        polloAsado_0: true,
+        polloAsado_1: true,
+        polloAsado_2: true,
+        polloQuemado: true,
+      
+        papaCruda_0: true,
+        papaAsada_0: true,
+        papaAsadaQuemada: true,
+
+        lomoCrudo_0: true,
+        lomo_0: true,
+        lomoQuemado: true,
+
+        bifeCrudo_0: true,
+        bife_0: true,
+        bife_1: true,
+        bife_2: true,
+        bifeQuemado: true,
+
+        chorizoCrudo_0: true,
+        chorizo_0: true,
+        chorizo_1: true,
+        chorizo_2: true,
+        chorizoQuemado: true,
+
+        asadoCrudo_0: true,
+        asado_0: true,
+        asado_1: true,
+        asado_2: true,
+        asadoQuemado: true,
+      }},
+      freidora: {accepts: { //si se lo puede depositar en esta maquina o no
+        milaPollo_0: true,
+        milaPollo_1: true,
+        milaPolloQuemado: true,
+
+        papaCortada_0: true,
+        papaCortada_1: true,
+        papaCortadaQuemada: true,
+
+        empaPollo_1: true,
+        empaPollo_2: true,
+        empaPolloQuemado: true,
+        empaCarne_1: true,
+        empaCarne_2: true,
+        empaCarneQuemado: true,
       }},
     }
 
-    this.pedidosDisponibles = ["papa_2", "pollo_3", "achicoria_1"]
+    this.pedidosDisponibles = ["milaPollo_1", "empaCarne_2", "pancho", "sanLomo_0", "panBife_0"]
     
-    this.ingredientesNecesarios = ["papa_0", "achicoria_0", "pollo_0", "carbon_0"]
+    this.ingredientesNecesarios = ["polloCrudo_0", "asadoCrudo_0", "tapaEmpanada_0", "achicoriaCruda_0", "panCrudo_0", "papaCruda_0", "chorizoCrudo_0", "bifeCrudo_0", "lomoCrudo_0"]
     this.randomIndexIngredientesNecesarios = Math.floor(Math.random() * this.ingredientesNecesarios.length)
     //CREAR SONIDOS ---------------------------------------------------
     this.coccionAudio = this.sound.add("coccion_0", {loop: true})
@@ -132,19 +289,26 @@ export class Game extends Scene {
       [INPUT_ACTIONS.UP]: [Phaser.Input.Keyboard.KeyCodes.W],
       [INPUT_ACTIONS.DOWN]: [Phaser.Input.Keyboard.KeyCodes.S],
       [INPUT_ACTIONS.LEFT]: [Phaser.Input.Keyboard.KeyCodes.A],
-      [INPUT_ACTIONS.RIGHT]: [Phaser.Input.Keyboard.KeyCodes.D]
+      [INPUT_ACTIONS.RIGHT]: [Phaser.Input.Keyboard.KeyCodes.D],
+      [INPUT_ACTIONS.SOUTH]: [Phaser.Input.Keyboard.KeyCodes.X],
+      [INPUT_ACTIONS.EAST]: [Phaser.Input.Keyboard.KeyCodes.C],
+      [INPUT_ACTIONS.WEST]: [Phaser.Input.Keyboard.KeyCodes.Z]
     }, "player1");
     this.inputSystem.configureKeyboard({
       [INPUT_ACTIONS.UP]: [Phaser.Input.Keyboard.KeyCodes.UP],
       [INPUT_ACTIONS.DOWN]: [Phaser.Input.Keyboard.KeyCodes.DOWN],
       [INPUT_ACTIONS.LEFT]: [Phaser.Input.Keyboard.KeyCodes.LEFT],
-      [INPUT_ACTIONS.RIGHT]: [Phaser.Input.Keyboard.KeyCodes.RIGHT]
+      [INPUT_ACTIONS.RIGHT]: [Phaser.Input.Keyboard.KeyCodes.RIGHT],
+      [INPUT_ACTIONS.SOUTH]: [Phaser.Input.Keyboard.KeyCodes.K],
+      [INPUT_ACTIONS.EAST]: [Phaser.Input.Keyboard.KeyCodes.L],
+      [INPUT_ACTIONS.WEST]: [Phaser.Input.Keyboard.KeyCodes.J]
     }, "player2");
 
     //FONDO Y PJ ---------------------------------------------------------
     this.add.image(320, 180, "background");
     this.barra = this.physics.add.sprite(100, 180, "tabla");
-    this.barra.setImmovable(true);
+    this.barra.body.pushable = false;
+    this.barra.body.setImmovable(true)
     this.barra.body.setSize(this.barra.body.width-10, this.barra.body.height)
     this.player = new Player(this, 640, 360, "player1");
     this.player2 = new Player(this, 440, 360, "player2", 2);
@@ -183,7 +347,7 @@ export class Game extends Scene {
     this.ingredientesNecesarios.splice(this.randomIndexIngredientesNecesarios, 1);
     this.randomIndexIngredientesNecesarios = Math.floor(Math.random() * this.ingredientesNecesarios.length)
     
-    this.box4 = new IngredientBox(this, 500, 80, this.ingredientesNecesarios[this.randomIndexIngredientesNecesarios], "caja", 10);
+    this.box4 = new IngredientBox(this, 500, 80, "carbon_0", "caja", 10);
     this.physics.add.collider(this.box4, this.player)
     this.physics.add.collider(this.box4, this.player2)
     this.Interactuables.push(this.box4);
@@ -217,12 +381,6 @@ export class Game extends Scene {
     
 
     //Cursors
-    this.actionKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.J);
-    this.throwKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.K);
-    this.dashKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.L);
-    this.actionKey2 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
-    this.throwKey2 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
-    this.dashKey2 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.C);
     this.victoryKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.N);
     this.DefeatKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M);
   }
@@ -241,7 +399,7 @@ export class Game extends Scene {
     });
 
     //PLAYER 1 ----------------------------------------------------------------------------
-    if (Phaser.Input.Keyboard.JustDown(this.actionKey)) {
+    if (this.inputSystem.isJustPressed(INPUT_ACTIONS.WEST, "player1")) {
       if(this.nearestBox.activeBox){
         this.nearestBox.onInteract(this.player)
         console.log("Action key pressed!")
@@ -250,12 +408,12 @@ export class Game extends Scene {
           this.player.holdingSM.changeState("none", {player: this.player})
     
         } else{
-          console.log("Cancel key pressed but nothing in the hands")
+          console.log("Nothing at hand")
         }
       }
     }
 
-    if (Phaser.Input.Keyboard.JustDown(this.throwKey) && this.player.holdingItem) {
+    if (this.inputSystem.isJustPressed(INPUT_ACTIONS.EAST, "player1") && this.player.holdingItem) {
       const itemToThrow = this.player.itemHolded;
       this.player.holdingSM.changeState("none", {player: this.player});
 
@@ -264,11 +422,11 @@ export class Game extends Scene {
       itemToThrow.body.setVelocity(this.player.lastDirection.x * speed, this.player.lastDirection.y * speed);
     }
 
-    if (Phaser.Input.Keyboard.JustDown(this.dashKey)) {
+    if (this.inputSystem.isJustPressed(INPUT_ACTIONS.SOUTH, "player1")) {
       this.player.dash()
     }
     //PLAYER 2 ----------------------------------------------------------------------------
-    if (Phaser.Input.Keyboard.JustDown(this.actionKey2)) {
+    if (this.inputSystem.isJustPressed(INPUT_ACTIONS.WEST, "player2")) {
       if(this.nearestBox2.activeBox2){
         this.nearestBox2.onInteract(this.player2)
         console.log("Action key pressed!")
@@ -277,12 +435,12 @@ export class Game extends Scene {
           this.player2.holdingSM.changeState("none", {player: this.player2})
     
         } else{
-          console.log("Cancel key pressed but nothing in the hands")
+          console.log("Nothing at hand")
         }
       }
     }
 
-    if (Phaser.Input.Keyboard.JustDown(this.throwKey2) && this.player2.holdingItem) {
+    if (this.inputSystem.isJustPressed(INPUT_ACTIONS.EAST, "player2") && this.player2.holdingItem) {
       const itemToThrow = this.player2.itemHolded;
       this.player2.holdingSM.changeState("none", {player: this.player2});
 
@@ -291,7 +449,7 @@ export class Game extends Scene {
       itemToThrow.body.setVelocity(this.player2.lastDirection.x * speed, this.player2.lastDirection.y * speed);
     }
 
-    if (Phaser.Input.Keyboard.JustDown(this.dashKey2)) {
+    if (this.inputSystem.isJustPressed(INPUT_ACTIONS.SOUTH, "player2")) {
       this.player2.dash()
     }
 

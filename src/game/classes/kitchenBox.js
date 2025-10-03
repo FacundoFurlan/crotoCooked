@@ -1,5 +1,6 @@
 import { Interactuables } from "./Interactuables.js";
 import { CircularTimer } from "./CircularTimer.js";
+import { Ingredientes } from "./Ingredientes.js";
 
 export class KitchenBox extends Interactuables {
     constructor(scene, x, y, textureKey, size = 48) {
@@ -33,6 +34,55 @@ export class KitchenBox extends Interactuables {
             this.checkIfItemCompatible(player);
         } else if(!player.holdingItem && this.holdingItem === true){ //si el jugador no tiene nada y esto si
             this.checkIfItemCanGo(player);
+        } else if(this.textureKey === "mesa" && player.holdingItem && this.holdingItem){
+            console.log("TENEMOS COSAS EN LAS MANOS")
+            if(player.itemHolded.dataIngredient.fusion){
+                console.log(player.itemHolded.dataIngredient.fusion)
+                if(player.itemHolded.dataIngredient.fusion[this.itemHolded.textureKey]){
+                    console.log(`Se deberia fabricar: ${player.itemHolded.dataIngredient.fusion[this.itemHolded.textureKey]}`)
+                    if(this.circleTimer.active){
+                        this.circleTimer.stop()
+                        if(this.actionSound){
+                            this.actionSound.stop();
+                        }
+                        this.setTexture(this.textureKey)
+                    }
+                    const nextItemTextureKey = player.itemHolded.dataIngredient.fusion[this.itemHolded.textureKey]
+                    const playerItemRef = player.itemHolded;
+                    let indexPIR = this.scene.Interactuables.indexOf(playerItemRef)
+                    let indexPIR2 = this.scene.ingredientesCreadosArray.indexOf(playerItemRef)
+                    if(indexPIR !== -1){
+                        this.scene.Interactuables.splice(indexPIR, 1);
+                    }
+                    if(indexPIR2 !== -1){
+                        this.scene.ingredientesCreadosArray.splice(indexPIR2, 1);
+                    }
+                    player.holdingSM.changeState("none", {player: player});
+                    playerItemRef.destroy();
+                    console.log("HASTA ACA ESTAMOS BIEN")
+                    const itemHoldedRef = this.itemHolded;
+                    indexPIR = this.scene.Interactuables.indexOf(itemHoldedRef)
+                    indexPIR2 = this.scene.ingredientesCreadosArray.indexOf(itemHoldedRef)
+                    if(indexPIR !== -1){
+                        this.scene.Interactuables.splice(indexPIR, 1);
+                    }
+                    if(indexPIR2 !== -1){
+                        this.scene.ingredientesCreadosArray.splice(indexPIR2, 1);
+                    }
+                    itemHoldedRef.destroy();
+                    console.log("HASTA ACA ESTAMOS BIEN 2")
+                    if(!this.circleTimer.active){
+                        if(this.aparatoAccepts[nextItemTextureKey]){
+                            console.log(nextItemTextureKey)
+                            this.itemHolded = new Ingredientes(this.scene, this.body.center.x, this.body.center.y, nextItemTextureKey);
+                            this.holdingItem = true;
+                            this.itemHolded.setPosition(this.body.center.x, this.body.center.y);
+                            this.itemHolded.setVisible(true)
+                            this.startCook()
+                        }
+                    }
+                }
+            }
         }
     }
     
@@ -41,7 +91,7 @@ export class KitchenBox extends Interactuables {
             if(this.aparatoAccepts[player.itemHolded.textureKey]){
                 console.log("%cEntro por aca", "color: green")
                 this.scene.tweens.killTweensOf(player.itemHolded);
-                console.log("se intento poner algo: ", player.itemHolded.dataIngredient.hasNext)
+                console.log("se intento poner algo: ", player.itemHolded.dataIngredient)
                 this.itemHolded = player.itemHolded;
                 this.holdingItem = true;
                 player.holdingSM.changeState("none", {player: player})
@@ -66,7 +116,7 @@ export class KitchenBox extends Interactuables {
     }
 
     startCook(){
-        if(this.itemHolded && this.itemHolded.dataIngredient.hasNext && this.itemHolded.dataIngredient.isWorkedOn[this.textureKey]){
+        if(this.itemHolded && this.itemHolded.dataIngredient.next && this.itemHolded.dataIngredient.next[this.textureKey]){
             console.log("%cSe inicia reloj", "color: aqua")
             this.circleTimer.start()
             if(this.actionSound){
@@ -78,9 +128,9 @@ export class KitchenBox extends Interactuables {
 
 
     finishCook(){
-        this.itemHolded.cook();
+        this.itemHolded.cook(this.textureKey);
         console.log("NEW COOKED ITEM: ", this.itemHolded.dataIngredient)
-        if(this.itemHolded.dataIngredient.hasNext && this.itemHolded.dataIngredient.isWorkedOn[this.textureKey]){
+        if(this.itemHolded.dataIngredient.next && this.itemHolded.dataIngredient.next[this.textureKey]){
             console.log("tiene que arrancar reloj")
             this.circleTimer.start()
         } else{

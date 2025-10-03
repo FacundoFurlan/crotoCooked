@@ -47,8 +47,20 @@ export class Asador extends KitchenBox {
         }
     }
 
+    checkIfItemCanGo(player){
+        if(this.circleTimer.active){
+            this.circleTimer.stop()
+            if(this.actionSound){
+                this.actionSound.stop();
+            }
+        }
+        player.holdingSM.changeState("ingredient", {player: player, ingredient: this.itemHolded});
+        this.itemHolded = null;
+        this.holdingItem = false;
+    }
+
     startCook(){
-        if(this.itemHolded && this.itemHolded.dataIngredient.hasNext && this.itemHolded.dataIngredient.isWorkedOn[this.textureKey]){
+        if(this.itemHolded && this.itemHolded.dataIngredient.next && this.itemHolded.dataIngredient.next[this.textureKey]){
             if(this.hasCoal){
                 console.log("%cSe inicia reloj", "color: aqua")
                 this.circleTimer.start()
