@@ -7,6 +7,8 @@ export class MainMenu extends Phaser.Scene {
         const { width, height } = this.scale;
 
         this.add.text(width/2, height/2, "Press A for coop, B for vs", { fontSize: "32px", color: "#fff", fontFamily: "MyFont" }).setOrigin(0.5);
+
+        this.registry.set("actualLevel", 1);
         
         this.coopKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.vsKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.B);

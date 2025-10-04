@@ -26,6 +26,8 @@ export class Game extends Scene {
 
   preload() {
     this.currentCycle = "preload";
+    this.actualLevel = this.registry.get("actualLevel");
+    console.log(`%cActual Level: ${this.actualLevel}`, "color: aqua")
     this.load.setPath("assets");
     this.currentMode = this.registry.get("mode");
     console.log(`%cModo de juego: ${this.currentMode}`, "color: yellow")
@@ -274,9 +276,21 @@ export class Game extends Scene {
       }},
     }
 
-    this.pedidosDisponibles = ["milaPollo_1", "empaCarne_2", "pancho", "sanLomo_0", "panBife_0"]
-    
-    this.ingredientesNecesarios = ["polloCrudo_0", "asadoCrudo_0", "tapaEmpanada_0", "achicoriaCruda_0", "panCrudo_0", "papaCruda_0", "chorizoCrudo_0", "bifeCrudo_0", "lomoCrudo_0"]
+    this.nivel1 = {pedidosDispo: ["polloAsado_2", "bife_2", "achicoriaPicada_0"], ingreNecesarios: ["polloCrudo_0", "bifeCrudo_0", "achicoriaCruda_0"]}
+    this.nivel2 = {pedidosDispo: ["polloAsado_2", "bife_2", "achicoriaPicada_0", "chorizo_2", "papaAsada_0", "papaCortada_1", "pancho"], ingreNecesarios: ["polloCrudo_0", "bifeCrudo_0", "achicoriaCruda_0", "chorizoCrudo_0", "papaCruda_0", "panCrudo_0"]}
+    this.nivel3 = {pedidosDispo: ["polloAsado_2", "bife_2", "achicoriaPicada_0", "chorizo_2", "papaAsada_0", "papaCortada_1", "pancho", "empaCarne_2", "empaPollo_2", "lomo_0", "sanBife_0", "sanLomo_0", "sanMila_0"], ingreNecesarios: ["polloCrudo_0", "bifeCrudo_0", "achicoriaCruda_0", "chorizoCrudo_0", "papaCruda_0", "panCrudo_0", "lomoCrudo_0", "tapaEmpanada_0"]}
+
+    if(this.actualLevel === 1){
+      this.pedidosDisponibles = this.nivel1.pedidosDispo
+      this.ingredientesNecesarios = this.nivel1.ingreNecesarios
+    } else if(this.actualLevel === 2){
+      this.pedidosDisponibles = this.nivel2.pedidosDispo
+      this.ingredientesNecesarios = this.nivel2.ingreNecesarios
+    } else if(this.actualLevel >= 3){
+      this.pedidosDisponibles = this.nivel3.pedidosDispo
+      this.ingredientesNecesarios = this.nivel3.ingreNecesarios
+    }
+  
     this.randomIndexIngredientesNecesarios = Math.floor(Math.random() * this.ingredientesNecesarios.length)
     //CREAR SONIDOS ---------------------------------------------------
     this.coccionAudio = this.sound.add("coccion_0", {loop: true})
@@ -325,44 +339,31 @@ export class Game extends Scene {
     this.ingredientesCreadosArray = []
     this.nearestBox = null;
     this.posicionesPedidos = [45, 135, 225, 315]
-    
-    this.box1 = new IngredientBox(this, 300, 80, this.ingredientesNecesarios[this.randomIndexIngredientesNecesarios], "caja", 10);
-    this.physics.add.collider(this.box1, this.player)
-    this.physics.add.collider(this.box1, this.player2)
-    this.Interactuables.push(this.box1);
-    this.ingredientesNecesarios.splice(this.randomIndexIngredientesNecesarios, 1);
-    this.randomIndexIngredientesNecesarios = Math.floor(Math.random() * this.ingredientesNecesarios.length)
-    
-    this.box2 = new IngredientBox(this, 400, 80, this.ingredientesNecesarios[this.randomIndexIngredientesNecesarios], "caja", 10);
-    this.physics.add.collider(this.box2, this.player)
-    this.physics.add.collider(this.box2, this.player2)
-    this.Interactuables.push(this.box2);
-    this.ingredientesNecesarios.splice(this.randomIndexIngredientesNecesarios, 1);
-    this.randomIndexIngredientesNecesarios = Math.floor(Math.random() * this.ingredientesNecesarios.length)
-    
-    this.box3 = new IngredientBox(this, 200, 80, this.ingredientesNecesarios[this.randomIndexIngredientesNecesarios], "caja", 10);
-    this.physics.add.collider(this.box3, this.player)
-    this.physics.add.collider(this.box3, this.player2)
-    this.Interactuables.push(this.box3);
-    this.ingredientesNecesarios.splice(this.randomIndexIngredientesNecesarios, 1);
-    this.randomIndexIngredientesNecesarios = Math.floor(Math.random() * this.ingredientesNecesarios.length)
-    
-    this.box4 = new IngredientBox(this, 500, 80, "carbon_0", "caja", 10);
-    this.physics.add.collider(this.box4, this.player)
-    this.physics.add.collider(this.box4, this.player2)
-    this.Interactuables.push(this.box4);
-    this.ingredientesNecesarios.splice(this.randomIndexIngredientesNecesarios, 1);
-    this.randomIndexIngredientesNecesarios = Math.floor(Math.random() * this.ingredientesNecesarios.length)
+
+    let cont = 0;
+    this.ingredientesNecesarios.forEach(element => {
+      let box1 = new IngredientBox(this, 180 + (50*cont), 80, element, "caja", 10);
+      this.physics.add.collider(box1, this.player)
+      this.physics.add.collider(box1, this.player2)
+      this.Interactuables.push(box1);
+      cont++;
+    });
+    let box1 = new IngredientBox(this, 180 + (50*cont), 80, "carbon_0", "caja", 10);
+    this.physics.add.collider(box1, this.player)
+    this.physics.add.collider(box1, this.player2)
+    this.Interactuables.push(box1);
     
     this.kitchenBox1 = new KitchenBox(this, 400, 250, "mesa", 30)
     this.physics.add.collider(this.player, this.kitchenBox1)
     this.physics.add.collider(this.player2, this.kitchenBox1)
     this.Interactuables.push(this.kitchenBox1);
     
-    this.kitchenBox2 = new KitchenBox(this, 300, 250, "freidora", 30)
-    this.physics.add.collider(this.player, this.kitchenBox2)
-    this.physics.add.collider(this.player2, this.kitchenBox2)
-    this.Interactuables.push(this.kitchenBox2);
+    if(!this.actualLevel === 1){
+      this.kitchenBox2 = new KitchenBox(this, 300, 250, "freidora", 30)
+      this.physics.add.collider(this.player, this.kitchenBox2)
+      this.physics.add.collider(this.player2, this.kitchenBox2)
+      this.Interactuables.push(this.kitchenBox2);
+    }
     
     this.kitchenBox3 = new Asador(this, 200, 250, "asador", 30)
     this.physics.add.collider(this.player, this.kitchenBox3)
@@ -525,16 +526,18 @@ export class Game extends Scene {
   finishLevel() {
     this.sound.stopAll();
     const score = this.playerScore ?? 0;
+    this.registry.set("actualLevel", this.actualLevel+1)
     // Detenemos el HUD y lanzamos la escena de victoria
     this.scene.stop("HUD");
     // Opcional: animación de cámara antes de cambiar (fade)
     this.cameras.main.fadeOut(500, 0, 0, 0);
     this.cameras.main.once("camerafadeoutcomplete", () => {
-      this.scene.start("Victory", { score: score });
+      this.scene.start("Game");
     });
   }
   
   onPlayerDeath(reason) {
+    this.registry.set("actualLevel", 1)
     this.sound.stopAll();
     const score = this.playerScore ?? 0;
     this.scene.stop("HUD");
