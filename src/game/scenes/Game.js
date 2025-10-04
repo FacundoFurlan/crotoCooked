@@ -107,7 +107,7 @@ export class Game extends Scene {
       carbon_0: {index: 2},
 
       //PAPAS --------------
-      papaCruda_0: {index: 49, next: {table: "papaCortada_0", asador: "papaAsada_0"}},
+      papaCruda_0: {index: 49, next: {mesa: "papaCortada_0", asador: "papaAsada_0"}},
       papaCortada_0: {index: 50, next: {freidora: "papaCortada_1"}},
       papaCortada_1: {index: 51, next: {freidora: "papaCortadaQuemada"}},
       papaCortadaQuemada: {index: 53},
