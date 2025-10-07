@@ -34,10 +34,10 @@ export class Game extends Scene {
 
     //SPRITES---------------------------------------
     this.load.image("background", "BG_Dia.png");
-    this.load.image("mesa", "SS_Mesa.png");
+    this.load.image("mesa", "SS_Mesa(1).png");
     this.load.image("freidora", "SS_Freidora_0.png");
     this.load.image("freidoraOn", "SS_Freidora_1.png");
-    this.load.image("asador", "SS_Asador_0.png");
+    this.load.image("asador", "SS_Asador(1).png");
     this.load.image("asadorOn", "SS_Asador_1.png");
     this.load.image("caja", "SS_Caja.png");
     this.load.image("orden", "SS_Orden.png");
@@ -324,8 +324,8 @@ export class Game extends Scene {
     this.barra.body.pushable = false;
     this.barra.body.setImmovable(true)
     this.barra.body.setSize(this.barra.body.width-10, this.barra.body.height)
-    this.player = new Player(this, 640, 360, "player1");
-    this.player2 = new Player(this, 440, 360, "player2", 2);
+    this.player = new Player(this, 640, 360, "player1", this.inputSystem);
+    this.player2 = new Player(this, 440, 360, "player2", this.inputSystem, 2);
 
     this.physics.add.collider(this.player, this.player2, () => {
       this.playersTouching = true;
@@ -384,6 +384,7 @@ export class Game extends Scene {
     //Cursors
     this.victoryKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.N);
     this.DefeatKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M);
+    this.CaceriaKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.B);
   }
 
   update(t, dt) {
@@ -460,6 +461,15 @@ export class Game extends Scene {
     if (Phaser.Input.Keyboard.JustDown(this.DefeatKey)) {
       this.onPlayerDeath();
     }
+    if (Phaser.Input.Keyboard.JustDown(this.CaceriaKey)) {
+      this.registry.set("actualLevel", 1)
+      this.sound.stopAll();
+      this.scene.stop("HUD");
+      this.cameras.main.fadeOut(400);
+      this.cameras.main.once("camerafadeoutcomplete", () => {
+        this.scene.start("Caceria");
+      });
+    }
 
     if (this.playersTouching) {
       console.log("tocandose");
@@ -470,13 +480,6 @@ export class Game extends Scene {
         this._pushPlayers(this.player2, this.player);
       }
       this.playersTouching = false; // reset para la siguiente frame
-    }
-
-    if (this.inputSystem.isGamepadConnected("player1")) {
-      const debug1 = this.inputSystem.debugGamepad("player1");
-      if (debug1 && debug1.pressedButtons.length > 0) {
-        console.log("P1 Raw gamepad buttons:", debug1.pressedButtons);
-      }
     }
   }
 

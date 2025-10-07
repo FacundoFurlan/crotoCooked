@@ -4,6 +4,7 @@ import { MainMenu } from './scenes/MainMenu';
 import { HUD } from './scenes/HUD';
 import { Victory } from './scenes/Victory';
 import { Defeat } from './scenes/Defeat';
+import { Caceria } from './scenes/Caceria';
 
 // Find out more information about the Game Config at:
 // https://docs.phaser.io/api-documentation/typedef/types-core#gameconfig
@@ -38,7 +39,8 @@ const config = {
         MainGame,
         HUD,
         Victory,
-        Defeat
+        Defeat,
+        Caceria
     ]
 };
 

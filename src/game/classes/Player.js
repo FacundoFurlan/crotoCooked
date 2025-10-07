@@ -3,7 +3,7 @@ import { State } from "../state/State.js";
 import { INPUT_ACTIONS } from "../../utils/InputSystem.js";
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
-  constructor(scene, x, y, key, kind = 1) {
+  constructor(scene, x, y, key, inputSystem, kind = 1,) {
     //INICIALIZANDO VARIABLES---------------------------------------
     super(scene, x, y, key);
     this.scene = scene;
@@ -17,17 +17,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.pushedDuration = 400;
     this.pushedTime = 0;
     this.inputId = this.kind === 1 ? "player1" : "player2";
-    this.inputSystem = this.scene.inputSystem;
-    // if (kind === 1) {
-    //   this.cursors = this.scene.input.keyboard.createCursorKeys();
-    // } else if (kind === 2) {
-    //   this.cursors = {
-    //     left: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A),
-    //     right: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D),
-    //     up: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W),
-    //     down: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S),
-    //   };
-    // }
+    this.inputSystem = inputSystem;
 
     //MAQUINA DE ESTADO DE MOVIMIENTO -------------------------------
     this.movingSM = new StateMachine("idle");
@@ -104,6 +94,7 @@ class IdleState extends State {
       this.player.inputSystem.isPressed(INPUT_ACTIONS.LEFT, this.player.inputId) ||
       this.player.inputSystem.isPressed(INPUT_ACTIONS.RIGHT, this.player.inputId)
     ) {
+      console.log("%ctaclas presionandose", "color: red")
       this.player.movingSM.changeState("moving", { player: this.player });
     }
   }
