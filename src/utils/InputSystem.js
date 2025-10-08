@@ -430,7 +430,7 @@ export default class InputSystem {
     return this.mapping[player][action].gamepad.some((input) => {
       if (input.type === "button") {
         return (
-          gamepad.buttons[input.index] && gamepad.buttons[input.index].pressed
+          gamepad.buttons[input.index] && (gamepad.buttons[input.index].pressed || gamepad.buttons[input.index].value > 0.5)
         );
       } else if (input.type === "axis") {
         const axisValue = gamepad.axes[input.index].getValue();
@@ -450,39 +450,53 @@ export default class InputSystem {
    * @param {string} [player='player1'] - Jugador a verificar ('player1' o 'player2')
    * @returns {boolean} true si fue presionada via gamepad en este frame
    */
-  isGamepadJustPressed(action, player = "player1") {
-    const gamepad = player === "player1" ? this.gamepad1 : this.gamepad2;
+isGamepadJustPressed(action, player = "player1") {
+  const gamepad = player === "player1" ? this.gamepad1 : this.gamepad2;
 
-    if (
-      !gamepad ||
-      !this.mapping[player] ||
-      !this.mapping[player][action] ||
-      !this.mapping[player][action].gamepad
-    )
-      return false;
+  if (
+    !gamepad ||
+    !this.mapping[player] ||
+    !this.mapping[player][action] ||
+    !this.mapping[player][action].gamepad
+  )
+    return false;
 
-    return this.mapping[player][action].gamepad.some((input) => {
-      if (input.type === "button") {
-        const button = gamepad.buttons[input.index];
-        return button && button.pressed && button.duration < 100; // Umbral de just pressed
-      } else if (input.type === "axis") {
-        // Para ejes, necesitamos rastrear el estado anterior (enfoque simplificado)
-        const axisValue = gamepad.axes[input.index].getValue();
-        const threshold = 0.5;
-        const isPressed =
-          input.dir > 0 ? axisValue > threshold : axisValue < -threshold;
+  if (!this.previousButtonStates) this.previousButtonStates = {};
+  if (!this.previousButtonStates[player]) this.previousButtonStates[player] = {};
 
-        // Almacenar estado anterior para detección de just pressed
-        const stateKey = `axis_${input.index}_${input.dir}`;
-        const wasPressed = this.previousAxisStates[player][stateKey];
+  return this.mapping[player][action].gamepad.some((input) => {
+    if (input.type === "button") {
+      const button = gamepad.buttons[input.index];
+      if (!button) return false;
 
-        this.previousAxisStates[player][stateKey] = isPressed;
+      const pressedNow = button.pressed || button.value > 0.5;
+      const prevPressed = this.previousButtonStates[player][input.index] || false;
 
-        return isPressed && !wasPressed;
-      }
-      return false;
-    });
-  }
+      // Guardar estado actual para el próximo frame
+      this.previousButtonStates[player][input.index] = pressedNow;
+
+      // Solo retorna true cuando cambia de no presionado → presionado
+      return pressedNow && !prevPressed;
+    }
+
+    if (input.type === "axis") {
+      const axisValue = gamepad.axes[input.index].getValue();
+      const threshold = 0.5;
+      const isPressed = input.dir > 0 ? axisValue > threshold : axisValue < -threshold;
+      const stateKey = `axis_${input.index}_${input.dir}`;
+
+      this.previousAxisStates ??= {};
+      this.previousAxisStates[player] ??= {};
+
+      const wasPressed = this.previousAxisStates[player][stateKey];
+      this.previousAxisStates[player][stateKey] = isPressed;
+
+      return isPressed && !wasPressed;
+    }
+
+    return false;
+  });
+}
 
   /**
    * Obtiene la configuración actual de mapeo
