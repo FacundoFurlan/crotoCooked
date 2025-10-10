@@ -433,15 +433,6 @@ export class Game extends Scene {
   }
 
   update(t, dt) {
-
-    if (this.input.gamepad.total) {
-      const pad = this.input.gamepad.getPad(0);
-      pad.buttons.forEach((b, i) => {
-        if (b.value > 0) {
-          console.log("Botón presionado:", i, "valor:", b.value);
-        }
-      });
-    }
     this.currentCycle = "update";
     // console.log("FR: ", dt/1000)
 
