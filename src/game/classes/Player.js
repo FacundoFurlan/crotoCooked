@@ -30,16 +30,20 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.holdingSM = new StateMachine("none");
     this.holdingSM.addState("none", new HoldingNothingState())
     this.holdingSM.addState("ingredient", new HoldingIngredientState())
-    this.holdingSM.changeState("none", {player: this});
+    this.holdingSM.changeState("none", { player: this });
 
     //AÑADIENDO A LA ESCENA ------------------------------------------
     this.scene.add.existing(this);
     this.scene.physics.add.existing(this);
+    this.setDepth(8);
+    // HITBOX CUSTOM: por ejemplo, 16x32 centrada
+    this.body.setSize(16, 16);
+    this.body.setOffset(1.5, 30); // Ajusta estos valores según tu sprite
 
     //ROMPER EL SPRITE SHEET
     const directions = ['down', 'up', 'left', 'right'];
     const dirStart = { down: 2, up: 3, left: 0, right: 1 };
-    const dirEnd   = { down: 2, up: 3, left: 0, right: 1 };
+    const dirEnd = { down: 2, up: 3, left: 0, right: 1 };
 
 
     directions.forEach(dir => {
@@ -55,7 +59,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     });
 
     //ULTIMOS ARREGLOS DE SPRITE -----------------------------------------
-    
+
     this.refreshBody()
     this.setPushable(false)
     this.body.setCollideWorldBounds(true)
@@ -67,7 +71,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     this.lastDash += dt;
     this.pushedTime += dt;
-    if(this.pushedDuration < this.pushedTime){
+    if (this.pushedDuration < this.pushedTime) {
       this.pushed = false;
     }
   }
@@ -113,7 +117,7 @@ class MovingState extends State {
     this.stepInterval = 300;
   }
   update(dt) {
-    if(!this.player.pushed){
+    if (!this.player.pushed) {
       this.handleInput(dt);
     }
     // Si no se presiona ninguna tecla, vuelve a idle
@@ -132,29 +136,29 @@ class MovingState extends State {
 
 
     this.stepTimer += dt;
-    if(this.stepTimer >= this.stepInterval){
+    if (this.stepTimer >= this.stepInterval) {
       this.stepTimer = 0;
-      this.player.scene.sound.play("caminar_pasto_0", {volume: .1, rate: Phaser.Math.FloatBetween(.8,1.2)})
+      this.player.scene.sound.play("caminar_pasto", { volume: .2, rate: Phaser.Math.FloatBetween(.8, 1.2) })
     }
   }
   handleInput(dt) {
     const speed = 200;
     let dir = null;
 
-    if (this.player.inputSystem.isPressed(INPUT_ACTIONS.LEFT, this.player.inputId)) { 
-      this.player.body.setVelocityX(-speed); 
+    if (this.player.inputSystem.isPressed(INPUT_ACTIONS.LEFT, this.player.inputId)) {
+      this.player.body.setVelocityX(-speed);
       dir = 'left';
     }
-    if (this.player.inputSystem.isPressed(INPUT_ACTIONS.RIGHT, this.player.inputId)) { 
-      this.player.body.setVelocityX(speed); 
+    if (this.player.inputSystem.isPressed(INPUT_ACTIONS.RIGHT, this.player.inputId)) {
+      this.player.body.setVelocityX(speed);
       dir = 'right';
     }
-    if (this.player.inputSystem.isPressed(INPUT_ACTIONS.UP, this.player.inputId)) { 
-      this.player.body.setVelocityY(-speed); 
+    if (this.player.inputSystem.isPressed(INPUT_ACTIONS.UP, this.player.inputId)) {
+      this.player.body.setVelocityY(-speed);
       dir = 'up';
     }
-    if (this.player.inputSystem.isPressed(INPUT_ACTIONS.DOWN, this.player.inputId)) { 
-      this.player.body.setVelocityY(speed); 
+    if (this.player.inputSystem.isPressed(INPUT_ACTIONS.DOWN, this.player.inputId)) {
+      this.player.body.setVelocityY(speed);
       dir = 'down';
     }
     this.player.body.velocity.normalize().scale(speed);
@@ -195,16 +199,18 @@ class HoldingIngredientState extends State {
 
     this.player.holdingItem = true;
     this.player.itemHolded = this.ingredient;
-    
-    this.player.itemHolded.setPosition(this.player.body.center.x, this.player.body.center.y);
+
+    this.player.itemHolded.setDepth(9)
+    this.player.itemHolded.setPosition(this.player.body.center.x, this.player.body.center.y - 10);
     this.player.itemHolded.grabbed = true;
     this.player.itemHolded.setVisible(true)
   }
   update(dt) {
-    this.player.itemHolded.setPosition(this.player.body.center.x, this.player.body.center.y);
+    this.player.itemHolded.setPosition(this.player.body.center.x, this.player.body.center.y - 10);
   }
-  
+
   finish() {
+    this.player.itemHolded.setDepth(7)
     this.player.holdingItem = false;
     this.player.itemHolded.setVisible(true);
     this.player.itemHolded.grabbed = false;
@@ -216,7 +222,7 @@ class DashingState extends State {
   init(params) {
     this.player = params.player;
 
-    this.dashDuration = 250; 
+    this.dashDuration = 250;
     this.elapsed = 0;
     this.player.isDashing = true;
 
