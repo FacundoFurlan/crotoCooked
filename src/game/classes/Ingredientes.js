@@ -2,8 +2,8 @@ import { State } from "../state/State";
 import { Interactuables } from "./Interactuables";
 
 export class Ingredientes extends Interactuables {
-    constructor(scene, x, y, textureKey = "carbon_0"){
-        super(scene, x, y, "ingredientesAtlas", 900,scene.ingredientesAtlas[textureKey].index);
+    constructor(scene, x, y, textureKey = "carbon_0") {
+        super(scene, x, y, "ingredientesAtlas", 900, scene.ingredientesAtlas[textureKey].index);
         console.log("esto llega a ingredientes: ", textureKey)
 
         this.setVisible(false)
@@ -11,24 +11,25 @@ export class Ingredientes extends Interactuables {
         this.textureKey = textureKey;
         this.dataIngredient = this.scene.ingredientesAtlas[textureKey]
         this.grabbed = false;
-        
+
         this.body.setMass(3);
         this.body.setBounce(.2);
         this.body.setDrag(200)
         this.body.setImmovable(false)
         this.setCollideWorldBounds(true);
-        
+        this.setDepth(7);
+
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
-        
-        this.scene.physics.add.collider(this.scene.player, this, ()=> {
+
+        this.scene.physics.add.collider(this.scene.player, this, () => {
             this.scene.player.setVelocity(this.scene.player.body.velocity.x * .8, this.scene.player.body.velocity.y * .8)
         })
-        this.scene.physics.add.collider(this.scene.player2, this, ()=> {
+        this.scene.physics.add.collider(this.scene.player2, this, () => {
             this.scene.player.setVelocity(this.scene.player.body.velocity.x * .8, this.scene.player.body.velocity.y * .8)
         })
         this.scene.physics.add.collider(this.scene.barra, this)
-        
+
         this.scene.tweens.add({
             targets: this,
             y: this.y - 8,
@@ -37,12 +38,12 @@ export class Ingredientes extends Interactuables {
             repeat: 1
         });
 
-        
+
         this.scene.Interactuables.push(this)
         this.scene.ingredientesCreadosArray.push(this);
 
         this.scene.Interactuables.forEach(other => {
-            if(other !== this){
+            if (other !== this) {
                 this.scene.physics.add.collider(this, other);
 
             }
@@ -51,17 +52,17 @@ export class Ingredientes extends Interactuables {
 
     }
 
-    update(dt){
+    update(dt) {
 
     }
 
-    onInteract(player){
-        if(!this.grabbed && !player.holdingItem){
-            player.holdingSM.changeState("ingredient", {player: player, ingredient: this})
+    onInteract(player) {
+        if (!this.grabbed && !player.holdingItem) {
+            player.holdingSM.changeState("ingredient", { player: player, ingredient: this })
         }
     }
 
-    cook(cocina){
+    cook(cocina) {
         this.textureKey = this.dataIngredient.next[cocina];
         this.dataIngredient = this.scene.ingredientesAtlas[this.textureKey];
         this.setTexture("ingredientesAtlas", this.dataIngredient.index);
@@ -69,14 +70,14 @@ export class Ingredientes extends Interactuables {
 }
 
 class IdleState extends State {
-    init (params){
+    init(params) {
         this.ingrediente = params.ingrediente;
     }
 
-    update(dt){
+    update(dt) {
     }
 
-    finish(){
+    finish() {
 
     }
 }

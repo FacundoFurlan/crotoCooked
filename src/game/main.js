@@ -1,5 +1,5 @@
 import { Game as MainGame } from './scenes/Game';
-import { AUTO, Scale,Game, Physics } from 'phaser';
+import { AUTO, Scale, Game, Physics } from 'phaser';
 import { MainMenu } from './scenes/MainMenu';
 import { HUD } from './scenes/HUD';
 import { Victory } from './scenes/Victory';
@@ -24,9 +24,9 @@ const config = {
     physics: {
         default: "arcade",
         arcade: {
-            gravity: {y: 0},
+            gravity: { y: 0 },
             debug: false,
-            fps:240
+            fps: 240
         }
     },
     render: {
