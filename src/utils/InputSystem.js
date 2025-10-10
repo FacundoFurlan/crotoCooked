@@ -498,6 +498,7 @@ isGamepadJustPressed(action, player = "player1") {
   });
 }
 
+
   /**
    * Obtiene la configuración actual de mapeo
    * Útil para debugging o para mostrar controles al usuario
