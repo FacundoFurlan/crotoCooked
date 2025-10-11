@@ -12,6 +12,7 @@ export class Caceria extends Phaser.Scene {
 
   preload(){
     this.currentCycle = "preload";
+    this.caceria = true;
     this.actualLevel = this.registry.get("actualLevel");
     console.log(`%cActual Level: ${this.actualLevel}`, "color: aqua")
     this.load.setPath("assets");
@@ -60,6 +61,10 @@ export class Caceria extends Phaser.Scene {
     this.player2 = new Player(this, 440, 360, "player2", this.inputSystem, 2);
     this.boss = new Boss(this, width/2, height/2 - 100, "lobo");
 
+    this.physics.add.collider(this.player, this.player2, () => {
+      this.playersTouching = true;
+    }, null, this);
+
     this.add.text(width/2, height/2 - 60, "Caceria", {
       fontFamily: "MyFont",
       fontSize: "48px",
@@ -75,5 +80,54 @@ export class Caceria extends Phaser.Scene {
     if (this.boss){
       this.boss.update(dt);
     } 
+
+    //PLAYER 1 ----------------------------------------------------------------------------
+    if (this.inputSystem.isJustPressed(INPUT_ACTIONS.WEST, "player1")) {
+      console.log("attack p1")
+      this.player.attack()
+    }
+
+    if (this.inputSystem.isJustPressed(INPUT_ACTIONS.EAST, "player1")) {
+      console.log("parry p1")
+    }
+
+    if (this.inputSystem.isJustPressed(INPUT_ACTIONS.SOUTH, "player1")) {
+      console.log("dash p1")
+      this.player.dash()
+    }
+    //PLAYER 2 ----------------------------------------------------------------------------
+    if (this.inputSystem.isJustPressed(INPUT_ACTIONS.WEST, "player2")) {
+      console.log("attack p2")
+      this.player2.attack()
+    }
+
+    if (this.inputSystem.isJustPressed(INPUT_ACTIONS.EAST, "player2") && this.player2.holdingItem) {
+      console.log("parry p2")
+    }
+
+    if (this.inputSystem.isJustPressed(INPUT_ACTIONS.SOUTH, "player2")) {
+      console.log("dash p2")
+      this.player2.dash()
+    }
+
+    if (this.playersTouching) {
+      console.log("tocandose");
+      if (this.player.isDashing) {
+        this._pushPlayers(this.player, this.player2);
+      }
+      if (this.player2.isDashing) {
+        this._pushPlayers(this.player2, this.player);
+      }
+      this.playersTouching = false; // reset para la siguiente frame
+    }
+  }
+
+  _pushPlayers(p1, p2) {
+    const dir = p1.lastDirection
+    const force = 400;
+
+    p2.pushed = true;
+    p2.pushedTime = 0;
+    p2.body.setVelocity(dir.x * force, dir.y * force);
   }
 }

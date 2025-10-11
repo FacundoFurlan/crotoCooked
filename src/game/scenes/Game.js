@@ -16,6 +16,7 @@ export class Game extends Scene {
 
   init() {
     this.currentCycle = "init";
+    this.caceria = false;
 
     this.input.once('pointerdown', () => { //esto es para evitar un warning molesto del audio
       if (this.sound.context.state === 'suspended') {
@@ -373,20 +374,11 @@ export class Game extends Scene {
     for (let i = 0; i < 6; i++) {
       let x = 400 + (i % 2) * 25; // X 400, 425, 400, 425
       let y = 150 + (Math.floor(i / 2) * 25); // Y aumenta en 1 cada 2 iteraciones
-      // if (i > 5) {
-      //   this.add.sprite(x, y, "mesa", i) // cuando llegue a la parte de las patas las crea sin colisión
-      //   continue
-      // }
       let mesa = new KitchenBox(this, x, y, "mesa", 25, i);
       this.physics.add.collider(this.player, mesa);
       this.physics.add.collider(this.player2, mesa);
       this.Interactuables.push(mesa);
     }
-
-    // this.kitchenBox1 = new KitchenBox(this, 400, 250, "mesa", 30, 0)
-    // this.physics.add.collider(this.player, this.kitchenBox1)
-    // this.physics.add.collider(this.player2, this.kitchenBox1)
-    // this.Interactuables.push(this.kitchenBox1);
 
     if (!this.actualLevel === 1) {
       this.kitchenBox2 = new KitchenBox(this, 300, 250, "freidora", 30)
@@ -398,22 +390,11 @@ export class Game extends Scene {
     for (let i = 0; i < 4; i++) {
       let x = 200 + (i % 2) * 25; // X 200, 225, 200, 225
       let y = 250 + (Math.floor(i / 2) * 25); // Y aumenta en 1 cada 2 iteraciones
-      // if (i === 0) {
-      //   this.add.image(x + 15, y + 15, "cenizas")
-      // }
-      // if (i > 3) {
-      //   this.add.sprite(x, y, "asador", i) // cuando llegue a la parte de las patas las crea sin colisión
-      //   continue
-      // }
       let asador = new Asador(this, x, y, 25, i);
       this.physics.add.collider(this.player, asador);
       this.physics.add.collider(this.player2, asador);
       this.Interactuables.push(asador);
     }
-
-    // this.physics.add.collider(this.player, this.kitchenBox3)
-    // this.physics.add.collider(this.player2, this.kitchenBox3)
-    // this.Interactuables.push(this.kitchenBox3);
 
     this.spawnPedidos();
     this.spawnPedidos();

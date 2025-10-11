@@ -8,6 +8,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     super(scene, x, y, key);
     this.scene = scene;
     this.kind = kind;
+    this.caceria = this.scene.caceria;
     this.holdingItem = false;
     this.itemHolded = null;
     this.dashCooldown = 2000;
@@ -18,6 +19,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.pushedTime = 0;
     this.inputId = this.kind === 1 ? "player1" : "player2";
     this.inputSystem = inputSystem;
+    this.attackCooldown = 500; // 500 ms
+    this.lastAttack = 0;
 
     //MAQUINA DE ESTADO DE MOVIMIENTO -------------------------------
     this.movingSM = new StateMachine("idle");
@@ -65,10 +68,53 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.body.setCollideWorldBounds(true)
   }
 
+  attack() {
+    // No ataques si ya estás haciendo dash o empujado
+    if (this.isDashing || this.pushed || !this.caceria) return;
+    if (this.lastAttack < this.attackCooldown) return; // todavía en cooldown
+    this.lastAttack = 0;
+
+    // Determinar dirección del ataque
+    const dir = this.lastDirection ? this.lastDirection.clone().normalize() : new Phaser.Math.Vector2(0, 1);
+
+    // Posición inicial del ataque (un poco delante del jugador)
+    const offset = 20;
+    const attackX = this.x + dir.x * offset;
+    const attackY = this.y + dir.y * offset;
+
+    // Crear un sprite placeholder (un cuadrado rojo)
+    const attackSprite = this.scene.add.rectangle(attackX, attackY, 16, 16, 0xff0000, 0.6);
+    this.scene.physics.add.existing(attackSprite);
+    attackSprite.body.setAllowGravity(false);
+    attackSprite.body.setImmovable(true);
+
+    this.scene.physics.add.overlap(
+      attackSprite,
+      this.scene.boss,
+      (hitbox, boss) => {
+        if (boss.isAlive) {
+          boss.takeDamage(25); // daño de ejemplo
+        }
+      }
+    );
+
+    // Le damos un pequeño impulso visual (opcional)
+    this.scene.tweens.add({
+      targets: attackSprite,
+      scaleX: 1.5,
+      scaleY: 1.5,
+      alpha: 0,
+      duration: 50,
+      onComplete: () => attackSprite.destroy(),
+    });
+  }
+
+
   update(dt) {
     this.movingSM.update(dt);
     this.holdingSM.update(dt);
 
+    this.lastAttack += dt;
     this.lastDash += dt;
     this.pushedTime += dt;
     if (this.pushedDuration < this.pushedTime) {
@@ -89,7 +135,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 class IdleState extends State {
   init(params) {
     this.player = params.player;
-    console.log("Entering Idle State");
   }
   update(dt) {
     if (
@@ -98,19 +143,16 @@ class IdleState extends State {
       this.player.inputSystem.isPressed(INPUT_ACTIONS.LEFT, this.player.inputId) ||
       this.player.inputSystem.isPressed(INPUT_ACTIONS.RIGHT, this.player.inputId)
     ) {
-      console.log("%ctaclas presionandose", "color: red")
       this.player.movingSM.changeState("moving", { player: this.player });
     }
   }
   finish() {
     this.player.clearTint();
-    console.log("Exiting Idle State");
   }
 }
 
 class MovingState extends State {
   init(params) {
-    console.log("Entering Moving State");
     this.player = params.player;
 
     this.stepTimer = 0;
@@ -173,7 +215,6 @@ class MovingState extends State {
       this.player.body.setVelocity(0);
     }
     this.player.clearTint();
-    console.log("Exiting Moving State");
   }
 }
 
@@ -236,7 +277,6 @@ class DashingState extends State {
     }
 
     this.player.setTint(0xffff00); // feedback visual
-    console.log("Entering Dashing State");
   }
 
   update(dt) {
@@ -260,6 +300,5 @@ class DashingState extends State {
     this.player.clearTint();
     this.player.isDashing = false;
     this.player.body.setVelocity(0);
-    console.log("Exiting Dashing State");
   }
 }
