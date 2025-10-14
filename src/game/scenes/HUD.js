@@ -61,7 +61,7 @@ export class HUD extends Phaser.Scene {
             
             const gameScene = this.scene.get("Game");
             if(gameScene && gameScene.onPlayerDeath){
-                gameScene.onPlayerDeath("Se acabo el tiempo")
+                gameScene.finishLevel()
             }
         }
 
