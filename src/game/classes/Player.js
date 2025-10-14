@@ -45,8 +45,15 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     //ROMPER EL SPRITE SHEET
     const directions = ['down', 'up', 'left', 'right'];
-    const dirStart = { down: 2, up: 3, left: 0, right: 1 };
-    const dirEnd = { down: 2, up: 3, left: 0, right: 1 };
+    const dirStart = { down: 6, up: 30, left: 0, right: 24 };
+    const dirEnd = { down: 9, up: 33, left: 3, right: 27 };
+
+    this.idleFrames = {
+      down: 6,  // primer frame de abajo
+      up: 30,   // primer frame de arriba
+      left: 0,  // primer frame de izquierda
+      right: 24 // primer frame de derecha
+    };
 
 
     directions.forEach(dir => {
@@ -122,6 +129,14 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     }
   }
 
+  getDirectionFromVector(vec) {
+    if (Math.abs(vec.x) > Math.abs(vec.y)) {
+      return vec.x > 0 ? 'right' : 'left';
+    } else {
+      return vec.y > 0 ? 'down' : 'up';
+    }
+  }
+
   dash() {
     if (this.lastDash >= this.dashCooldown) {
       if (this.lastDirection) {
@@ -144,6 +159,12 @@ class IdleState extends State {
       this.player.inputSystem.isPressed(INPUT_ACTIONS.RIGHT, this.player.inputId)
     ) {
       this.player.movingSM.changeState("moving", { player: this.player });
+    } else {
+      // SETEAR SPRITE QUIETO
+      const dir = this.player.lastDirection ? this.player.getDirectionFromVector(this.player.lastDirection) : 'down';
+      this.player.setFrame(this.player.idleFrames[dir]);
+      this.player.anims.stop(); // Esto corta cualquier animación que estuviera corriendo
+      this.player.body.setVelocity(0);
     }
   }
   finish() {
@@ -215,6 +236,14 @@ class MovingState extends State {
       this.player.body.setVelocity(0);
     }
     this.player.clearTint();
+
+    // Setear frame de idle según última dirección
+    if (this.player.lastDirection) {
+      const dir = this.player.getDirectionFromVector(this.player.lastDirection);
+      this.player.setFrame(this.player.idleFrames[dir]);
+    } else {
+      this.player.setFrame(this.player.idleFrames.down);
+    }
   }
 }
 
@@ -275,7 +304,14 @@ class DashingState extends State {
         this.player.lastDirection.y * dashSpeed
       );
     }
-
+    const dir = this.player.getDirectionFromVector(this.player.lastDirection);
+    const dashFrames = {
+      down: 10,   // frame de dash hacia abajo
+      up: 34,    // frame de dash hacia arriba
+      left: 4,   // frame de dash hacia izquierda
+      right: 28  // frame de dash hacia derecha
+    };
+    this.player.setFrame(dashFrames[dir]);
     this.player.setTint(0xffff00); // feedback visual
   }
 
@@ -300,5 +336,13 @@ class DashingState extends State {
     this.player.clearTint();
     this.player.isDashing = false;
     this.player.body.setVelocity(0);
+
+    // Setear frame de idle según última dirección
+    if (this.player.lastDirection) {
+      const dir = this.player.getDirectionFromVector(this.player.lastDirection);
+      this.player.setFrame(this.player.idleFrames[dir]);
+    } else {
+      this.player.setFrame(this.player.idleFrames.down);
+    }
   }
 }

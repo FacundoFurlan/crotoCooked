@@ -7,6 +7,8 @@ export class Boss extends Phaser.Physics.Arcade.Sprite {
     super(scene, x, y, key);
     this.scene = scene;
     this.hp = 300;
+    this.key = key
+    this.speed = 120;
     this.maxHp = 300;
     this.attackCooldown = 2000;
     this.isAttacking = false;
@@ -28,7 +30,7 @@ export class Boss extends Phaser.Physics.Arcade.Sprite {
     this.setImmovable(true);
     this.setCollideWorldBounds(true);
     this.setDepth(10);
-    this.setScale(.2)
+    this.setScale(1)
 
     //Máquina de estados del boss
     this.behaviorSM = new StateMachine("appear");
@@ -59,7 +61,7 @@ export class Boss extends Phaser.Physics.Arcade.Sprite {
   
   updateHealthBar(dt) {
     const x = this.x - this.barWidth / 2;
-    const y = this.y - 20; // 20px arriba del boss
+    const y = this.y - 50; // 20px arriba del boss
 
     // Smooth tween del ancho
     const targetWidth = (this.hp / this.maxHp) * this.barWidth;
@@ -177,46 +179,73 @@ class BossIdleState extends State {
   }
 
   update(dt) {
-    // Espera y luego pasa a ataque
-    if (this.boss.lastAttack >= this.boss.attackCooldown) {
-      this.boss.behaviorSM.changeState("attack", { boss: this.boss });
+    const target = this.boss.getClosestPlayer();
+    if (target) {
+      const dist = Phaser.Math.Distance.Between(this.boss.x, this.boss.y, target.x, target.y);
+      if (dist < 120 && this.boss.lastAttack >= this.boss.attackCooldown) {
+        this.boss.behaviorSM.changeState("attack", { boss: this.boss });
+      }
     }
-  }
-
-  finish() {
   }
 }
 
 class AttackState extends State {
   init(params) {
     this.boss = params.boss;
-    console.log("%cBoss lanza ataque dirigido", "color: orange");
-
-    this.attackDuration = 1000;
-    this.elapsed = 0;
+    this.boss.isAttacking = true;
+    this.boss.setVelocity(0, 0);
     this.boss.lastAttack = 0;
 
-    this.boss.setTint(0xff0000); // feedback visual
-    this.boss.setVelocity(0, 0); // boss queda quieto
-    this.boss.isAttacking = true;
-
-    // --- Identificar objetivo ---
+    // Buscar objetivo
     this.target = this.boss.getClosestPlayer();
-    if(!this.target) return;
+    if (!this.target) {
+      this.boss.behaviorSM.changeState("idle", { boss: this.boss });
+      return;
+    }
 
-    // Vector de dirección normalizado
-    const dir = new Phaser.Math.Vector2(
-      this.target.x - this.boss.x,
-      this.target.y - this.boss.y
-    ).normalize();
+    // Calcular distancia y dirección
+    const dx = this.target.x - this.boss.x;
+    const dy = Math.abs(this.target.y - this.boss.y); // ignoramos vertical salvo diferencia muy grande
+    const dist = Math.abs(dx);
 
-    // --- Hitbox ---
-    const hitboxDistance = 50; // distancia desde el boss
-    const hitboxSize = { w: 60, h: 60 };
+    const attackRange = 120; // distancia máxima del ataque
+    if (dist > attackRange || dy > 50) {
+      // fuera de rango → no ataca
+      this.boss.behaviorSM.changeState("idle", { boss: this.boss });
+      this.boss.isAttacking = false;
+      return;
+    }
+
+    // Determinar dirección (solo izquierda o derecha)
+    const facingRight = dx > 0;
+    this.boss.setFlipX(facingRight);
+    this.boss.play("boss_attack_1", true);
+
+
+    this.hitboxFrames = new Set();
+
+    this.boss.on("animationupdate", (anim, frame) => {
+      if (anim.key === "boss_attack_1") {
+        const triggerFrames = [2, 4, 6]; // frames donde el ataque pega
+        if (triggerFrames.includes(frame.index) && !this.hitboxFrames.has(frame.index)) {
+          this.spawnHitbox(facingRight);
+          this.hitboxFrames.add(frame.index);
+        }
+      }
+    });
+
+    // Volver a idle cuando termina
+    this.boss.once(`animationcomplete`, () => {
+      this.finishAttack();
+    });
+  }
+
+  spawnHitbox(facingRight) {
+    const hitboxSize = { w: 197, h: 110 };
 
     this.hitbox = this.boss.scene.add.rectangle(
-      this.boss.x + dir.x * hitboxDistance,
-      this.boss.y + dir.y * hitboxDistance,
+      this.boss.x,
+      this.boss.y,
       hitboxSize.w,
       hitboxSize.h,
       0xff0000,
@@ -227,10 +256,9 @@ class AttackState extends State {
     this.hitbox.body.setAllowGravity(false);
     this.hitbox.body.setImmovable(true);
 
-    // Colisiones con players
     const players = [];
-    if(this.boss.scene.player) players.push(this.boss.scene.player);
-    if(this.boss.scene.player2) players.push(this.boss.scene.player2);
+    if (this.boss.scene.player) players.push(this.boss.scene.player);
+    if (this.boss.scene.player2) players.push(this.boss.scene.player2);
 
     players.forEach(player => {
       this.boss.scene.physics.add.overlap(this.hitbox, player, () => {
@@ -238,20 +266,25 @@ class AttackState extends State {
         console.log(`%cplayer${player.kind} took damage`, "color: yellow")
       });
     });
+
+    // hitbox dura poco
+    this.boss.scene.time.delayedCall(200, () => {
+      if (this.hitbox) this.hitbox.destroy();
+    });
   }
 
-  update(dt) {
-    this.elapsed += dt;
-
-    if(this.elapsed >= this.attackDuration) {
-      this.boss.behaviorSM.changeState("idle", { boss: this.boss });
-    }
+  finishAttack() {
+    this.boss.isAttacking = false;
+    this.boss.clearTint();
+    this.boss.setFlipX(false)
+    this.boss.setTexture(this.boss.key);
+    this.boss.behaviorSM.changeState("idle", { boss: this.boss });
   }
 
   finish() {
-    this.boss.clearTint();
-    this.boss.isAttacking = false;
-    if(this.hitbox) this.hitbox.destroy();
+    if (this.hitbox) this.hitbox.destroy();
+    this.boss.off("animationupdate-boss_attack_1");
+    this.boss.off("animationcomplete-boss_attack_1");
   }
 }
 
@@ -288,6 +321,7 @@ class DeadState extends State {
       alpha: 0,
       duration: 1000,
       onComplete: () => {
+        this.boss.healthBar.destroy();
         this.boss.destroy();
       }
     });

@@ -51,8 +51,8 @@ export class Game extends Scene {
     this.load.audio("coccionListo", "./audio/PByA_Coccion.mp3");
 
     //SPRITESHEETS--------------------------------
-    this.load.spritesheet("player1", "SS_PJ1.png", { frameWidth: 21, frameHeight: 45 })
-    this.load.spritesheet("player2", "SS_PJ2.png", { frameWidth: 21, frameHeight: 45 })
+    this.load.spritesheet("player1", "SS_PJ1(1).png", { frameWidth: 30, frameHeight: 47 })
+    this.load.spritesheet("player2", "SS_PJ2(1).png", { frameWidth: 30, frameHeight: 47 })
     this.load.spritesheet("ingredientesAtlas", "SS_Ingredientes(1).png", { frameWidth: 20, frameHeight: 20 })
     this.load.spritesheet("asador", "SS_Asador.png", { frameWidth: 25, frameHeight: 25 })
     this.load.spritesheet("brasas", "SS_Asador_Brasas.png", { frameWidth: 32, frameHeight: 32 })

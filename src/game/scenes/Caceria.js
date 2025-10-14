@@ -21,16 +21,23 @@ export class Caceria extends Phaser.Scene {
 
     //sprites---
     this.load.image("background", "BG_Dia.png")
-    this.load.image("lobo", "lobizonPlaceHolder.png")
+    this.load.image("lobo", "Lobison pixelart.png")
 
     //sprite sheet ---------
     this.load.spritesheet("player1", "SS_PJ1.png",{frameWidth: 21, frameHeight: 45})
     this.load.spritesheet("player2", "SS_PJ2.png",{frameWidth: 21, frameHeight: 45})
+    this.load.spritesheet("bossAttack1", "SS_Atack-1.png",{frameWidth: 197, frameHeight: 110})
   }
 
   create() {
     const { width, height } = this.scale;
     this.scene.bringToTop();
+    this.anims.create({
+      key: "boss_attack_1",
+      frames: this.anims.generateFrameNumbers("bossAttack1", { start: 0, end: 7 }),
+      frameRate: 8,
+      repeat: 0
+    });
 
     this.inputSystem = new InputSystem(this.input);
     this.inputSystem.configureKeyboard({
