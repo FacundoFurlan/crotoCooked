@@ -561,7 +561,7 @@ export class Game extends Scene {
     // Opcional: animación de cámara antes de cambiar (fade)
     this.cameras.main.fadeOut(500, 0, 0, 0);
     this.cameras.main.once("camerafadeoutcomplete", () => {
-      this.scene.start("Game");
+      this.scene.start("Caceria");
     });
   }
 

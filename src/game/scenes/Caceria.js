@@ -22,7 +22,8 @@ export class Caceria extends Phaser.Scene {
     //sprites---
     this.load.image("background", "BG_Dia.png")
     this.load.image("lobo", "Lobison pixelart.png")
-
+    this.load.image("heart", "Heart.png");
+    
     //sprite sheet ---------
     this.load.spritesheet("player1", "SS_PJ1.png",{frameWidth: 21, frameHeight: 45})
     this.load.spritesheet("player2", "SS_PJ2.png",{frameWidth: 21, frameHeight: 45})
@@ -66,7 +67,7 @@ export class Caceria extends Phaser.Scene {
 
     this.player = new Player(this, 640, 360, "player1", this.inputSystem);
     this.player2 = new Player(this, 440, 360, "player2", this.inputSystem, 2);
-    this.boss = new Boss(this, width/2, height/2 - 100, "lobo");
+    this.boss = new Boss(this, width/2, height/2 - 100, "bossAttack1");
 
     this.physics.add.collider(this.player, this.player2, () => {
       this.playersTouching = true;
@@ -79,6 +80,78 @@ export class Caceria extends Phaser.Scene {
       align: "center"
     }).setOrigin(0.5);
 
+    //VIDAS
+    this.player1Lives = 3;
+    this.player2Lives = 3;
+    this.lastDamageTimeP1 = 0;
+    this.lastDamageTimeP2 = 0;
+    // Corazones de Player 1 (izquierda)
+    this.heartsP1 = [];
+    for (let i = 0; i < 3; i++) {
+      const heart = this.add.image(30 + i * 40, 30, "heart").setScrollFactor(0).setScale(2);
+      this.heartsP1.push(heart);
+    }
+
+    // Corazones de Player 2 (derecha)
+    this.heartsP2 = [];
+    for (let i = 0; i < 3; i++) {
+      const heart = this.add.image(this.scale.width - 30 - i * 40, 30, "heart")
+        .setScrollFactor(0)
+        .setScale(2);
+      this.heartsP2.push(heart);
+    }
+  }
+  
+  damagePlayer(playerIndex) {
+    const now = this.time.now;
+    const cooldown = 1000; // 1 segundo
+    
+    if (playerIndex === 1) {
+      if (now - this.lastDamageTimeP1 < cooldown) return;
+      this.lastDamageTimeP1 = now;
+      this.player1Lives--;
+      this._updateHearts(1);
+      console.log(`Player 1 recibió daño (${this.player1Lives}/3)`);
+    } else if (playerIndex === 2) {
+      if (now - this.lastDamageTimeP2 < cooldown) return;
+      this.lastDamageTimeP2 = now;
+      this.player2Lives--;
+      this._updateHearts(2);
+      console.log(`Player 2 recibió daño (${this.player2Lives}/3)`);
+    }
+  }
+
+  _updateHearts(playerIndex) {
+    const hearts = playerIndex === 1 ? this.heartsP1 : this.heartsP2;
+    const lives = playerIndex === 1 ? this.player1Lives : this.player2Lives;
+
+    hearts.forEach((heart, i) => {
+      heart.setVisible(i < lives);
+    });
+
+    if (lives <= 0) {
+      console.log(`%cPlayer ${playerIndex} murió`, "color: red");
+      if (playerIndex === 1) {
+        this.player.setVisible(false);          // Lo oculta visualmente
+        this.player.body.enable = false;        // Desactiva su colisión y movimiento
+        this.player.active = false;             // Evita que Phaser lo actualice en colisiones
+      } else {
+        this.player2.setVisible(false);          // Lo oculta visualmente
+        this.player2.body.enable = false;        // Desactiva su colisión y movimiento
+        this.player2.active = false;
+      }
+
+      this.cameras.main.flash(300, 255, 0, 0); // parpadeo rojo breve
+
+      if (this.player1Lives <= 0 && this.player2Lives <= 0) {
+        console.log("%cAmbos jugadores murieron. Fin de la cacería.", "color: gray");
+
+        // Esperar 2 segundos y volver al menú
+        this.time.delayedCall(2000, () => {
+          this.scene.start("MainMenu"); // <-- Cambiá por el nombre real de tu escena de menú
+        });
+      }
+    }
   }
 
   update(t, dt){

@@ -4,11 +4,11 @@ import { StateMachine } from "../state/StateMachine";
 
 export class Boss extends Phaser.Physics.Arcade.Sprite {
   constructor(scene, x, y, key) {
-    super(scene, x, y, key);
+    super(scene, x, y, key, 0);
     this.scene = scene;
     this.hp = 300;
     this.key = key
-    this.speed = 120;
+    this.speed = 210;
     this.maxHp = 300;
     this.attackCooldown = 2000;
     this.isAttacking = false;
@@ -54,6 +54,7 @@ export class Boss extends Phaser.Physics.Arcade.Sprite {
     const target = this.getClosestPlayer();
     if (target) {
       this.scene.physics.moveToObject(this, target, this.speed);
+      this.setFlipX(target.x > this.x ? true : false)
     } else {
       this.setVelocity(0, 0);
     }
@@ -87,8 +88,12 @@ export class Boss extends Phaser.Physics.Arcade.Sprite {
 
   getClosestPlayer() {
     const players = [];
-    if (this.scene.player) players.push(this.scene.player);
-    if (this.scene.player2) players.push(this.scene.player2);
+    if (this.scene.player && this.scene.player.active && this.scene.player.visible) {
+      players.push(this.scene.player);
+    }
+    if (this.scene.player2 && this.scene.player2.active && this.scene.player2.visible) {
+      players.push(this.scene.player2);
+    }
 
     if (players.length === 0) return null;
 
@@ -262,8 +267,7 @@ class AttackState extends State {
 
     players.forEach(player => {
       this.boss.scene.physics.add.overlap(this.hitbox, player, () => {
-        player.takeDamage?.(20);
-        console.log(`%cplayer${player.kind} took damage`, "color: yellow")
+        this.boss.scene.damagePlayer(player.kind);
       });
     });
 
@@ -277,7 +281,7 @@ class AttackState extends State {
     this.boss.isAttacking = false;
     this.boss.clearTint();
     this.boss.setFlipX(false)
-    this.boss.setTexture(this.boss.key);
+    this.boss.setFrame(0);
     this.boss.behaviorSM.changeState("idle", { boss: this.boss });
   }
 
@@ -314,6 +318,7 @@ class HurtState extends State {
 class DeadState extends State {
   init(params) {
     this.boss = params.boss;
+    const scene = this.boss.scene;
     console.log("%cBoss muere", "color: gray");
     this.boss.isAlive = false;
     this.boss.scene.tweens.add({
@@ -323,6 +328,10 @@ class DeadState extends State {
       onComplete: () => {
         this.boss.healthBar.destroy();
         this.boss.destroy();
+
+        scene.time.delayedCall(1000, () => {
+          scene.scene.start("Game");
+        });
       }
     });
   }
