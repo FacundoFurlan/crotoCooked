@@ -49,6 +49,16 @@ export class Game extends Scene {
     this.load.audio("picarListo", "./audio/PByA_MT_Tabla_Listo.mp3");
     this.load.audio("fritar", "./audio/PByA_MT_Freidora_Coccion.mp3");
     this.load.audio("coccionListo", "./audio/PByA_Coccion.mp3");
+    this.load.audio("dash", "./audio/PByA_PJ_Dash.mp3");
+    this.load.audio("agarrar", "./audio/PByA_Objeto.mp3");
+    this.load.audio("lanzar", "./audio/PByA_Objeto_Lanzar.mp3");
+    this.load.audio("caja", "./audio/PByA_MT_Caja_Abrir.mp3");
+    this.load.audio("pedidoNuevo", "./audio/PByA_Hud_Pedido_Nuevo.mp3");
+    this.load.audio("pedidoEntregado", "./audio/PByA_Hud_Pedido_Entregado.mp3");
+    this.load.audio("dinero", "./audio/PByA_Hud_Dinero.mp3");
+    this.load.audio("tiempoEmpieza", "./audio/PByA_Hud_Tiempo_Empieza.mp3");
+    this.load.audio("tiempoCritico", "./audio/PByA_Hud_Tiempo_Critico.mp3");
+    this.load.audio("tiempoFin", "./audio/PByA_Hud_Tiempo_Fin.mp3");
 
     //SPRITESHEETS--------------------------------
     this.load.spritesheet("player1", "SS_PJ1(1).png", { frameWidth: 30, frameHeight: 47 })
@@ -308,6 +318,18 @@ export class Game extends Scene {
     this.picarListoAudio = this.sound.add("picarListo", { loop: false })
     this.fritarAudio = this.sound.add("fritar", { loop: true })
     this.coccionListoAudio = this.sound.add("coccionListo", { loop: false })
+    this.dashAudio = this.sound.add("dash", { loop: false })
+    this.caminarAudio = this.sound.add("caminar_pasto", { loop: false })
+    this.agarrarAudio = this.sound.add("agarrar", { loop: false })
+    this.lanzarAudio = this.sound.add("lanzar", { loop: false })
+    this.cajaAudio = this.sound.add("caja", { loop: false })
+    this.pedidoNuevoAudio = this.sound.add("pedidoNuevo", { loop: false })
+    this.pedidoEntregadoAudio = this.sound.add("pedidoEntregado", { loop: false })
+    this.dineroAudio = this.sound.add("dinero", { loop: false })
+    this.tiempoEmpiezaAudio = this.sound.add("tiempoEmpieza", { loop: false })
+    this.tiempoCriticoAudio = this.sound.add("tiempoCritico", { loop: false })
+    this.tiempoFinAudio = this.sound.add("tiempoFin", { loop: false })
+
 
 
     //MANEJO DE INPUTS ---------------------------------------------------
@@ -448,6 +470,10 @@ export class Game extends Scene {
       const speed = 600;
       itemToThrow.thrownBy = 1;
       itemToThrow.body.setVelocity(this.player.lastDirection.x * speed, this.player.lastDirection.y * speed);
+      this.lanzarAudio.play({
+        volume: .4,
+        rate: 1
+      })
     }
 
     if (this.inputSystem.isJustPressed(INPUT_ACTIONS.SOUTH, "player1")) {
@@ -581,7 +607,10 @@ export class Game extends Scene {
     let y = this.posicionesPedidos.find(
       pos => !this.Interactuables.some(p => p.y === pos && p.availableIngredients)
     );
-
+    this.pedidoNuevoAudio.play({
+      volume: 0.2, // Ajusta el volumen
+      rate: 1    // Ajusta el pitch
+    });
     if (!y) { // no hay lugar libre
       const hud = this.scene.get("HUD");
       hud.addPedidosEnCola(1);

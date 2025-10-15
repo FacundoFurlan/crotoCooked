@@ -11,7 +11,7 @@ export class IngredientBox extends Interactuables {
         this.ingredientKey = ingredientKey;
         console.log(this.ingredientKey)
 
-        this.ingredientSprite = this.scene.add.sprite(x,y-7, "ingredientesAtlas", this.scene.ingredientesAtlas[this.ingredientKey].index);
+        this.ingredientSprite = this.scene.add.sprite(x, y - 2, "ingredientesAtlas", this.scene.ingredientesAtlas[this.ingredientKey].index);
 
         this.body.setCollideWorldBounds(true);
         this.body.setImmovable(true);
@@ -20,34 +20,38 @@ export class IngredientBox extends Interactuables {
         this.stateMachine = new StateMachine("idle");
         this.stateMachine.addState("idle", new IdleState());
         this.stateMachine.addState("anim", new AnimationState());
-        this.stateMachine.changeState("idle", {box: this});
+        this.stateMachine.changeState("idle", { box: this });
     }
 
     update(dt) {
         if (this.stateMachine) this.stateMachine.update(dt);
     }
 
-    onInteract(player){
-        if(this.stateMachine.currentStateName != "anim"){
+    onInteract(player) {
+        if (this.stateMachine.currentStateName != "anim") {
             this.newIngredient = new Ingredientes(this.scene, player.x, player.y, this.ingredientKey)
-            player.holdingSM.changeState("ingredient", {player: player, ingredient: this.newIngredient})
-            this.stateMachine.changeState("anim", {box: this});
+            player.holdingSM.changeState("ingredient", { player: player, ingredient: this.newIngredient })
+            this.stateMachine.changeState("anim", { box: this });
+            this.scene.cajaAudio.play({
+                volume: 0.2, // Ajusta el volumen
+                rate: 1    // Ajusta el pitch
+            });
         }
     }
 }
 
 class IdleState extends State {
-    init(params){
+    init(params) {
         this.box = params.box;
     }
 
-    update(dt){        
+    update(dt) {
 
     }
 }
 
 class AnimationState extends State {
-    init(params){
+    init(params) {
         this.box = params.box
 
         this.animTween = this.box.scene.tweens.add({
@@ -63,14 +67,14 @@ class AnimationState extends State {
         this.duration = 2000;
     }
 
-    update(dt){
+    update(dt) {
         this.elapsed += dt;
-        if(this.elapsed >= this.duration){
-            this.box.stateMachine.changeState("idle", {box: this.box})
+        if (this.elapsed >= this.duration) {
+            this.box.stateMachine.changeState("idle", { box: this.box })
         }
     }
 
-    finish(){
+    finish() {
         this.animTween.stop();
         this.box.angle = 0;
         this.animTween.remove();
