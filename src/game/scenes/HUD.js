@@ -4,37 +4,46 @@ export class HUD extends Phaser.Scene {
     }
 
     create() {
-        const {width} = this.scale;
+        const { width } = this.scale;
 
         this.currentMode = this.registry.get("mode");
-        if(this.currentMode === 1){
+        if (this.currentMode === 1) {
             this.registry.set("coopPoints", 0)
-            this.pointsText = this.add.text(width-100, 20 , `Puntos: ${this.registry.get("coopPoints")}`, {
+            this.pointsText = this.add.text(width - 100, 20, `Puntos: ${this.registry.get("coopPoints")}`, {
                 fontFamily: "MyFont",
                 fontSize: "25px",
-                color: "#ffffffff"
+                color: "#ffffffff",
+                strokeThickness: 2,
+                stroke: "#000000ff"
             }).setOrigin(.5);
-        } else if(this.currentMode === 2){
+        } else if (this.currentMode === 2) {
             this.registry.set("vsPoints1", 0)
             this.registry.set("vsPoints2", 0)
-            this.pointsText1 = this.add.text(width-100, 20 , `Puntos P1: ${this.registry.get("vsPoints1")}`, {
+            this.pointsText1 = this.add.text(width - 100, 20, `Puntos P1: ${this.registry.get("vsPoints1")}`, {
                 fontFamily: "MyFont",
                 fontSize: "25px",
-                color: "#fff"
+                color: "#fff",
+                strokeThickness: 2,
+                stroke: "#000000ff"
             }).setOrigin(.5);
-            this.pointsText2 = this.add.text(width-100, 40 , `Puntos P2: ${this.registry.get("vsPoints2")}`, {
+            this.pointsText2 = this.add.text(width - 100, 40, `Puntos P2: ${this.registry.get("vsPoints2")}`, {
                 fontFamily: "MyFont",
                 fontSize: "25px",
-                color: "#fff"
+                color: "#fff",
+                strokeThickness: 2,
+                stroke: "#000000ff"
             }).setOrigin(.5);
         }
-        
-        this.timeLeft = 120000;
+        this.timeTotal = 120000;
+        this.timeLeft = this.timeTotal;
+        this.critico = true;
 
-        this.timerText = this.add.text(width/2, 20 , "01:00", {
+        this.timerText = this.add.text(width / 2, 20, "01:00", {
             fontFamily: "MyFont",
             fontSize: "25px",
-            color: "#fff"
+            color: "#fff",
+            strokeThickness: 2,
+            stroke: "#000000ff"
         }).setOrigin(.5);
 
         this.updateTimer();
@@ -48,53 +57,78 @@ export class HUD extends Phaser.Scene {
 
         this.pedidosEnCola = 0;
 
-        this.pedidosText = this.add.text(125, 9, `Pedidos: ${this.pedidosEnCola}`, { fontSize: "25px", color: "#fff", fontFamily: "MyFont" });
+        this.pedidosText = this.add.text(125, 9, `Pedidos: ${this.pedidosEnCola}`, {
+            fontSize: "25px",
+            color: "#fff",
+            fontFamily: "MyFont",
+            strokeThickness: 2,
+            stroke: "#000000ff"
+        });
         this.scene.bringToTop("HUD");
     }
 
-    onSecond(){
+    onSecond() {
         this.timeLeft -= 1000;
-
-        if(this.timeLeft < 0){
+        if (this.gameScene === undefined) {
+            this.gameScene = this.scene.get("Game");
+            this.gameScene.tiempoEmpiezaAudio.play({
+                volume: 0.5, // Ajusta el volumen
+                rate: 1    // Ajusta el pitch
+            });
+        }
+        if (this.timeLeft < this.timeTotal * 0.2 && this.critico) {
+            this.critico = false;
+            this.gameScene.tiempoCriticoAudio.play({
+                volume: 0.5, // Ajusta el volumen
+                rate: 1    // Ajusta el pitch
+            });
+            this.timerText.setColor("#d42929ff")
+        }
+        if (this.timeLeft === 1000) {
+            this.gameScene.tiempoFinAudio.play({
+                volume: 0.5, // Ajusta el volumen
+                rate: 1    // Ajusta el pitch
+            });
+        }
+        if (this.timeLeft < 0) {
             this.timeLeft = 0;
             this.timerEvent.remove(false)
-            
-            const gameScene = this.scene.get("Game");
-            if(gameScene && gameScene.onPlayerDeath){
-                gameScene.finishLevel()
+
+            if (this.gameScene && this.gameScene.onPlayerDeath) {
+                this.gameScene.finishLevel()
             }
         }
 
         this.updateTimer()
     }
 
-    addPedidosEnCola(amount){
+    addPedidosEnCola(amount) {
         this.pedidosEnCola += amount;
         this.pedidosText.setText(`Pedidos: ${this.pedidosEnCola}`)
     }
 
-    updatePoints(){
-        if(this.currentMode === 1){
+    updatePoints() {
+        if (this.currentMode === 1) {
             this.pointsText.setText(`Puntos: ${this.registry.get("coopPoints")}`)
-        } else if(this.currentMode === 2){
+        } else if (this.currentMode === 2) {
             this.pointsText1.setText(`Puntos P1: ${this.registry.get("vsPoints1")}`)
             this.pointsText2.setText(`Puntos P2: ${this.registry.get("vsPoints2")}`)
         }
     }
 
-    subsPedidosEnCola(amount){
+    subsPedidosEnCola(amount) {
         this.pedidosEnCola -= amount;
         this.pedidosText.setText(`Pedidos: ${this.pedidosEnCola}`)
     }
 
-    getPedidosEnCola(){
+    getPedidosEnCola() {
         return this.pedidosEnCola;
     }
 
-    updateTimer(){
+    updateTimer() {
         const totalSeconds = Math.floor(this.timeLeft / 1000);
-        const minutes = Math.floor(totalSeconds/60);
-        const seconds = totalSeconds%60;
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
 
         this.timerText.setText(`${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`);
     }

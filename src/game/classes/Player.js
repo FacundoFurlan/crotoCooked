@@ -21,6 +21,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.inputSystem = inputSystem;
     this.attackCooldown = 500; // 500 ms
     this.lastAttack = 0;
+    this.gameScene = this.scene.scene.get("Game");
 
     //MAQUINA DE ESTADO DE MOVIMIENTO -------------------------------
     this.movingSM = new StateMachine("idle");
@@ -201,7 +202,10 @@ class MovingState extends State {
     this.stepTimer += dt;
     if (this.stepTimer >= this.stepInterval) {
       this.stepTimer = 0;
-      this.player.scene.sound.play("caminar_pasto", { volume: .2, rate: Phaser.Math.FloatBetween(.8, 1.2) })
+      this.player.gameScene.caminarAudio.play({
+        volume: .2,
+        rate: Phaser.Math.FloatBetween(.8, 1.2)
+      })
     }
   }
   handleInput(dt) {
@@ -274,6 +278,10 @@ class HoldingIngredientState extends State {
     this.player.itemHolded.setPosition(this.player.body.center.x, this.player.body.center.y - 10);
     this.player.itemHolded.grabbed = true;
     this.player.itemHolded.setVisible(true)
+    this.player.gameScene.agarrarAudio.play({
+      volume: .1,
+      rate: 1.2
+    })
   }
   update(dt) {
     this.player.itemHolded.setPosition(this.player.body.center.x, this.player.body.center.y - 10);
@@ -285,6 +293,10 @@ class HoldingIngredientState extends State {
     this.player.itemHolded.setVisible(true);
     this.player.itemHolded.grabbed = false;
     this.player.itemHolded = null;
+    this.player.gameScene.agarrarAudio.play({
+      volume: .1,
+      rate: .8
+    })
   }
 }
 
@@ -313,6 +325,10 @@ class DashingState extends State {
     };
     this.player.setFrame(dashFrames[dir]);
     this.player.setTint(0xffff00); // feedback visual
+    this.player.gameScene.dashAudio.play({
+      volume: 0.5, // Ajusta el volumen
+      rate: Phaser.Math.FloatBetween(1, 1.4)    // Ajusta el pitch
+    });
   }
 
   update(dt) {
