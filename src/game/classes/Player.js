@@ -40,8 +40,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.scene.physics.add.existing(this);
     this.setDepth(8);
     // HITBOX CUSTOM: por ejemplo, 16x32 centrada
-    this.body.setSize(16, 16);
-    this.body.setOffset(1.5, 30); // Ajusta estos valores según tu sprite
+    this.body.setSize(22, 22);
+    this.body.setOffset(4, 25); // Ajusta estos valores según tu sprite
 
     //ROMPER EL SPRITE SHEET
     const directions = ['down', 'up', 'left', 'right'];

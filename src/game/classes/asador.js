@@ -14,7 +14,7 @@ export class Asador extends KitchenBox {
         this.hasCoal = false;
         this.textureCoal = textureCoal;
         this.timerCoal = 0;
-        this.durationCoal = 10000;
+        this.durationCoal = 20000;
         this.actionSound = this.scene.coccionAudio
         this.actionFinish = this.scene.coccionListoAudio
     }

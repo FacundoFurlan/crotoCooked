@@ -11,29 +11,29 @@ export class HUD extends Phaser.Scene {
             this.registry.set("coopPoints", 0)
             this.pointsText = this.add.text(width-100, 20 , `Puntos: ${this.registry.get("coopPoints")}`, {
                 fontFamily: "MyFont",
-                fontSize: "18px",
-                color: "#fff"
+                fontSize: "25px",
+                color: "#ffffffff"
             }).setOrigin(.5);
         } else if(this.currentMode === 2){
             this.registry.set("vsPoints1", 0)
             this.registry.set("vsPoints2", 0)
             this.pointsText1 = this.add.text(width-100, 20 , `Puntos P1: ${this.registry.get("vsPoints1")}`, {
                 fontFamily: "MyFont",
-                fontSize: "18px",
+                fontSize: "25px",
                 color: "#fff"
             }).setOrigin(.5);
             this.pointsText2 = this.add.text(width-100, 40 , `Puntos P2: ${this.registry.get("vsPoints2")}`, {
                 fontFamily: "MyFont",
-                fontSize: "18px",
+                fontSize: "25px",
                 color: "#fff"
             }).setOrigin(.5);
         }
         
-        this.timeLeft = 600000;
+        this.timeLeft = 120000;
 
         this.timerText = this.add.text(width/2, 20 , "01:00", {
             fontFamily: "MyFont",
-            fontSize: "18px",
+            fontSize: "25px",
             color: "#fff"
         }).setOrigin(.5);
 
@@ -48,7 +48,7 @@ export class HUD extends Phaser.Scene {
 
         this.pedidosEnCola = 0;
 
-        this.pedidosText = this.add.text(20, 20, `Pedidos en cola: ${this.pedidosEnCola}`, { fontSize: "16px", color: "#fff", fontFamily: "MyFont" });
+        this.pedidosText = this.add.text(125, 9, `Pedidos: ${this.pedidosEnCola}`, { fontSize: "25px", color: "#fff", fontFamily: "MyFont" });
         this.scene.bringToTop("HUD");
     }
 
@@ -70,7 +70,7 @@ export class HUD extends Phaser.Scene {
 
     addPedidosEnCola(amount){
         this.pedidosEnCola += amount;
-        this.pedidosText.setText(`Pedidos en cola: ${this.pedidosEnCola}`)
+        this.pedidosText.setText(`Pedidos: ${this.pedidosEnCola}`)
     }
 
     updatePoints(){
@@ -84,7 +84,7 @@ export class HUD extends Phaser.Scene {
 
     subsPedidosEnCola(amount){
         this.pedidosEnCola -= amount;
-        this.pedidosText.setText(`Pedidos en cola: ${this.pedidosEnCola}`)
+        this.pedidosText.setText(`Pedidos: ${this.pedidosEnCola}`)
     }
 
     getPedidosEnCola(){

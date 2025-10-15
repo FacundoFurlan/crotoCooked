@@ -488,7 +488,7 @@ export class Game extends Scene {
       this.onPlayerDeath();
     }
     if (Phaser.Input.Keyboard.JustDown(this.CaceriaKey)) {
-      this.registry.set("actualLevel", 1)
+      this.registry.set("actualLevel", this.actualLevel + 1)
       this.sound.stopAll();
       this.scene.stop("HUD");
       this.cameras.main.fadeOut(400);
