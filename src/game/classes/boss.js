@@ -222,19 +222,26 @@ class AttackState extends State {
     }
 
     // Determinar dirección (solo izquierda o derecha)
-    const facingRight = dx > 0;
+    const facingRight = dx >= 0;
     this.boss.setFlipX(facingRight);
     this.boss.play("boss_attack_1", true);
 
 
     this.hitboxFrames = new Set();
+    this.boss.lastAttackFrameTime = 0;
+    this.attackDelay = 350;
 
     this.boss.on("animationupdate", (anim, frame) => {
       if (anim.key === "boss_attack_1") {
         const triggerFrames = [2, 4, 6]; // frames donde el ataque pega
         if (triggerFrames.includes(frame.index) && !this.hitboxFrames.has(frame.index)) {
-          this.spawnHitbox(facingRight);
-          this.hitboxFrames.add(frame.index);
+
+          const now = this.boss.scene.time.now;
+          if(now - this.boss.lastAttackFrameTime >= this.attackDelay){
+            this.spawnHitbox(facingRight);
+            this.applyAttackStep(facingRight);
+            this.hitboxFrames.add(frame.index);
+          }
         }
       }
     });
@@ -242,6 +249,19 @@ class AttackState extends State {
     // Volver a idle cuando termina
     this.boss.once(`animationcomplete`, () => {
       this.finishAttack();
+    });
+  }
+
+  applyAttackStep(facingRight) {
+    const impulse = 60; // cuanto se mueve hacia adelante
+    console.log("facing right:   ", facingRight)
+    const dir = facingRight ? 1 : -1;
+
+    this.boss.scene.tweens.add({
+      targets: this.boss,
+      x: this.boss.x + dir * impulse,
+      duration: 120,
+      ease: "Sine.easeOut"
     });
   }
 
