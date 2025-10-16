@@ -1,21 +1,22 @@
 export class Interactuables extends Phaser.Physics.Arcade.Sprite {
-  constructor(scene, x, y, textureKey, size = 32, index = null) {
-    super(scene, x, y, textureKey, index);
+    constructor(scene, x, y, textureKey, size = 32, index = null) {
+        super(scene, x, y, textureKey, index);
 
-    this.scene = scene;
-    this.size = size;
-    this.activeBox = false; // seleccionado/activo
-    this.activeBox2 = false; // seleccionado/activo
-    this.highlighted = false;
-    this.closestToPlayer = false;
-    this.distToPlayer = Infinity;
-    this.distForActivation = 15;
+        this.scene = scene;
+        this.size = size;
+        this.activeBox = false; // seleccionado/activo
+        this.activeBox2 = false; // seleccionado/activo
+        this.highlighted = false;
+        this.closestToPlayer = false;
+        this.distToPlayer = Infinity;
+        this.distForActivation = 15;
 
-    this.fx = this.preFX.addColorMatrix();
+        this.fx = this.preFX.addColorMatrix();
+        this.fx2 = this.preFX.addColorMatrix();
 
-    scene.add.existing(this);
-    scene.physics.add.existing(this);
-  }
+        scene.add.existing(this);
+        scene.physics.add.existing(this);
+    }
 
     // rect del body (AABB)
     _rectOf(body) {
@@ -52,16 +53,20 @@ export class Interactuables extends Phaser.Physics.Arcade.Sprite {
         // highlight visual: solo si alguno de los dos la tiene activa
         if (this.activeBox || this.activeBox2) {
             if (!this.highlighted) {
-            this.fx.brightness(1.1);
-            this.highlighted = true;
+                this.fx.brightness(1.1);
+                this.highlighted = true;
+                if (this.texture.key === "asador") {
+                    this.fx2.saturate(1.5);
+                }
             }
         } else {
             this.fx.brightness(1);
+            this.fx2.saturate(0);
             this.highlighted = false;
         }
     }
 
-    onInteract(){}
+    onInteract() { }
 
-    update(dt) {}
+    update(dt) { }
 }

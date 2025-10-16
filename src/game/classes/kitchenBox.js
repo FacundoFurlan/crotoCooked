@@ -3,7 +3,7 @@ import { CircularTimer } from "./CircularTimer.js";
 import { Ingredientes } from "./Ingredientes.js";
 
 export class KitchenBox extends Interactuables {
-    constructor(scene, x, y, textureKey, size, frame) {
+    constructor(scene, x, y, textureKey, size, frame, tabla) {
 
         super(scene, x, y, textureKey, size, frame);
 
@@ -17,14 +17,20 @@ export class KitchenBox extends Interactuables {
         this.body.setCollideWorldBounds(true);
         this.body.setImmovable(true);
 
+        this.cortar = false;
         this.actionSound = null;
         this.actionFinish = null;
         this.textureOn = this.textureKey;
         if (textureKey === "mesa") {
             this.actionSound = this.scene.picarAudio
             this.actionFinish = this.scene.picarListoAudio;
+            if (tabla === 1) {
+                scene.add.image(x, y, "tablaCortar");
+                this.cortar = true;
+            }
         } else if (textureKey === "freidora") {
             this.actionSound = this.scene.fritarAudio
+            this.actionFinish = this.scene.coccionListoAudio;
             this.textureOn = "freidoraOn"
         }
 
@@ -36,7 +42,7 @@ export class KitchenBox extends Interactuables {
             this.checkIfItemCompatible(player);
         } else if (!player.holdingItem && this.holdingItem === true) { //si el jugador no tiene nada y esto si
             this.checkIfItemCanGo(player);
-        } else if (this.textureKey === "mesa" && player.holdingItem && this.holdingItem) {
+        } else if (this.textureKey === "mesa" && player.holdingItem && this.holdingItem && !this.cortar) {
             console.log("TENEMOS COSAS EN LAS MANOS")
             if (player.itemHolded.dataIngredient.fusion) {
                 console.log(player.itemHolded.dataIngredient.fusion)
@@ -89,19 +95,32 @@ export class KitchenBox extends Interactuables {
     }
 
     checkIfItemCompatible(player) {
-        if (!this.circleTimer.active) {
-            if (this.aparatoAccepts[player.itemHolded.textureKey]) {
-                console.log("%cEntro por aca", "color: green")
-                this.scene.tweens.killTweensOf(player.itemHolded);
-                console.log("se intento poner algo: ", player.itemHolded.dataIngredient)
-                this.itemHolded = player.itemHolded;
-                this.holdingItem = true;
-                player.holdingSM.changeState("none", { player: player })
-                this.itemHolded.setPosition(this.body.center.x, this.body.center.y);
-                this.itemHolded.setVisible(true)
-                this.startCook()
-            }
+        // Protege contra null
+        if (!player.itemHolded) return false;
+
+        // Si el timer está activo, no es compatible
+        if (this.circleTimer.active) return false;
+
+        // Si el aparato acepta el item
+        if (this.aparatoAccepts[player.itemHolded.textureKey]) {
+            console.log("%cEntro por aca", "color: green");
+            this.scene.tweens.killTweensOf(player.itemHolded);
+            console.log("se intento poner algo: ", player.itemHolded.dataIngredient);
+
+            this.itemHolded = player.itemHolded;
+            this.holdingItem = true;
+            player.holdingSM.changeState("none", { player: player });
+            this.itemHolded.setPosition(this.body.center.x, this.body.center.y);
+            this.itemHolded.setVisible(true);
+
+            // si es una mesa y no puede cortar entonces no se cocina
+            if (this.textureKey === "mesa" && !this.cortar) return false;
+            this.startCook();
+
+            return true; // compatible
         }
+
+        return false; // no compatible
     }
 
     checkIfItemCanGo(player) {

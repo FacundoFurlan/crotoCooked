@@ -10,7 +10,7 @@ export class Caceria extends Phaser.Scene {
   init(data) {
   }
 
-  preload(){
+  preload() {
     this.currentCycle = "preload";
     this.caceria = true;
     this.actualLevel = this.registry.get("actualLevel");
@@ -20,14 +20,14 @@ export class Caceria extends Phaser.Scene {
     console.log(`%cModo de juego: ${this.currentMode}`, "color: yellow")
 
     //sprites---
-    this.load.image("background", "BG_Dia.png")
+    this.load.image("backgroundCaceria", "BG_Dia.png");
     this.load.image("lobo", "Lobison pixelart.png")
     this.load.image("heart", "Heart.png");
-    
+
     //sprite sheet ---------
-    this.load.spritesheet("player1", "SS_PJ1.png",{frameWidth: 21, frameHeight: 45})
-    this.load.spritesheet("player2", "SS_PJ2.png",{frameWidth: 21, frameHeight: 45})
-    this.load.spritesheet("bossAttack1", "SS_Atack-1.png",{frameWidth: 197, frameHeight: 110})
+    this.load.spritesheet("player1", "SS_PJ1.png", { frameWidth: 21, frameHeight: 45 })
+    this.load.spritesheet("player2", "SS_PJ2.png", { frameWidth: 21, frameHeight: 45 })
+    this.load.spritesheet("bossAttack1", "SS_Atack-1.png", { frameWidth: 197, frameHeight: 110 })
   }
 
   create() {
@@ -60,20 +60,20 @@ export class Caceria extends Phaser.Scene {
       [INPUT_ACTIONS.WEST]: [Phaser.Input.Keyboard.KeyCodes.J]
     }, "player2");
 
-    this.add.image(320,180, "background");
+    this.add.image(320, 180, "backgroundCaceria");
     this.nightOverlay = this.add.rectangle(0, 0, this.scale.width, this.scale.height, 0x000033, 0.6)
-    .setOrigin(0)
-    .setScrollFactor(0); //Esto crea la idea de que ya es de noche
+      .setOrigin(0)
+      .setScrollFactor(0); //Esto crea la idea de que ya es de noche
 
     this.player = new Player(this, 640, 360, "player1", this.inputSystem);
     this.player2 = new Player(this, 440, 360, "player2", this.inputSystem, 2);
-    this.boss = new Boss(this, width/2, height/2 - 100, "bossAttack1");
+    this.boss = new Boss(this, width / 2, height / 2 - 100, "bossAttack1");
 
     this.physics.add.collider(this.player, this.player2, () => {
       this.playersTouching = true;
     }, null, this);
 
-    this.add.text(width/2, height/2 - 60, "Caceria", {
+    this.add.text(width / 2, height / 2 - 60, "Caceria", {
       fontFamily: "MyFont",
       fontSize: "48px",
       color: "#ff5555",
@@ -101,11 +101,11 @@ export class Caceria extends Phaser.Scene {
       this.heartsP2.push(heart);
     }
   }
-  
+
   damagePlayer(playerIndex) {
     const now = this.time.now;
     const cooldown = 1000; // 1 segundo
-    
+
     if (playerIndex === 1) {
       if (now - this.lastDamageTimeP1 < cooldown) return;
       this.lastDamageTimeP1 = now;
@@ -154,12 +154,12 @@ export class Caceria extends Phaser.Scene {
     }
   }
 
-  update(t, dt){
+  update(t, dt) {
     if (this.player) this.player.update(dt);
     if (this.player2) this.player2.update(dt);
-    if (this.boss){
+    if (this.boss) {
       this.boss.update(dt);
-    } 
+    }
 
     //PLAYER 1 ----------------------------------------------------------------------------
     if (this.inputSystem.isJustPressed(INPUT_ACTIONS.WEST, "player1")) {
