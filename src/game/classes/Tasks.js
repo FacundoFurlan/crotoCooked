@@ -29,6 +29,11 @@ export class Task extends Interactuables {
         this.body.setImmovable(true);
         this.body.setSize(this.body.width + 50, this.body.height)
         this.body.setOffset(this.body.offset.x + 50 / 2, this.body.offset.y)
+        this.timerText = this.scene.add.text(x, y - 32, "ORDEN", {
+            fontFamily: "MyFont",
+            fontSize: "18px",
+            color: "#3b7ffcff"
+        }).setOrigin(.5);
 
         this.scene.Interactuables.forEach(other => {
             if (other !== this) {

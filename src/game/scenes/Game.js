@@ -41,6 +41,8 @@ export class Game extends Scene {
     this.load.image("orden", "SS_Orden.png");
     this.load.image("tabla", "SS_Tablones.png");
     this.load.image("cenizas", "SS_Asador_Cenizas.png");
+    this.load.image("iconoCarbon", "SS_Icono_Carbon.png");
+    this.load.image("tablaCortar", "SS_Tabla.png");
 
     //AUDIO----------------------------------------
     this.load.audio("caminar_pasto", "./audio/PByA_PJ_Caminar_Pasto.mp3");
@@ -354,7 +356,7 @@ export class Game extends Scene {
     }, "player2");
 
     //FONDO Y PJ ---------------------------------------------------------
-    this.add.image(320, 180, "background");
+    this.add.image(320, 180, "background").setScale(1);
     this.add.image(215, 265, "cenizas");
     this.add.sprite(200, 300, "asador", 4);
     this.add.sprite(225, 300, "asador", 5);
@@ -393,22 +395,28 @@ export class Game extends Scene {
     this.physics.add.collider(box1, this.player2)
     this.Interactuables.push(box1);
 
+    // Creacion de mesa
     for (let i = 0; i < 6; i++) {
       let x = 400 + (i % 2) * 25; // X 400, 425, 400, 425
       let y = 150 + (Math.floor(i / 2) * 25); // Y aumenta en 1 cada 2 iteraciones
-      let mesa = new KitchenBox(this, x, y, "mesa", 25, i);
+      let tabla = Math.random() < 0.5 ? 0 : 1;
+      if (i === 0) tabla = 1; // proteccion para que no hayan tablas
+      if (i > 3) tabla = 0; // proteccion para que no sean todos los espacios tablas
+      let mesa = new KitchenBox(this, x, y, "mesa", 25, i, tabla);
       this.physics.add.collider(this.player, mesa);
       this.physics.add.collider(this.player2, mesa);
       this.Interactuables.push(mesa);
     }
 
-    if (!this.actualLevel === 1) {
+    if (this.actualLevel > 1) {
+      console.log('FREIDORA RAAAAAAAAAAAAAAAAAA')
       this.kitchenBox2 = new KitchenBox(this, 300, 250, "freidora", 30)
       this.physics.add.collider(this.player, this.kitchenBox2)
       this.physics.add.collider(this.player2, this.kitchenBox2)
       this.Interactuables.push(this.kitchenBox2);
     }
 
+    //Creacion de asador
     for (let i = 0; i < 4; i++) {
       let x = 200 + (i % 2) * 25; // X 200, 225, 200, 225
       let y = 250 + (Math.floor(i / 2) * 25); // Y aumenta en 1 cada 2 iteraciones
@@ -417,7 +425,7 @@ export class Game extends Scene {
       this.physics.add.collider(this.player2, asador);
       this.Interactuables.push(asador);
     }
-
+    console.log(this.Interactuables)
     this.spawnPedidos();
     this.spawnPedidos();
     this.time.addEvent({
@@ -607,10 +615,7 @@ export class Game extends Scene {
     let y = this.posicionesPedidos.find(
       pos => !this.Interactuables.some(p => p.y === pos && p.availableIngredients)
     );
-    this.pedidoNuevoAudio.play({
-      volume: 0.2, // Ajusta el volumen
-      rate: 1    // Ajusta el pitch
-    });
+
     if (!y) { // no hay lugar libre
       const hud = this.scene.get("HUD");
       hud.addPedidosEnCola(1);
@@ -619,6 +624,10 @@ export class Game extends Scene {
       this.physics.add.collider(this.player, pedido);
       this.physics.add.collider(this.player2, pedido);
       this.Interactuables.push(pedido);
+      this.pedidoNuevoAudio.play({
+        volume: 0.2, // Ajusta el volumen
+        rate: 1    // Ajusta el pitch
+      });
     }
   }
 
