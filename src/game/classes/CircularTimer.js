@@ -1,11 +1,12 @@
 export class CircularTimer {
-    constructor(scene, x, y, radius = 20, duration = 2000, onComplete = null) {
+    constructor(scene, x, y, radius = 20, duration = 2000, onComplete = null, kind = 1) {
         this.scene = scene;
         this.x = x;
         this.y = y;
         this.radius = radius;
         this.duration = duration;
         this.onComplete = onComplete;
+        this.kind = kind;
 
         // Gráfico base
         this.circle = scene.add.graphics();
@@ -19,7 +20,8 @@ export class CircularTimer {
         this.active = false;
     }
 
-    start() {
+    start(duration = null) {
+        duration? this.duration = duration : false;
         this.progress = 0;
         this.active = true;
         this.circle.setVisible(true)
@@ -50,7 +52,7 @@ export class CircularTimer {
         this.circle.lineStyle(4, 0xffffff);
         this.circle.strokeCircle(this.x, this.y, this.radius);
 
-        if (this.active) {
+        if (this.active && this.kind === 1) {
             let angle = (this.progress / this.duration) * Phaser.Math.PI2;
             if ((this.progress * 100) / this.duration < 50) {
                 this.circle.lineStyle(4, 0x00ff00);
@@ -62,6 +64,17 @@ export class CircularTimer {
             this.circle.beginPath();
             this.circle.arc(this.x, this.y, this.radius, -Math.PI / 2, -Math.PI / 2 + angle, false);
             this.circle.strokePath();
+        } else if(this.active && this.kind === 2){
+            let angle = (this.progress / this.duration) * Phaser.Math.PI2;
+            if (this.progress >= (this.duration - 3000)) {
+                this.circle.lineStyle(4, 0xff0000);
+            } else {
+                this.circle.lineStyle(4, 0x00ff00);
+            }
+            this.circle.beginPath();
+            this.circle.arc(this.x, this.y, this.radius, -Math.PI / 2, -Math.PI / 2 + angle, false);
+            this.circle.strokePath();
+
         }
     }
 }
