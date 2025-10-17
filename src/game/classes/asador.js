@@ -27,7 +27,7 @@ export class Asador extends KitchenBox {
         this.actionSound = this.scene.coccionAudio
         this.actionFinish = this.scene.coccionListoAudio
 
-        this.circleTimer = new CircularTimer(scene, x, y, 16, this.cookDuration, () => { this.finishCook() }, 2)
+        this.circleTimer = new CircularTimer(scene, x+13, y+13, 6, this.cookDuration, () => { this.finishCook() }, 2)
     }
 
     onInteract(player) {
