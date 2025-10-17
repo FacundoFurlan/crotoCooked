@@ -132,5 +132,6 @@ export class Task extends Interactuables {
 
         this.circleTimer.circle.destroy();
         this.destroy()
+        this.timerText.destroy();
     }
 }
