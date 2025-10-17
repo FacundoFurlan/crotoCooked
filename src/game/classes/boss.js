@@ -239,7 +239,7 @@ class AttackState extends State {
           const now = this.boss.scene.time.now;
           if(now - this.boss.lastAttackFrameTime >= this.attackDelay){
             this.spawnHitbox(facingRight);
-            this.applyAttackStep(facingRight);
+            this.applyAttackStep();
             this.hitboxFrames.add(frame.index);
           }
         }
@@ -252,7 +252,10 @@ class AttackState extends State {
     });
   }
 
-  applyAttackStep(facingRight) {
+  applyAttackStep() {
+    const dx = this.target.x - this.boss.x;
+    const facingRight = dx >= 0;
+    this.boss.setFlipX(facingRight);
     const impulse = 60; // cuanto se mueve hacia adelante
     console.log("facing right:   ", facingRight)
     const dir = facingRight ? 1 : -1;
