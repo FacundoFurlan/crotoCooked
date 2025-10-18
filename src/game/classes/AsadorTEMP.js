@@ -1,5 +1,5 @@
 import { CircularTimer } from "./CircularTimer";
-import { KitchenBox } from "./KitchenBoxTEMP";
+import { KitchenBox } from "./KitchenBox";
 
 export class Asador extends KitchenBox {
     constructor(scene, x, y, size, frame) {
