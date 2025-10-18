@@ -15,6 +15,10 @@ export class Task extends Interactuables {
         this.ordersLeft = this.ingredientAmount;
         this.itemsHolded = []
 
+        this.zoneLayout = this.scene.add.image(x+84, y, "zonaEntrega")
+        this.zoneLayout.setDepth(7)
+        this.zoneLayout.setBlendMode(Phaser.BlendModes.LIGHTEN)
+
         for (let i = 0; i < this.ingredientAmount; i++) {
             const randomIndexPedidosDisponibles = Math.floor(Math.random() * this.availableIngredients.length)
             const nextIngredient = new Ingredientes(this.scene, x + 5, y + (20 * i) - 15, this.availableIngredients[randomIndexPedidosDisponibles]);
@@ -27,7 +31,7 @@ export class Task extends Interactuables {
 
         this.body.setCollideWorldBounds(true);
         this.body.setImmovable(true);
-        this.body.setSize(this.body.width + 50, this.body.height)
+        this.body.setSize(this.body.width + 37, this.body.height-50)
         this.body.setOffset(this.body.offset.x + 50 / 2, this.body.offset.y)
         this.timerText = this.scene.add.text(x, y - 32, "ORDEN", {
             fontFamily: "MyFont",

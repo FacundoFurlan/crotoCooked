@@ -3,8 +3,10 @@ import { Player } from "../classes/Player.js";
 import { IngredientBox } from "../classes/IngredientBox.js";
 import { KitchenBox } from "../classes/kitchenBox.js";
 import { Task } from "../classes/Tasks.js";
-import { Asador } from "../classes/asador.js";
+import { Asador } from "../classes/Asador.js";
 import InputSystem, { INPUT_ACTIONS } from "../../utils/InputSystem.js";
+import { Recetario } from "../classes/Recetario.js";
+import { LibroRecetario } from "../classes/LibroRecetario.js";
 
 export class Game extends Scene {
   constructor() {
@@ -43,6 +45,8 @@ export class Game extends Scene {
     this.load.image("cenizas", "SS_Asador_Cenizas.png");
     this.load.image("iconoCarbon", "SS_Icono_Carbon.png");
     this.load.image("tablaCortar", "SS_Tabla.png");
+    this.load.image("zonaEntrega", "SS_Layout Zona Entrega(1).png");
+    this.load.image("libroReceta", "SS_LibroReceta.png");
 
     //AUDIO----------------------------------------
     this.load.audio("caminar_pasto", "./audio/PByA_PJ_Caminar_Pasto.mp3");
@@ -69,6 +73,13 @@ export class Game extends Scene {
     this.load.spritesheet("asador", "SS_Asador.png", { frameWidth: 25, frameHeight: 25 })
     this.load.spritesheet("brasas", "SS_Asador_Brasas.png", { frameWidth: 32, frameHeight: 32 })
     this.load.spritesheet("mesa", "SS_Mesa.png", { frameWidth: 25, frameHeight: 25 })
+    this.load.spritesheet("recetario1", "SS_Recetario_lvl1.png", { frameWidth: 206, frameHeight: 102 })
+    this.load.spritesheet("recetario2", "SS_Recetario_lvl2.png", { frameWidth: 206, frameHeight: 102 })
+    this.load.spritesheet("recetario3", "SS_Recetario_lvl3.png", { frameWidth: 206, frameHeight: 102 })
+    this.load.spritesheet("recetario4", "SS_Recetario_lvl4.png", { frameWidth: 206, frameHeight: 102 })
+    this.load.spritesheet("recetario5", "SS_Recetario_lvl5.png", { frameWidth: 206, frameHeight: 102 })
+    this.load.spritesheet("recetario6", "SS_Recetario_lvl6.png", { frameWidth: 206, frameHeight: 102 })
+    this.load.spritesheet("recetario7", "SS_Recetario_lvl7.png", { frameWidth: 206, frameHeight: 102 })
   }
 
   create() {
@@ -376,11 +387,15 @@ export class Game extends Scene {
     this.physics.add.collider(this.player, this.barra);
     this.physics.add.collider(this.player2, this.barra);
 
+    this.recetario = new Recetario(this, 225, 378, this.actualLevel)
     //Cajas---------------------------------------------------------------
     this.Interactuables = []
     this.ingredientesCreadosArray = []
     this.nearestBox = null;
     this.posicionesPedidos = [45, 135, 225, 315]
+
+    this.libroRecetario = new LibroRecetario(this, 100, 80)
+    this.Interactuables.push(this.libroRecetario)
 
     let cont = 0;
     this.ingredientesNecesarios.forEach(element => {
@@ -441,6 +456,7 @@ export class Game extends Scene {
     this.victoryKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.N);
     this.DefeatKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M);
     this.CaceriaKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.B);
+    this.recetarioKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
   }
 
   update(t, dt) {
@@ -520,6 +536,9 @@ export class Game extends Scene {
     }
     if (Phaser.Input.Keyboard.JustDown(this.DefeatKey)) {
       this.onPlayerDeath();
+    }
+    if (Phaser.Input.Keyboard.JustDown(this.recetarioKey)) {
+      this.recetario.onInput()
     }
     if (Phaser.Input.Keyboard.JustDown(this.CaceriaKey)) {
       this.registry.set("actualLevel", this.actualLevel + 1)
@@ -618,7 +637,9 @@ export class Game extends Scene {
 
     if (!y) { // no hay lugar libre
       const hud = this.scene.get("HUD");
-      hud.addPedidosEnCola(1);
+      if(hud && hud.scene.isActive()){
+        hud.addPedidosEnCola(1);
+      }
     } else {
       let pedido = new Task(this, 40, y, this.pedidosDisponibles);
       this.physics.add.collider(this.player, pedido);
