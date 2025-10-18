@@ -1,7 +1,7 @@
 import { Scene } from "phaser";
 import { Player } from "../classes/Player.js";
 import { IngredientBox } from "../classes/IngredientBox.js";
-import { KitchenBox } from "../classes/kitchenBox.js";
+import { KitchenBox } from "../classes/KitchenBox.js";
 import { Task } from "../classes/Tasks.js";
 import { Asador } from "../classes/Asador.js";
 import InputSystem, { INPUT_ACTIONS } from "../../utils/InputSystem.js";
