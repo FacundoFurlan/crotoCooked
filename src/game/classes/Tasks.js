@@ -104,6 +104,8 @@ export class Task extends Interactuables {
                 this.scene.onPlayerDeath("failed to cook")
             }
         }
+
+        this.clearTask();
     }
 
     update(dt) {
@@ -111,17 +113,6 @@ export class Task extends Interactuables {
     }
 
     completeTask(playerId) {
-        this.scene.Interactuables = this.scene.Interactuables.filter(i => i !== this);
-        this.setVisible(false);
-        this.setPosition(300, 300);
-        this.scene.checkTaskQueue();
-        this.circleTimer.circle.setVisible(false);
-
-        this.itemsHolded.forEach(element => {
-            this.scene.Interactuables = this.scene.Interactuables.filter(i => i !== element);
-            element.destroy();
-        });
-
         if (this.scene.currentMode === 1) {
             this.scene.registry.set("coopPoints", this.scene.registry.get("coopPoints") + 20);
             this.scene.scene.get("HUD").updatePoints()
@@ -134,8 +125,23 @@ export class Task extends Interactuables {
             rate: Phaser.Math.FloatBetween(.8, 1.4)   // Ajusta el pitch
         });
 
+        this.clearTask();
+    }
+
+    clearTask(){
+        this.scene.Interactuables = this.scene.Interactuables.filter(i => i !== this);
+        this.setVisible(false);
+        this.setPosition(300, 300);
+        this.scene.checkTaskQueue();
+        this.circleTimer.circle.setVisible(false);
+
+        this.itemsHolded.forEach(element => {
+            this.scene.Interactuables = this.scene.Interactuables.filter(i => i !== element);
+            element.destroy();
+        });
+
         this.circleTimer.circle.destroy();
-        this.destroy()
         this.timerText.destroy();
+        this.destroy()
     }
 }
