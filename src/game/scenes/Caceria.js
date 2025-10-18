@@ -1,5 +1,5 @@
 import InputSystem, { INPUT_ACTIONS } from "../../utils/InputSystem";
-import { Boss } from "../classes/boss";
+import { Boss } from "../classes/Boss";
 import { Player } from "../classes/Player";
 
 export class Caceria extends Phaser.Scene {
