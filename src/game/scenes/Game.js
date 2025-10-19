@@ -322,11 +322,11 @@ export class Game extends Scene {
 
     //FONDO Y PJ ---------------------------------------------------------
     this.add.image(320, 180, "background").setScale(1);
-    this.add.image(215, 265, "cenizas");
-    this.add.sprite(200, 300, "asador", 4);
-    this.add.sprite(225, 300, "asador", 5);
-    this.add.sprite(400, 225, "mesa", 6);
-    this.add.sprite(425, 225, "mesa", 7);
+    this.add.image(565, 265, "cenizas");
+    this.add.sprite(550, 300, "asador", 4);
+    this.add.sprite(575, 300, "asador", 5);
+    this.add.sprite(350, 225, "mesa", 6);
+    this.add.sprite(375, 225, "mesa", 7);
     this.barra = this.physics.add.sprite(100, 180, "tabla");
     this.barra.body.pushable = false;
     this.barra.body.setImmovable(true)
@@ -366,7 +366,7 @@ export class Game extends Scene {
 
     // Creacion de mesa
     for (let i = 0; i < 6; i++) {
-      let x = 400 + (i % 2) * 25; // X 400, 425, 400, 425
+      let x = 350 + (i % 2) * 25; // X 400, 425, 400, 425
       let y = 150 + (Math.floor(i / 2) * 25); // Y aumenta en 1 cada 2 iteraciones
       let tabla = Math.random() < 0.5 ? 0 : 1;
       if (i === 0) tabla = 1; // proteccion para que no hayan tablas
@@ -387,7 +387,7 @@ export class Game extends Scene {
 
     //Creacion de asador
     for (let i = 0; i < 4; i++) {
-      let x = 200 + (i % 2) * 25; // X 200, 225, 200, 225
+      let x = 550 + (i % 2) * 25; // X 200, 225, 200, 225
       let y = 250 + (Math.floor(i / 2) * 25); // Y aumenta en 1 cada 2 iteraciones
       let asador = new Asador(this, x, y, 25, i);
       this.physics.add.collider(this.player, asador);
@@ -591,7 +591,7 @@ export class Game extends Scene {
 
     if (!y) { // no hay lugar libre
       const hud = this.scene.get("HUD");
-      if(hud && hud.scene.isActive()){
+      if (hud && hud.scene.isActive()) {
         hud.addPedidosEnCola(1);
       }
     } else {
