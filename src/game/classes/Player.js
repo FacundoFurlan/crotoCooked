@@ -69,6 +69,23 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       }
     });
 
+    if (!this.scene.anims.exists(`p${kind}_Attack`)) {
+      this.scene.anims.create({
+        key: `p${kind}_Attack`,
+        frames: this.scene.anims.generateFrameNumbers(`player${kind}Attack`, { start: 0, end: 2 }),
+        frameRate: 10,
+        repeat: 0
+      });
+    }
+    if (!this.scene.anims.exists(`p_attack_woosh`)) {
+      this.scene.anims.create({
+        key: `p_attack_woosh`,
+        frames: this.scene.anims.generateFrameNumbers(`playerAttackWoosh`, { start: 0, end: 2 }),
+        frameRate: 10,
+        repeat: 0
+      });
+    }
+
     //ULTIMOS ARREGLOS DE SPRITE -----------------------------------------
 
     this.refreshBody()
@@ -81,47 +98,88 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     if (this.isDashing || this.pushed || !this.caceria) return;
     if (this.lastAttack < this.attackCooldown) return; // todavía en cooldown
     this.lastAttack = 0;
+    this.isAttacking = true;
+
+    this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+      this.isAttacking = false;
+    });
 
     // Determinar dirección del ataque
-    const dir = this.lastDirection ? this.lastDirection.clone().normalize() : new Phaser.Math.Vector2(0, 1);
-
-    // Posición inicial del ataque (un poco delante del jugador)
-    const offset = 20;
-    const attackX = this.x + dir.x * offset;
-    const attackY = this.y + dir.y * offset;
-
-    // Crear un sprite placeholder (un cuadrado rojo)
-    const attackSprite = this.scene.add.rectangle(attackX, attackY, 16, 16, 0xff0000, 0.6);
-    this.scene.physics.add.existing(attackSprite);
-    attackSprite.body.setAllowGravity(false);
-    attackSprite.body.setImmovable(true);
-
-    this.scene.physics.add.overlap(
-      attackSprite,
-      this.scene.boss,
-      (hitbox, boss) => {
-        if (boss.isAlive) {
-          boss.takeDamage(25); // daño de ejemplo
+    let dir = "right";
+    if(this.lastDirection){
+      dir = this.getDirectionFromVector(this.lastDirection);
+      if(dir === "up" ||dir === "down"){
+        if(Math.abs(this.lastDirection.x) > 0){
+          dir = this.lastDirection.x > 0 ? "right" : "left";
+        } else {
+          dir = "right";
         }
       }
-    );
+    }
 
-    // Le damos un pequeño impulso visual (opcional)
-    this.scene.tweens.add({
-      targets: attackSprite,
-      scaleX: 1.5,
-      scaleY: 1.5,
-      alpha: 0,
-      duration: 50,
-      onComplete: () => attackSprite.destroy(),
+    if(dir === "left"){
+      this.setFlipX(true);
+    } else {
+      this.setFlipX(false);
+    }
+
+    const animKey = `p${this.kind}_Attack`;
+    this.anims.play(animKey, true);
+    this.body.setVelocity(0);
+
+    //woosh aca
+    const offset = 20;
+    const dirVec = dir === "left" ? new Phaser.Math.Vector2(-1, 0) : new Phaser.Math.Vector2(1, 0);
+    const attackX = this.x + dirVec.x * offset;
+    const attackY = this.y;
+
+    const woosh = this.scene.add.sprite(attackX, attackY, "playerAttackWoosh");
+    woosh.play("p_attack_woosh");
+    woosh.setDepth(9);
+    if(dir === "left"){
+      woosh.setFlipX(true);
+    } else {
+      woosh.setFlipX(false);
+    }
+
+    this.scene.physics.add.existing(woosh);
+    woosh.body.setAllowGravity(false);
+    woosh.body.setImmovable(true);
+
+    this.scene.physics.add.overlap(woosh, this.scene.boss, (hitbox, boss) => {
+      if (boss.isAlive && !woosh.hasHit){
+        boss.takeDamage(25);
+        woosh.hasHit = true;
+      }
     });
+
+    woosh.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+      woosh.destroy()
+    })
+
+    this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+      this.isAttacking = false;
+      this.setFlipX(false);
+      if (this.lastDirection) {
+        const dir = this.getDirectionFromVector(this.lastDirection);
+        this.setFrame(this.idleFrames[dir]);
+      }
+    });
+
   }
 
 
   update(dt) {
+    if (this.isAttacking) {
+      this.body.setVelocity(0);
+      this.lastAttack += dt;
+      this.lastDash += dt;
+      this.pushedTime += dt;
+      return; // no moverse mientras ataca
+    }
     this.movingSM.update(dt);
     this.holdingSM.update(dt);
-
+    
     this.lastAttack += dt;
     this.lastDash += dt;
     this.pushedTime += dt;
