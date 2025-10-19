@@ -425,7 +425,7 @@ export class Game extends Scene {
 
     if (this.actualLevel > 1) {
       console.log('FREIDORA RAAAAAAAAAAAAAAAAAA')
-      this.kitchenBox2 = new KitchenBox(this, 300, 250, "freidora", 30)
+      this.kitchenBox2 = new KitchenBox(this, 500, 250, "freidora", 30)
       this.physics.add.collider(this.player, this.kitchenBox2)
       this.physics.add.collider(this.player2, this.kitchenBox2)
       this.Interactuables.push(this.kitchenBox2);
