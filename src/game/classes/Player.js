@@ -11,7 +11,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.caceria = this.scene.caceria;
     this.holdingItem = false;
     this.itemHolded = null;
-    this.dashCooldown = 2000;
+    this.dashCooldown = 1000;
     this.isDashing = false;
     this.lastDash = 0;
     this.pushed = false;
@@ -19,7 +19,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.pushedTime = 0;
     this.inputId = this.kind === 1 ? "player1" : "player2";
     this.inputSystem = inputSystem;
-    this.attackCooldown = 500; // 500 ms
+    this.attackCooldown = 250; // 500 ms
     this.lastAttack = 0;
     this.gameScene = this.scene.scene.get("Game");
 
@@ -106,10 +106,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     // Determinar dirección del ataque
     let dir = "right";
-    if(this.lastDirection){
+    if (this.lastDirection) {
       dir = this.getDirectionFromVector(this.lastDirection);
-      if(dir === "up" ||dir === "down"){
-        if(Math.abs(this.lastDirection.x) > 0){
+      if (dir === "up" || dir === "down") {
+        if (Math.abs(this.lastDirection.x) > 0) {
           dir = this.lastDirection.x > 0 ? "right" : "left";
         } else {
           dir = "right";
@@ -117,7 +117,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       }
     }
 
-    if(dir === "left"){
+    if (dir === "left") {
       this.setFlipX(true);
     } else {
       this.setFlipX(false);
@@ -136,7 +136,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     const woosh = this.scene.add.sprite(attackX, attackY, "playerAttackWoosh");
     woosh.play("p_attack_woosh");
     woosh.setDepth(9);
-    if(dir === "left"){
+    if (dir === "left") {
       woosh.setFlipX(true);
     } else {
       woosh.setFlipX(false);
@@ -147,7 +147,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     woosh.body.setImmovable(true);
 
     this.scene.physics.add.overlap(woosh, this.scene.boss, (hitbox, boss) => {
-      if (boss.isAlive && !woosh.hasHit){
+      if (boss.isAlive && !woosh.hasHit) {
         boss.takeDamage(25);
         woosh.hasHit = true;
       }
@@ -179,7 +179,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     }
     this.movingSM.update(dt);
     this.holdingSM.update(dt);
-    
+
     this.lastAttack += dt;
     this.lastDash += dt;
     this.pushedTime += dt;

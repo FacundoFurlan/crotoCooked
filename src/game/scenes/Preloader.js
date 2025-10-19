@@ -1,12 +1,18 @@
 export class Preloader extends Phaser.Scene {
-    constructor(){
+    constructor() {
         super("Preloader")
+        this.assetsReady = false;
+        this.fontReady = false;
     }
 
-    preload(){
+    preload() {
         //PRELOAD
         this.currentCycle = "preload"
         this.load.setPath("assets");
+
+        //para cargar la fuente
+        this.load.script('webfont', 'https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js');
+
 
         //IMAGENES ------------------------------------------
         this.load.image("background", "BG_Dia.png");
@@ -60,29 +66,46 @@ export class Preloader extends Phaser.Scene {
         this.load.spritesheet("recetario5", "SS_Recetario_lvl5.png", { frameWidth: 206, frameHeight: 102 })
         this.load.spritesheet("recetario6", "SS_Recetario_lvl6.png", { frameWidth: 206, frameHeight: 102 })
         this.load.spritesheet("recetario7", "SS_Recetario_lvl7.png", { frameWidth: 206, frameHeight: 102 })
-        
+
         //LOGICA DE CARGA
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;
 
-        const progressBox = this.add.rectangle(width/2, height/2, 320, 50, 0x222222)
-        const progressBar = this.add.rectangle(width/2 - 150, height/2, 0, 30, 0xffffff).setOrigin(0, .5);
-        
-        const loadingText = this.add.text(width/2, height/2 - 50, "Loading...", {
+        const progressBox = this.add.rectangle(width / 2, height / 2, 320, 50, 0x222222)
+        const progressBar = this.add.rectangle(width / 2 - 150, height / 2, 0, 30, 0xffffff).setOrigin(0, .5);
+
+        const loadingText = this.add.text(width / 2, height / 2 - 50, "Loading...", {
             fontSize: "20px",
             color: "#ffffff"
         }).setOrigin(.5)
-    
+
         this.load.on("progress", (value) => {
             progressBar.width = 300 * value;
         });
-    
+
 
         this.load.on("complete", () => {
             progressBox.destroy();
             progressBar.destroy();
             loadingText.destroy();
-            this.scene.start("MainMenu");
+            this.assetsReady = true;
+            this.tryStart();
         })
+    }
+    create() {
+        WebFont.load({
+            custom: {
+                families: ['MyFont'],
+            },
+            active: () => {
+                this.fontReady = true;
+                this.tryStart();
+            }
+        });
+    }
+    tryStart() {
+        if (this.assetsReady && this.fontReady) {
+            this.scene.start("MainMenu");
+        }
     }
 }
