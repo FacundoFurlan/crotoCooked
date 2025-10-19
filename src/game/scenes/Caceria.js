@@ -18,16 +18,6 @@ export class Caceria extends Phaser.Scene {
     this.load.setPath("assets");
     this.currentMode = this.registry.get("mode");
     console.log(`%cModo de juego: ${this.currentMode}`, "color: yellow")
-
-    //sprites---
-    this.load.image("backgroundCaceria", "BG_Dia.png");
-    this.load.image("lobo", "Lobison pixelart.png")
-    this.load.image("heart", "Heart.png");
-
-    //sprite sheet ---------
-    this.load.spritesheet("player1", "SS_PJ1.png", { frameWidth: 21, frameHeight: 45 })
-    this.load.spritesheet("player2", "SS_PJ2.png", { frameWidth: 21, frameHeight: 45 })
-    this.load.spritesheet("bossAttack1", "SS_Atack-1.png", { frameWidth: 197, frameHeight: 110 })
   }
 
   create() {
