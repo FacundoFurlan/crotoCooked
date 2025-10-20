@@ -24,11 +24,13 @@ export class Boss extends Phaser.Physics.Arcade.Sprite {
     this.currentHpWidth = 60; // ancho actual
     this.barWidth = 60;
     this.barHeight = 8;
+    this.gameScene = this.scene.scene.get("Game");
+
 
     //cosas del dash
     this.dashCooldown = 4000;
     this.lastDash = 0;
-    
+
     // Agregar a escena y sistema de físicas
     this.scene.add.existing(this);
     this.scene.physics.add.existing(this);
@@ -47,7 +49,7 @@ export class Boss extends Phaser.Physics.Arcade.Sprite {
     this.behaviorSM.addState("dead", new DeadState());
     this.behaviorSM.changeState("appear", { boss: this });
   }
-  
+
   preUpdate(time, delta) {
     super.preUpdate(time, delta);
     if (this.isDead) return;
@@ -65,7 +67,7 @@ export class Boss extends Phaser.Physics.Arcade.Sprite {
       this.setVelocity(0, 0);
     }
   }
-  
+
   updateHealthBar(dt) {
     const x = this.x - this.barWidth / 2;
     const y = this.y - 50; // 20px arriba del boss
@@ -123,7 +125,7 @@ export class Boss extends Phaser.Physics.Arcade.Sprite {
       this.lastAttack += dt;
       this.lastDash += dt;
       this.highlightedTimer -= dt;
-      if(this.highlightedTimer <= 0 && this.highlighted){
+      if (this.highlightedTimer <= 0 && this.highlighted) {
         this.highlighted = false;
         this.fx.brightness(1);
       }
@@ -135,7 +137,7 @@ export class Boss extends Phaser.Physics.Arcade.Sprite {
   takeDamage(amount) {
     if (!this.isAlive) return;
     const cooldown = 50;
-    
+
     // --- Cooldown de daño ---
     const now = this.scene.time.now;
     if (this.lastHitTime && now - this.lastHitTime < cooldown) {
@@ -160,7 +162,7 @@ export class Boss extends Phaser.Physics.Arcade.Sprite {
     this.highlighted = true;
     this.highlightedTimer = cooldown;
   }
-  
+
 }
 
 class AppearState extends State {
@@ -247,9 +249,13 @@ class AttackState extends State {
         if (triggerFrames.includes(frame.index) && !this.hitboxFrames.has(frame.index)) {
 
           const now = this.boss.scene.time.now;
-          if(now - this.boss.lastAttackFrameTime >= this.attackDelay){
+          if (now - this.boss.lastAttackFrameTime >= this.attackDelay) {
             this.spawnHitbox(facingRight);
             this.applyAttackStep();
+            this.boss.gameScene.dashAudio.play({
+              volume: 0.3, // Ajusta el volumen
+              rate: Phaser.Math.FloatBetween(.8, 1)    // Ajusta el pitch
+            });
             this.hitboxFrames.add(frame.index);
           }
         }
@@ -331,8 +337,16 @@ class HurtState extends State {
     console.log("%cBoss recibe daño", "color: red");
     this.timer = 0;
     this.duration = 300;
+    this.boss.gameScene.golpePjAudio.play({
+      volume: 0.3, // Ajusta el volumen
+      rate: Phaser.Math.FloatBetween(.8, 1)    // Ajusta el pitch
+    });
 
     if (this.boss.hp <= 0) {
+      this.boss.gameScene.muerteBossAudio.play({
+        volume: 0.3, // Ajusta el volumen
+        rate: 1    // Ajusta el pitch
+      });
       this.boss.behaviorSM.changeState("dead", { boss: this.boss });
     }
   }
@@ -409,6 +423,10 @@ class DashState extends State {
           if (now - this.boss.lastDashFrameTime >= this.dashDelay) {
             this.spawnHitbox();
             this.hitboxFrames.add(4);
+            this.boss.gameScene.dashAudio.play({
+              volume: 0.3, // Ajusta el volumen
+              rate: Phaser.Math.FloatBetween(.2, .6)    // Ajusta el pitch
+            });
             this.boss.lastDashFrameTime = now;
           }
         }

@@ -21,6 +21,7 @@ export class Caceria extends Phaser.Scene {
   }
 
   create() {
+    this.gameScene = this.scene.get("Game");
     const { width, height } = this.scale;
     this.scene.bringToTop();
     this.anims.create({
@@ -35,7 +36,7 @@ export class Caceria extends Phaser.Scene {
       frameRate: 4,
       repeat: 0
     });
-    
+
     this.inputSystem = new InputSystem(this.input);
     this.inputSystem.configureKeyboard({
       [INPUT_ACTIONS.UP]: [Phaser.Input.Keyboard.KeyCodes.W],
@@ -61,8 +62,8 @@ export class Caceria extends Phaser.Scene {
     //   .setOrigin(0)
     //   .setScrollFactor(0); //Esto crea la idea de que ya es de noche
 
-    this.player = new Player(this, (width/2)-200, 190, "player1", this.inputSystem);
-    this.player2 = new Player(this, (width/2)+200, 190, "player2", this.inputSystem, 2);
+    this.player = new Player(this, (width / 2) - 200, 190, "player1", this.inputSystem);
+    this.player2 = new Player(this, (width / 2) + 200, 190, "player2", this.inputSystem, 2);
     this.boss = new Boss(this, width / 2, height / 2 - 100, "bossAttack1");
 
     this.physics.add.collider(this.player, this.player2, () => {
@@ -89,6 +90,10 @@ export class Caceria extends Phaser.Scene {
         .setScale(2);
       this.heartsP2.push(heart);
     }
+    this.gameScene.ambienteBossAudio.play({
+      volume: 0.3, // Ajusta el volumen
+      rate: 1    // Ajusta el pitch
+    });
   }
 
   damagePlayer(playerIndex) {
@@ -101,12 +106,20 @@ export class Caceria extends Phaser.Scene {
       this.player1Lives--;
       this._updateHearts(1);
       console.log(`Player 1 recibió daño (${this.player1Lives}/3)`);
+      this.gameScene.golpeBossAudio.play({
+        volume: 0.3, // Ajusta el volumen
+        rate: Phaser.Math.FloatBetween(1.2, .8)    // Ajusta el pitch
+      });
     } else if (playerIndex === 2) {
       if (now - this.lastDamageTimeP2 < cooldown || this.player2.isDashing) return;
       this.lastDamageTimeP2 = now;
       this.player2Lives--;
       this._updateHearts(2);
       console.log(`Player 2 recibió daño (${this.player2Lives}/3)`);
+      this.gameScene.golpeBossAudio.play({
+        volume: 0.3, // Ajusta el volumen
+        rate: Phaser.Math.FloatBetween(1.2, .8)    // Ajusta el pitch
+      });
     }
   }
 
@@ -137,7 +150,7 @@ export class Caceria extends Phaser.Scene {
 
         // Esperar 2 segundos y volver al menú
         this.time.delayedCall(2000, () => {
-          this.scene.start("Defeat", {reason: "Failed to dodge"}); // <-- Cambiá por el nombre real de tu escena de menú
+          this.scene.start("Defeat", { reason: "Failed to dodge" }); // <-- Cambiá por el nombre real de tu escena de menú
         });
       }
     }

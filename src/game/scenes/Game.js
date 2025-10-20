@@ -281,7 +281,7 @@ export class Game extends Scene {
 
     this.randomIndexIngredientesNecesarios = Math.floor(Math.random() * this.ingredientesNecesarios.length)
     //CREAR SONIDOS ---------------------------------------------------
-    this.musicaCumbia1 = this.sound.add("musica_cumbia_1", {loop: true, volume: .2}).play()
+    this.musicaCumbia1 = this.sound.add("musica_cumbia_1", { loop: true, volume: .2 }).play()
     this.coccionAudio = this.sound.add("coccion", { loop: true })
     this.picarAudio = this.sound.add("picar", { loop: true })
     this.picarListoAudio = this.sound.add("picarListo", { loop: false })
@@ -298,6 +298,10 @@ export class Game extends Scene {
     this.tiempoEmpiezaAudio = this.sound.add("tiempoEmpieza", { loop: false })
     this.tiempoCriticoAudio = this.sound.add("tiempoCritico", { loop: false })
     this.tiempoFinAudio = this.sound.add("tiempoFin", { loop: false })
+    this.golpePjAudio = this.sound.add("golpePj", { loop: false })
+    this.muerteBossAudio = this.sound.add("muerteBoss", { loop: false })
+    this.golpeBossAudio = this.sound.add("golpeBoss", { loop: false })
+    this.ambienteBossAudio = this.sound.add("ambienteBoss", { loop: false })
 
 
 
@@ -361,14 +365,14 @@ export class Game extends Scene {
     this.libroRecetario = new LibroRecetario(this, 100, 260)
     this.Interactuables.push(this.libroRecetario)
 
-    this.arrayUbicacionesCajas = [{x: 240, y: 80}, {x: 290, y: 65}, {x: 358, y: 74}, {x: 260, y: 205}, {x: 460, y: 190}, {x: 340, y: 300}, {x: 430, y: 280}, {x: 525, y: 280}, {x: 575, y: 275}]
+    this.arrayUbicacionesCajas = [{ x: 240, y: 80 }, { x: 290, y: 65 }, { x: 358, y: 74 }, { x: 260, y: 205 }, { x: 460, y: 190 }, { x: 340, y: 300 }, { x: 430, y: 280 }, { x: 525, y: 280 }, { x: 575, y: 275 }]
 
     let cont = 0;
     this.ingredientesNecesarios.forEach(element => {
       const index = Math.floor(Math.random() * this.arrayUbicacionesCajas.length);
-  
+
       const element1 = this.arrayUbicacionesCajas[index];
-  
+
       this.arrayUbicacionesCajas.splice(index, 1);
 
       let box1 = new IngredientBox(this, element1.x, element1.y, element, "caja", 10);
