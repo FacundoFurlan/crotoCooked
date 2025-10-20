@@ -73,7 +73,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.scene.anims.create({
         key: `p${kind}_Attack`,
         frames: this.scene.anims.generateFrameNumbers(`player${kind}Attack`, { start: 0, end: 2 }),
-        frameRate: 10,
+        frameRate: null,
+        frameDuration: 83,
         repeat: 0
       });
     }
@@ -81,7 +82,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.scene.anims.create({
         key: `p_attack_woosh`,
         frames: this.scene.anims.generateFrameNumbers(`playerAttackWoosh`, { start: 0, end: 2 }),
-        frameRate: 10,
+        frameRate: null,
+        frameDuration: 83,
         repeat: 0
       });
     }
@@ -95,7 +97,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
   attack() {
     // No ataques si ya estás haciendo dash o empujado
-    if (this.isDashing || this.pushed || !this.caceria) return;
+    if (this.isDashing || this.pushed || !this.caceria || !this.active) return;
     if (this.lastAttack < this.attackCooldown) return; // todavía en cooldown
     this.lastAttack = 0;
     this.isAttacking = true;

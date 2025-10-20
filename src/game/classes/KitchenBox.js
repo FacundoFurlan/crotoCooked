@@ -150,7 +150,7 @@ export class KitchenBox extends Interactuables {
 
     finishCook() {
         this.itemHolded.cook(this.textureKey);
-        this.actionFinish.play()
+        // this.actionFinish.play()
         console.log("NEW COOKED ITEM: ", this.itemHolded.dataIngredient)
         if (this.itemHolded.dataIngredient.next && this.itemHolded.dataIngredient.next[this.textureKey]) {
             console.log("tiene que arrancar reloj")

@@ -15,7 +15,7 @@ export class Preloader extends Phaser.Scene {
 
 
         //IMAGENES ------------------------------------------
-        this.load.image("background", "BG_Dia.png");
+        this.load.image("background", "BG_Dia_01(1).png");
         this.load.image("freidora", "SS_Freidora_0.png");
         this.load.image("freidoraOn", "SS_Freidora_1.png");
         this.load.image("caja", "SS_Caja.png");
@@ -26,9 +26,11 @@ export class Preloader extends Phaser.Scene {
         this.load.image("tablaCortar", "SS_Tabla.png");
         this.load.image("zonaEntrega", "SS_Layout Zona Entrega(1).png");
         this.load.image("libroReceta", "SS_LibroReceta.png");
-        this.load.image("backgroundCaceria", "BG_Dia.png");
+        this.load.image("backgroundCaceria", "BG_Noche_01.png");
         this.load.image("lobo", "Lobison pixelart.png")
         this.load.image("heart", "Heart.png");
+        this.load.image("campana", "SS_Campanilla.png");
+        this.load.image("menuBG", "Menu Principal.png");
 
         //AUDIO----------------------------------------
         this.load.audio("caminar_pasto", "./audio/PByA_PJ_Caminar_Pasto.mp3");
@@ -47,6 +49,7 @@ export class Preloader extends Phaser.Scene {
         this.load.audio("tiempoEmpieza", "./audio/PByA_Hud_Tiempo_Empieza.mp3");
         this.load.audio("tiempoCritico", "./audio/PByA_Hud_Tiempo_Critico.mp3");
         this.load.audio("tiempoFin", "./audio/PByA_Hud_Tiempo_Fin.mp3");
+        this.load.audio("musica_cumbia_1", "./audio/music/cumbiesita_1.mp3");
 
         //SPRITESHEETS--------------------------------
         this.load.spritesheet("bossAttack1", "SS_Atack-1.png", { frameWidth: 197, frameHeight: 110 })
@@ -75,6 +78,7 @@ export class Preloader extends Phaser.Scene {
         const progressBar = this.add.rectangle(width / 2 - 150, height / 2, 0, 30, 0xffffff).setOrigin(0, .5);
 
         const loadingText = this.add.text(width / 2, height / 2 - 50, "Loading...", {
+            fontFamily: "MyFont",
             fontSize: "20px",
             color: "#ffffff"
         }).setOrigin(.5)

@@ -6,10 +6,11 @@ export class Boss extends Phaser.Physics.Arcade.Sprite {
   constructor(scene, x, y, key) {
     super(scene, x, y, key, 0);
     this.scene = scene;
-    this.hp = 300;
+    this.actualLevel = this.scene.registry.get("actualLevel");
+    this.hp = 500 * this.actualLevel;
     this.key = key
     this.speed = 210;
-    this.maxHp = 300;
+    this.maxHp = 500 * this.actualLevel;
     this.attackCooldown = 2000;
     this.isAttacking = false;
     this.lastAttack = 0;

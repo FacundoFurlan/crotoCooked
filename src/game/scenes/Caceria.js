@@ -51,24 +51,17 @@ export class Caceria extends Phaser.Scene {
     }, "player2");
 
     this.add.image(320, 180, "backgroundCaceria");
-    this.nightOverlay = this.add.rectangle(0, 0, this.scale.width, this.scale.height, 0x000033, 0.6)
-      .setOrigin(0)
-      .setScrollFactor(0); //Esto crea la idea de que ya es de noche
+    // this.nightOverlay = this.add.rectangle(0, 0, this.scale.width, this.scale.height, 0x000033, 0.6)
+    //   .setOrigin(0)
+    //   .setScrollFactor(0); //Esto crea la idea de que ya es de noche
 
-    this.player = new Player(this, 640, 360, "player1", this.inputSystem);
-    this.player2 = new Player(this, 440, 360, "player2", this.inputSystem, 2);
+    this.player = new Player(this, (width/2)-200, 190, "player1", this.inputSystem);
+    this.player2 = new Player(this, (width/2)+200, 190, "player2", this.inputSystem, 2);
     this.boss = new Boss(this, width / 2, height / 2 - 100, "bossAttack1");
 
     this.physics.add.collider(this.player, this.player2, () => {
       this.playersTouching = true;
     }, null, this);
-
-    this.add.text(width / 2, height / 2 - 60, "Caceria", {
-      fontFamily: "MyFont",
-      fontSize: "48px",
-      color: "#ff5555",
-      align: "center"
-    }).setOrigin(0.5);
 
     //VIDAS
     this.player1Lives = 3;
@@ -97,13 +90,13 @@ export class Caceria extends Phaser.Scene {
     const cooldown = 1000; // 1 segundo
 
     if (playerIndex === 1) {
-      if (now - this.lastDamageTimeP1 < cooldown) return;
+      if (now - this.lastDamageTimeP1 < cooldown || this.player.isDashing) return;
       this.lastDamageTimeP1 = now;
       this.player1Lives--;
       this._updateHearts(1);
       console.log(`Player 1 recibió daño (${this.player1Lives}/3)`);
     } else if (playerIndex === 2) {
-      if (now - this.lastDamageTimeP2 < cooldown) return;
+      if (now - this.lastDamageTimeP2 < cooldown || this.player2.isDashing) return;
       this.lastDamageTimeP2 = now;
       this.player2Lives--;
       this._updateHearts(2);
@@ -138,7 +131,7 @@ export class Caceria extends Phaser.Scene {
 
         // Esperar 2 segundos y volver al menú
         this.time.delayedCall(2000, () => {
-          this.scene.start("MainMenu"); // <-- Cambiá por el nombre real de tu escena de menú
+          this.scene.start("Defeat", {reason: "Failed to dodge"}); // <-- Cambiá por el nombre real de tu escena de menú
         });
       }
     }

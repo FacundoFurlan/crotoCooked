@@ -27,7 +27,7 @@ export class Task extends Interactuables {
             nextIngredient.setVisible(true)
         }
 
-        this.taskDuration = 60000 * this.ingredientAmount;
+        this.taskDuration = 30000 * this.ingredientAmount;
 
         this.body.setCollideWorldBounds(true);
         this.body.setImmovable(true);
@@ -87,7 +87,7 @@ export class Task extends Interactuables {
         if (this.scene.currentMode === 1) {
             let points = this.scene.registry.get("coopPoints");
             points -= 10;
-            this.scene.registry.set("coopPoints", points);
+            this.scene.registry.set("coopPoints", points < 0 ? 0: points);
             this.scene.scene.get("HUD").updatePoints();
             if (points < 0) {
                 this.scene.onPlayerDeath("failed to cook")
@@ -97,8 +97,8 @@ export class Task extends Interactuables {
             let points2 = this.scene.registry.get("vsPoints2");
             points1 -= 10;
             points2 -= 10;
-            this.scene.registry.set("vsPoints1", points1);
-            this.scene.registry.set("vsPoints2", points2);
+            this.scene.registry.set("vsPoints1", points1 < 0 ? 0 : points1);
+            this.scene.registry.set("vsPoints2", points1 < 0 ? 0 : points1);
             this.scene.scene.get("HUD").updatePoints();
             if (points1 < 0 || points2 < 0) {
                 this.scene.onPlayerDeath("failed to cook")

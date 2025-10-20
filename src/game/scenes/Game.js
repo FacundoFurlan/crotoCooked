@@ -7,6 +7,7 @@ import { Asador } from "../classes/Asador.js";
 import InputSystem, { INPUT_ACTIONS } from "../../utils/InputSystem.js";
 import { Recetario } from "../classes/Recetario.js";
 import { LibroRecetario } from "../classes/LibroRecetario.js";
+import { Freidora } from "../classes/Freidora.js";
 
 export class Game extends Scene {
   constructor() {
@@ -280,6 +281,7 @@ export class Game extends Scene {
 
     this.randomIndexIngredientesNecesarios = Math.floor(Math.random() * this.ingredientesNecesarios.length)
     //CREAR SONIDOS ---------------------------------------------------
+    this.musicaCumbia1 = this.sound.add("musica_cumbia_1", {loop: true, volume: .2}).play()
     this.coccionAudio = this.sound.add("coccion", { loop: true })
     this.picarAudio = this.sound.add("picar", { loop: true })
     this.picarListoAudio = this.sound.add("picarListo", { loop: false })
@@ -321,18 +323,26 @@ export class Game extends Scene {
     }, "player2");
 
     //FONDO Y PJ ---------------------------------------------------------
-    this.add.image(320, 180, "background").setScale(1);
-    this.add.image(565, 265, "cenizas");
-    this.add.sprite(550, 300, "asador", 4);
-    this.add.sprite(575, 300, "asador", 5);
+    this.add.image(320, 180, "background");
+    this.add.image(565, 195, "cenizas");
+    const campana1 = this.add.image(100, 65, "campana");
+    campana1.setDepth(99)
+    const campana2 = this.add.image(100, 155, "campana");
+    campana2.setDepth(99)
+    const campana3 = this.add.image(100, 245, "campana");
+    campana3.setDepth(99)
+    const campana4 = this.add.image(100, 335, "campana");
+    campana4.setDepth(99)
+    this.add.sprite(550, 180, "asador", 4);
+    this.add.sprite(575, 180, "asador", 5);
     this.add.sprite(350, 225, "mesa", 6);
     this.add.sprite(375, 225, "mesa", 7);
     this.barra = this.physics.add.sprite(100, 180, "tabla");
     this.barra.body.pushable = false;
     this.barra.body.setImmovable(true)
     this.barra.body.setSize(this.barra.body.width - 10, this.barra.body.height)
-    this.player = new Player(this, 640, 360, "player1", this.inputSystem);
-    this.player2 = new Player(this, 440, 360, "player2", this.inputSystem, 2);
+    this.player = new Player(this, 420, 150, "player1", this.inputSystem);
+    this.player2 = new Player(this, 300, 150, "player2", this.inputSystem, 2);
 
     this.physics.add.collider(this.player, this.player2, () => {
       this.playersTouching = true;
@@ -348,18 +358,28 @@ export class Game extends Scene {
     this.nearestBox = null;
     this.posicionesPedidos = [45, 135, 225, 315]
 
-    this.libroRecetario = new LibroRecetario(this, 100, 80)
+    this.libroRecetario = new LibroRecetario(this, 100, 260)
     this.Interactuables.push(this.libroRecetario)
+
+    this.arrayUbicacionesCajas = [{x: 240, y: 80}, {x: 290, y: 65}, {x: 358, y: 74}, {x: 260, y: 205}, {x: 460, y: 190}, {x: 340, y: 300}, {x: 430, y: 280}, {x: 525, y: 280}, {x: 575, y: 275}]
 
     let cont = 0;
     this.ingredientesNecesarios.forEach(element => {
-      let box1 = new IngredientBox(this, 180 + (50 * cont), 80, element, "caja", 10);
+      const index = Math.floor(Math.random() * this.arrayUbicacionesCajas.length);
+  
+      const element1 = this.arrayUbicacionesCajas[index];
+  
+      this.arrayUbicacionesCajas.splice(index, 1);
+
+      let box1 = new IngredientBox(this, element1.x, element1.y, element, "caja", 10);
+
       this.physics.add.collider(box1, this.player)
       this.physics.add.collider(box1, this.player2)
       this.Interactuables.push(box1);
       cont++;
     });
-    let box1 = new IngredientBox(this, 180 + (50 * cont), 80, "carbon_0", "caja", 10);
+
+    let box1 = new IngredientBox(this, 600, 80, "carbon_0", "caja", 10);
     this.physics.add.collider(box1, this.player)
     this.physics.add.collider(box1, this.player2)
     this.Interactuables.push(box1);
@@ -379,7 +399,7 @@ export class Game extends Scene {
 
     if (this.actualLevel > 1) {
       console.log('FREIDORA RAAAAAAAAAAAAAAAAAA')
-      this.kitchenBox2 = new KitchenBox(this, 500, 250, "freidora", 30)
+      this.kitchenBox2 = new Freidora(this, 460, 80, 30, null)
       this.physics.add.collider(this.player, this.kitchenBox2)
       this.physics.add.collider(this.player2, this.kitchenBox2)
       this.Interactuables.push(this.kitchenBox2);
@@ -388,7 +408,7 @@ export class Game extends Scene {
     //Creacion de asador
     for (let i = 0; i < 4; i++) {
       let x = 550 + (i % 2) * 25; // X 200, 225, 200, 225
-      let y = 250 + (Math.floor(i / 2) * 25); // Y aumenta en 1 cada 2 iteraciones
+      let y = 180 + (Math.floor(i / 2) * 25); // Y aumenta en 1 cada 2 iteraciones
       let asador = new Asador(this, x, y, 25, i);
       this.physics.add.collider(this.player, asador);
       this.physics.add.collider(this.player2, asador);
@@ -561,7 +581,6 @@ export class Game extends Scene {
 
   finishLevel() {
     this.sound.stopAll();
-    const score = this.playerScore ?? 0;
     this.registry.set("actualLevel", this.actualLevel + 1)
     // Detenemos el HUD y lanzamos la escena de victoria
     this.scene.stop("HUD");
@@ -575,11 +594,10 @@ export class Game extends Scene {
   onPlayerDeath(reason) {
     this.registry.set("actualLevel", 1)
     this.sound.stopAll();
-    const score = this.playerScore ?? 0;
     this.scene.stop("HUD");
     this.cameras.main.fadeOut(400);
     this.cameras.main.once("camerafadeoutcomplete", () => {
-      this.scene.start("Defeat", { reason, score });
+      this.scene.start("Defeat", { reason });
     });
   }
 

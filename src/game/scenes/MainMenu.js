@@ -51,20 +51,28 @@ export class MainMenu extends Phaser.Scene {
 
         const { width, height } = this.scale;
 
-        this.registry.set("actualLevel", 1);
+        this.registry.set("actualLevel", 2);
 
-        this.titleText = this.add.text(width / 2, height / 4, "POLLOS BIFES Y ACHICORIA: definitive edition", { fontSize: "32px", color: "#fff", fontFamily: "MyFont" }).setOrigin(0.5);
-        this.coopText = this.add.text(width / 2, height / 2, "Coop", { fontSize: "32px", color: "#fff", fontFamily: "MyFont" }).setOrigin(0.5);
-        this.versusText = this.add.text(width / 2, height / 1.5, "Versus", { fontSize: "32px", color: "#fff", fontFamily: "MyFont" }).setOrigin(0.5);
+        this.add.image(320, 180, "menuBG")
+        this.titleText1 = this.add.text(width / 2 -186, height / 4, "POLLOS BIFES", { fontSize: "30px", color: "#fff", fontFamily: "MyFont" }).setOrigin(0.5);
+        this.titleText1.angle = -5
+        this.titleText1 = this.add.text(width / 2 -182, height / 4 +20, "Y ACHICORIA", { fontSize: "30px", color: "#fff", fontFamily: "MyFont" }).setOrigin(0.5);
+        this.titleText1.angle = -5
+        this.coopText = this.add.text(width / 2 -170, height / 2.3, "Coop", { fontSize: "30px", color: "#fff", fontFamily: "MyFont" }).setOrigin(0.5);
+        this.versusText = this.add.text(width / 2 -160, height / 1.8, "Versus", { fontSize: "30px", color: "#fff", fontFamily: "MyFont" }).setOrigin(0.5);
 
         this.languageText = this.add.text(
-            width / 2,
-            height / 1.2,
+            width / 2 -150,
+            height / 1.5,
             getPhrase(this.language2),
             {
-                fontSize: "32px", color: "#fff", fontFamily: "MyFont"
+                fontSize: "30px", color: "#fff", fontFamily: "MyFont"
             }
-        ).setOrigin(0.5, 0.5);
+        ).setOrigin(0.5);
+
+        this.coopText.angle = -5;
+        this.versusText.angle = -5;
+        this.languageText.angle = -5;
 
         this.#updatedTextInScene = this.languageText; // o cualquier texto que quieras
 

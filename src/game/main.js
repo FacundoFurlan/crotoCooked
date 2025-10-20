@@ -14,7 +14,7 @@ const config = {
     width: 640, //640
     height: 360,    //360
     parent: 'game-container',
-    backgroundColor: '#028af8',
+    backgroundColor: '#448844',
     input: {
         gamepad: true
     },
