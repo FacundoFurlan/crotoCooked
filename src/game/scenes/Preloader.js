@@ -53,6 +53,7 @@ export class Preloader extends Phaser.Scene {
 
         //SPRITESHEETS--------------------------------
         this.load.spritesheet("bossAttack1", "SS_Atack-1.png", { frameWidth: 197, frameHeight: 110 })
+        this.load.spritesheet("bossAttack2", "SS_Atack-2.png", { frameWidth: 197, frameHeight: 110 })
         this.load.spritesheet("player1", "SS_PJ1(1).png", { frameWidth: 30, frameHeight: 47 })
         this.load.spritesheet("player2", "SS_PJ2(1).png", { frameWidth: 30, frameHeight: 47 })
         this.load.spritesheet("player1Attack", "SS_PJ1_Golpe.png", { frameWidth: 41, frameHeight: 47 })

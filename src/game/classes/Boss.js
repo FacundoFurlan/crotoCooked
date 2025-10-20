@@ -9,7 +9,7 @@ export class Boss extends Phaser.Physics.Arcade.Sprite {
     this.actualLevel = this.scene.registry.get("actualLevel");
     this.hp = 500 * this.actualLevel;
     this.key = key
-    this.speed = 210;
+    this.speed = 200;
     this.maxHp = 500 * this.actualLevel;
     this.attackCooldown = 2000;
     this.isAttacking = false;
@@ -24,6 +24,10 @@ export class Boss extends Phaser.Physics.Arcade.Sprite {
     this.currentHpWidth = 60; // ancho actual
     this.barWidth = 60;
     this.barHeight = 8;
+
+    //cosas del dash
+    this.dashCooldown = 4000;
+    this.lastDash = 0;
     
     // Agregar a escena y sistema de físicas
     this.scene.add.existing(this);
@@ -37,6 +41,7 @@ export class Boss extends Phaser.Physics.Arcade.Sprite {
     this.behaviorSM = new StateMachine("appear");
     this.behaviorSM.addState("appear", new AppearState());
     this.behaviorSM.addState("idle", new BossIdleState());
+    this.behaviorSM.addState("dash", new DashState());
     this.behaviorSM.addState("attack", new AttackState());
     this.behaviorSM.addState("hurt", new HurtState());
     this.behaviorSM.addState("dead", new DeadState());
@@ -116,6 +121,7 @@ export class Boss extends Phaser.Physics.Arcade.Sprite {
     if (this.isAlive) {
       this.behaviorSM.update(dt);
       this.lastAttack += dt;
+      this.lastDash += dt;
       this.highlightedTimer -= dt;
       if(this.highlightedTimer <= 0 && this.highlighted){
         this.highlighted = false;
@@ -188,8 +194,11 @@ class BossIdleState extends State {
     const target = this.boss.getClosestPlayer();
     if (target) {
       const dist = Phaser.Math.Distance.Between(this.boss.x, this.boss.y, target.x, target.y);
-      if (dist < 120 && this.boss.lastAttack >= this.boss.attackCooldown) {
+      if (dist < 120 && this.boss.lastAttack >= this.boss.attackCooldown && !this.boss.isDashing) {
         this.boss.behaviorSM.changeState("attack", { boss: this.boss });
+      }
+      if (dist < 300 && this.boss.lastDash >= this.boss.dashCooldown && !this.boss.isAttacking) {
+        this.boss.behaviorSM.changeState("dash", { boss: this.boss });
       }
     }
   }
@@ -359,5 +368,121 @@ class DeadState extends State {
         });
       }
     });
+  }
+}
+
+class DashState extends State {
+  init(params) {
+    this.boss = params.boss;
+    this.boss.isDashing = true;
+    this.boss.isAttacking = false;
+    this.boss.setVelocity(0, 0);
+    this.boss.lastDash = 0;
+
+    // Buscar objetivo
+    this.target = this.boss.getClosestPlayer();
+    if (!this.target) {
+      this.finishDash();
+      return;
+    }
+
+    // Reproducir animación del dash
+    this.boss.play("boss_dash", true);
+
+    this.hitboxFrames = new Set();
+    this.boss.lastDashFrameTime = 0;
+    this.dashImpulse = 350; // fuerza del dash
+    this.dashDelay = 100;   // tiempo entre posibles hitboxes (por seguridad)
+
+    this.boss.on("animationupdate", (anim, frame) => {
+      if (anim.key === "boss_dash") {
+        const frameIndex = frame.index;
+
+        // Frames 1-2: quieto
+        if (frameIndex === 3) {
+          this.applyDashImpulse();
+        }
+
+        // Frame 4: aplica daño (hitbox)
+        if (frameIndex === 4 && !this.hitboxFrames.has(4)) {
+          const now = this.boss.scene.time.now;
+          if (now - this.boss.lastDashFrameTime >= this.dashDelay) {
+            this.spawnHitbox();
+            this.hitboxFrames.add(4);
+            this.boss.lastDashFrameTime = now;
+          }
+        }
+      }
+    });
+
+    // Cuando termina la animación, volver a idle
+    this.boss.once("animationcomplete-boss_dash", () => {
+      this.finishDash();
+    });
+  }
+
+  applyDashImpulse() {
+    // Movimiento rápido hacia el jugador
+    const target = this.target;
+    if (!target) return;
+
+    const dx = target.x - this.boss.x;
+    const dy = target.y - this.boss.y;
+    const angle = Math.atan2(dy, dx);
+    const impulse = this.dashImpulse;
+
+    this.boss.scene.tweens.add({
+      targets: this.boss,
+      x: this.boss.x + Math.cos(angle) * impulse,
+      y: this.boss.y + Math.sin(angle) * impulse,
+      duration: 200,
+      ease: "Sine.easeOut"
+    });
+  }
+
+  spawnHitbox() {
+    const hitboxSize = { w: 180, h: 100 };
+
+    this.hitbox = this.boss.scene.add.rectangle(
+      this.boss.x,
+      this.boss.y,
+      hitboxSize.w,
+      hitboxSize.h,
+      0x00ffff,
+      0.25
+    );
+
+    this.boss.scene.physics.add.existing(this.hitbox);
+    this.hitbox.body.setAllowGravity(false);
+    this.hitbox.body.setImmovable(true);
+
+    const players = [];
+    if (this.boss.scene.player) players.push(this.boss.scene.player);
+    if (this.boss.scene.player2) players.push(this.boss.scene.player2);
+
+    players.forEach(player => {
+      this.boss.scene.physics.add.overlap(this.hitbox, player, () => {
+        this.boss.scene.damagePlayer(player.kind);
+      });
+    });
+
+    this.boss.scene.time.delayedCall(200, () => {
+      if (this.hitbox) this.hitbox.destroy();
+    });
+  }
+
+  finishDash() {
+    this.boss.isDashing = false;
+    this.boss.setVelocity(0, 0);
+    if (this.hitbox) this.hitbox.destroy();
+    this.boss.clearTint();
+    this.boss.setFrame(0);
+    this.boss.behaviorSM.changeState("idle", { boss: this.boss });
+  }
+
+  finish() {
+    if (this.hitbox) this.hitbox.destroy();
+    this.boss.off("animationupdate-boss_dash");
+    this.boss.off("animationcomplete-boss_dash");
   }
 }

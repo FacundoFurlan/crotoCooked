@@ -29,7 +29,13 @@ export class Caceria extends Phaser.Scene {
       frameRate: 8,
       repeat: 0
     });
-
+    this.anims.create({
+      key: "boss_dash",
+      frames: this.anims.generateFrameNumbers("bossAttack2", { start: 0, end: 7 }),
+      frameRate: 4,
+      repeat: 0
+    });
+    
     this.inputSystem = new InputSystem(this.input);
     this.inputSystem.configureKeyboard({
       [INPUT_ACTIONS.UP]: [Phaser.Input.Keyboard.KeyCodes.W],
