@@ -127,6 +127,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     const animKey = `p${this.kind}_Attack`;
     this.anims.play(animKey, true);
+    this.gameScene.dashAudio.play({
+      volume: 0.3, // Ajusta el volumen
+      rate: Phaser.Math.FloatBetween(1.2, 1.6)    // Ajusta el pitch
+    });
     this.body.setVelocity(0);
 
     //woosh aca

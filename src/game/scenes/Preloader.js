@@ -49,6 +49,10 @@ export class Preloader extends Phaser.Scene {
         this.load.audio("tiempoEmpieza", "./audio/PByA_Hud_Tiempo_Empieza.mp3");
         this.load.audio("tiempoCritico", "./audio/PByA_Hud_Tiempo_Critico.mp3");
         this.load.audio("tiempoFin", "./audio/PByA_Hud_Tiempo_Fin.mp3");
+        this.load.audio("golpePj", "./audio/PByA_PJ_Ataque_Golpe.mp3");
+        this.load.audio("golpeBoss", "./audio/PByA_Boss_Lobizon_Ataque_Golpe.mp3");
+        this.load.audio("muerteBoss", "./audio/PByA_Boss_Lobizon_Muerte.mp3");
+        this.load.audio("ambienteBoss", "./audio/PByA_Boss_Lobizon_Ambiente.mp3");
         this.load.audio("musica_cumbia_1", "./audio/music/cumbiesita_1.mp3");
 
         //SPRITESHEETS--------------------------------
