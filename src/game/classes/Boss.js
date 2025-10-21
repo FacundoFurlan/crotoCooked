@@ -134,7 +134,7 @@ export class Boss extends Phaser.Physics.Arcade.Sprite {
     }
   }
 
-  takeDamage(amount) {
+  takeDamage(amount, kind) {
     if (!this.isAlive) return;
     const cooldown = 50;
 
@@ -144,6 +144,7 @@ export class Boss extends Phaser.Physics.Arcade.Sprite {
       return; // Ignora si fue golpeado hace menos de cooldown ms
     }
     this.lastHitTime = now;
+    this.lastHittedBy = kind
 
     // --- Aplicar daño ---
     this.hp -= amount;
@@ -374,7 +375,14 @@ class DeadState extends State {
       duration: 1000,
       onComplete: () => {
         this.boss.healthBar.destroy();
-        this.boss.destroy();
+        this.boss.destroy();ç
+        if(scene.registry.get("mode") === 1){
+          const actualPoints = scene.registry.get("coopPoints");
+          scene.registry.set("coopPoints", actualPoints + 150);
+        } else if (scene.registry.get("mode") === 2){
+          const actualPoints = scene.registry.get(`vsPoints${this.boss.lastHittedBy}`)
+          scene.registry.set(`vsPoints${this.boss.lastHittedBy}`, actualPoints + 150);
+        }
 
         scene.time.delayedCall(1000, () => {
           scene.sound.stopAll();

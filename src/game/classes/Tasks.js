@@ -100,8 +100,12 @@ export class Task extends Interactuables {
             this.scene.registry.set("vsPoints1", points1 < 0 ? 0 : points1);
             this.scene.registry.set("vsPoints2", points1 < 0 ? 0 : points1);
             this.scene.scene.get("HUD").updatePoints();
+            if(points1 < 0 && points2 < 0){
+                this.scene.onPlayerDeath("A los dos les falto calle", 2)
+            }
+
             if (points1 < 0 || points2 < 0) {
-                this.scene.onPlayerDeath("failed to cook")
+                this.scene.onPlayerDeath(`Al jugador ${points1 < 0 ? 1 : 2} le falta calle`, 2)
             }
         }
 
