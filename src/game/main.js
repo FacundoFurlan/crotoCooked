@@ -6,6 +6,7 @@ import { Victory } from './scenes/Victory';
 import { Defeat } from './scenes/Defeat';
 import { Caceria } from './scenes/Caceria';
 import { Preloader } from './scenes/Preloader';
+import { Load } from './scenes/Load';
 
 // Find out more information about the Game Config at:
 // https://docs.phaser.io/api-documentation/typedef/types-core#gameconfig
@@ -42,7 +43,8 @@ const config = {
         HUD,
         Victory,
         Defeat,
-        Caceria
+        Caceria,
+        Load
     ]
 };
 
