@@ -54,6 +54,13 @@ export class MainMenu extends Phaser.Scene {
         this.registry.set("actualLevel", 1);
 
         this.add.image(320, 180, "menuBG")
+        this.westText = this.add.text(width / 2 + 210, height / 2 + 40, "juntar", { fontSize: "24px", color: "#303decff", fontFamily: "MyFont" }).setOrigin(0.5);
+        this.westText.angle = 15
+        this.southText = this.add.text(width / 2 + 260, height / 2 + 70, "dash", { fontSize: "24px", color: "#303decff", fontFamily: "MyFont" }).setOrigin(0.5);
+        this.southText.angle = -10
+        this.eastText = this.add.text(width / 2 + 280, height / 2 - 0, "lanzar", { fontSize: "24px", color: "#303decff", fontFamily: "MyFont" }).setOrigin(0.5);
+        this.eastText.angle = 10
+
         this.titleText1 = this.add.text(width / 2 - 186, height / 4, "POLLO, BIFES", { fontSize: "30px", color: "#fff", fontFamily: "MyFont" }).setOrigin(0.5);
         this.titleText1.angle = -5
         this.titleText1 = this.add.text(width / 2 - 182, height / 4 + 20, "Y ACHICORIA", { fontSize: "30px", color: "#fff", fontFamily: "MyFont" }).setOrigin(0.5);

@@ -31,6 +31,7 @@ export class Preloader extends Phaser.Scene {
         this.load.image("heart", "Heart.png");
         this.load.image("campana", "SS_Campanilla.png");
         this.load.image("menuBG", "Menu Principal(1).png");
+        this.load.image("hoja", "hoja.png");
 
         //AUDIO----------------------------------------
         this.load.audio("caminar_pasto", "./audio/PByA_PJ_Caminar_Pasto.mp3");

@@ -538,7 +538,7 @@ export class Game extends Scene {
       this.scene.stop("HUD");
       this.cameras.main.fadeOut(400);
       this.cameras.main.once("camerafadeoutcomplete", () => {
-        this.scene.start("Caceria");
+        this.scene.start("Load", { nextScene: "Caceria" });
       });
     }
 
@@ -605,13 +605,13 @@ export class Game extends Scene {
     // Opcional: animación de cámara antes de cambiar (fade)
     this.cameras.main.fadeOut(500, 0, 0, 0);
     this.cameras.main.once("camerafadeoutcomplete", () => {
-      this.scene.start("Caceria");
+      this.scene.start("Load", { nextScene: "Caceria" });
     });
   }
 
   onPlayerDeath(reason, mode = 1) {
 
-    if(mode === 1){
+    if (mode === 1) {
       this.registry.set("actualLevel", 1)
       this.sound.stopAll();
       this.scene.stop("HUD");
@@ -619,7 +619,7 @@ export class Game extends Scene {
       this.cameras.main.once("camerafadeoutcomplete", () => {
         this.scene.start("Defeat", { reason });
       });
-    } else if(mode === 2){
+    } else if (mode === 2) {
       this.registry.set("actualLevel", 1)
       this.sound.stopAll();
       this.scene.stop("HUD");
