@@ -37,7 +37,7 @@ export class Caceria extends Phaser.Scene {
     this.anims.create({
       key: "boss_attack_1",
       frames: this.anims.generateFrameNumbers("bossAttack1", { start: 0, end: 7 }),
-      frameRate: 8,
+      frameRate: 7,
       repeat: 0
     });
     this.anims.create({

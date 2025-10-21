@@ -462,7 +462,7 @@ class DashState extends State {
       targets: this.boss,
       x: this.boss.x + Math.cos(angle) * impulse,
       y: this.boss.y + Math.sin(angle) * impulse,
-      duration: 200,
+      duration: 400,
       ease: "Sine.easeOut"
     });
   }
