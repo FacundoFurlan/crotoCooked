@@ -377,7 +377,7 @@ class DeadState extends State {
         this.boss.destroy();
 
         scene.time.delayedCall(1000, () => {
-          this.sound.stopAll();
+          scene.sound.stopAll();
           scene.scene.start("Game");
           scene.scene.launch("HUD"); // lanzar HUD encima del Game
         });
