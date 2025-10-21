@@ -54,6 +54,8 @@ export class Preloader extends Phaser.Scene {
         this.load.audio("muerteBoss", "./audio/PByA_Boss_Lobizon_Muerte.mp3");
         this.load.audio("ambienteBoss", "./audio/PByA_Boss_Lobizon_Ambiente.mp3");
         this.load.audio("musica_cumbia_1", "./audio/music/cumbiesita_1.mp3");
+        this.load.audio("ambienteCaceria", "./audio/PByA_Ambiente_Caceria_01.mp3");
+        this.load.audio("ambienteCocina", "./audio/PByA_Ambiente_Cocina_01.mp3");
 
         //SPRITESHEETS--------------------------------
         this.load.spritesheet("bossAttack1", "SS_Atack-1.png", { frameWidth: 197, frameHeight: 110 })
