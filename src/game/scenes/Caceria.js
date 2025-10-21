@@ -24,6 +24,16 @@ export class Caceria extends Phaser.Scene {
     this.gameScene = this.scene.get("Game");
     const { width, height } = this.scale;
     this.scene.bringToTop();
+
+    this.musicaBoss1 = this.sound.add("musica_boss_1", { loop: true, volume: 0 });
+    this.musicaBoss1.play()
+    this.tweens.add({
+      targets: this.musicaBoss1,
+      volume: .2,        // volumen final
+      duration: 3000,   // 3 segundos
+      ease: 'Sine.easeInOut'
+    });
+
     this.anims.create({
       key: "boss_attack_1",
       frames: this.anims.generateFrameNumbers("bossAttack1", { start: 0, end: 7 }),
