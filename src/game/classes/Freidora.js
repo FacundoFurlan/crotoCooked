@@ -13,10 +13,10 @@ export class Freidora extends KitchenBox {
         this.etapas = {};
         this.etapaActual = null;
 
-        this.actionSound = this.scene.coccionAudio
+        this.actionSound = this.scene.fritarAudio
         this.actionFinish = this.scene.coccionListoAudio
 
-        this.circleTimer = new CircularTimer(scene, x+13, y+13, 6, this.cookDuration, () => { this.finishCook() }, 2)
+        this.circleTimer = new CircularTimer(scene, x + 13, y + 13, 6, this.cookDuration, () => { this.finishCook() }, 2)
     }
 
     onInteract(player) {
@@ -78,13 +78,13 @@ export class Freidora extends KitchenBox {
             let data = this.itemHolded.dataIngredient
             console.log("data    ", data)
 
-            while( data.next && data.next[this.textureKey]){
+            while (data.next && data.next[this.textureKey]) {
                 numeroDeEtapas++;
-                
+
                 let nextTexture = data.next[this.textureKey];
                 this.etapas[numeroDeEtapas] = nextTexture;
                 console.log("next texture:    ", nextTexture)
-                
+
                 data = this.scene.ingredientesAtlas[nextTexture];
             }
 
@@ -115,10 +115,10 @@ export class Freidora extends KitchenBox {
     update(dt) {
         this.circleTimer.update(dt);
 
-        if(this.circleTimer.active){
+        if (this.circleTimer.active) {
             const progress = this.circleTimer.progress;
-            if(Math.floor(progress/3000) > this.etapaActual){
-                this.etapaActual = Math.floor(progress/3000);
+            if (Math.floor(progress / 3000) > this.etapaActual) {
+                this.etapaActual = Math.floor(progress / 3000);
                 this.itemHolded.cook(this.textureKey)
             }
         }

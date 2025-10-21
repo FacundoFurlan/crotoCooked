@@ -62,6 +62,8 @@ export class Caceria extends Phaser.Scene {
     //   .setOrigin(0)
     //   .setScrollFactor(0); //Esto crea la idea de que ya es de noche
 
+    this.ambienteCaceria = this.sound.add("ambienteCaceria", { loop: true, volume: .2 }).play()
+
     this.player = new Player(this, (width / 2) - 200, 190, "player1", this.inputSystem);
     this.player2 = new Player(this, (width / 2) + 200, 190, "player2", this.inputSystem, 2);
     this.boss = new Boss(this, width / 2, height / 2 - 100, "bossAttack1");
@@ -150,6 +152,7 @@ export class Caceria extends Phaser.Scene {
 
         // Esperar 2 segundos y volver al menú
         this.time.delayedCall(2000, () => {
+          this.sound.stopAll();
           this.scene.start("Defeat", { reason: "Failed to dodge" }); // <-- Cambiá por el nombre real de tu escena de menú
         });
       }

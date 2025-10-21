@@ -55,16 +55,21 @@ export class Game extends Scene {
       milaPollo_0: { index: 37, next: { freidora: "milaPollo_1" } },
       milaPollo_1: { index: 38, next: { freidora: "milaPolloQuemado" }, fusion: { panCortado_0: "milaPolloPan_0", panAchicoria_0: "sanMila_0" } },
       milaPolloQuemado: { index: 39 },
+      milaCarne_0: { index: 7, next: { freidora: "milaCarne_1" } },
+      milaCarne_1: { index: 8, next: { freidora: "milaCarneQuemado" }, fusion: { panCortado_0: "milaCarnePan_0", panAchicoria_0: "sanMilaCarne_0" } },
+      milaCarneQuemado: { index: 9 },
       sanMila_0: { index: 41 },
+      sanMilaCarne_0: { index: 11 },
+      milaCarnePan_0: { index: 10, fusion: { achicoriaPicada_0: "sanMilaCarne_0" } },
       milaPolloPan_0: { index: 40, fusion: { achicoriaPicada_0: "sanMila_0" } },
 
-      //Asado
-      asadoCrudo_0: { index: 21, next: { asador: "asado_0" } },
-      asado_0: { index: 22, next: { asador: "asado_1" } },
-      asado_1: { index: 23, next: { asador: "asado_2" } },
-      asado_2: { index: 24, next: { asador: "asadoQuemado", mesa: "asadoPicado" } },
-      asadoQuemado: { index: 25 },
-      asadoPicado: { index: 26, fusion: { tapaEmpanada_0: "empaCarne_0" } },
+      //Asado o lomo 
+      lomoCrudo_0: { index: 21, next: { asador: "lomo_0" } },
+      lomo_0: { index: 22, next: { asador: "lomo_1" } },
+      lomo_1: { index: 23, next: { asador: "lomo_2" } },
+      lomo_2: { index: 24, next: { asador: "lomoQuemado", mesa: "lomoPicado" } },
+      lomoQuemado: { index: 25 },
+      lomoPicado: { index: 26, fusion: { tapaEmpanada_0: "empaCarne_0" } },
 
       //Empanadas
       tapaEmpanada_0: { index: 56, fusion: { asadoPicado: "empaCarne_0", polloPicado_0: "empaPollo_0" } },
@@ -83,9 +88,9 @@ export class Game extends Scene {
 
       //PAN --------------
       panCrudo_0: { index: 3, next: { mesa: "panCortado_0" } },
-      panCortado_0: { index: 4, next: { mesa: "panRallado_0" }, fusion: { achicoriaPicada_0: "panAchicoria_0", chorizo_2: "panChorizo_0", bife_2: "panBife_2", lomo_0: "panLomo_0", milaPollo_1: "milaPolloPan_0" } },
-      panAchicoria_0: { index: 6, fusion: { milaPollo_1: "sanMila_0", lomo_0: "sanLomo_0", bife_2: "sanBife_0", chorizo_2: "pancho" } },
-      panRallado_0: { index: 5, fusion: { polloLonja_0: "milaPollo_0" } },
+      panCortado_0: { index: 4, next: { mesa: "panRallado_0" }, fusion: { achicoriaPicada_0: "panAchicoria_0", chorizo_2: "panChorizo_0", bife_2: "panBife_2", milaCarne_1: "milaCarnePan_0", milaPollo_1: "milaPolloPan_0" } },
+      panAchicoria_0: { index: 6, fusion: { milaPollo_1: "sanMila_0", milaCarne_1: "sanMilaCarme_0", bife_2: "sanBife_0", chorizo_2: "pancho" } },
+      panRallado_0: { index: 5, fusion: { polloLonja_0: "milaPollo_0", bifeCrudo_0: "milaCarne_0" } },
 
       //CARBON -----------
       carbon_0: { index: 2 },
@@ -108,7 +113,7 @@ export class Game extends Scene {
       pancho: { index: 48 },
 
       //Bifes
-      bifeCrudo_0: { index: 14, next: { asador: "bife_0" } },
+      bifeCrudo_0: { index: 14, next: { asador: "bife_0" }, fusion: { panRallado_0: "milaCarne_0" } },
       bife_0: { index: 15, next: { asador: "bife_1" } },
       bife_1: { index: 16, next: { asador: "bife_2" } },
       bife_2: { index: 17, next: { asador: "bifeQuemado" }, fusion: { panCortado_0: "panBife_0", panAchicoria_0: "sanBife_0" } },
@@ -116,12 +121,6 @@ export class Game extends Scene {
       panBife_0: { index: 19, fusion: { achicoriaPicada_0: "sanBife_0" } },
       sanBife_0: { index: 20 },
 
-      //Lomo
-      lomoCrudo_0: { index: 7, next: { asador: "lomo_0" } },
-      lomo_0: { index: 8, next: { asador: "lomoQuemado" }, fusion: { panCortado_0: "panLomo_0", panAchicoria_0: "sanLomo_0" } },
-      lomoQuemado: { index: 9 },
-      panLomo_0: { index: 10, fusion: { achicoriaPicada_0: "sanLomo_0" } },
-      sanLomo_0: { index: 11 },
     } //index: numero de aparicion en atlas
 
     this.aparatosAtlas = {
@@ -141,15 +140,20 @@ export class Game extends Scene {
           milaPollo_1: true,
           milaPolloQuemado: true,
           sanMila_0: true,
-          milaPolloPan_0: true,
+          milaCarnePan_0: true,
+          milaCarne_0: true,
+          milaCarne_1: true,
+          milaCarneQuemado: true,
+          sanMilaCarne_0: true,
+          milaCarnePan_0: true,
 
-          //Asado
-          asadoCrudo_0: true,
-          asado_0: true,
-          asado_1: true,
-          asado_2: true,
-          asadoQuemado: true,
-          asadoPicado: true,
+          //Asado o lomo
+          lomoCrudo_0: true,
+          lomo_0: true,
+          lomo_1: true,
+          lomo_2: true,
+          lomoQuemado: true,
+          lomoPicado: true,
 
           //Empanadas
           tapaEmpanada_0: true,
@@ -201,12 +205,6 @@ export class Game extends Scene {
           panBife_0: true,
           sanBife_0: true,
 
-          //Lomo
-          lomoCrudo_0: true,
-          lomo_0: true,
-          lomoQuemado: true,
-          panLomo_0: true,
-          sanLomo_0: true,
         }
       },
       asador: {
@@ -221,10 +219,6 @@ export class Game extends Scene {
           papaAsada_0: true,
           papaAsadaQuemada: true,
 
-          lomoCrudo_0: true,
-          lomo_0: true,
-          lomoQuemado: true,
-
           bifeCrudo_0: true,
           bife_0: true,
           bife_1: true,
@@ -237,11 +231,11 @@ export class Game extends Scene {
           chorizo_2: true,
           chorizoQuemado: true,
 
-          asadoCrudo_0: true,
-          asado_0: true,
-          asado_1: true,
-          asado_2: true,
-          asadoQuemado: true,
+          lomoCrudo_0: true,
+          lomo_0: true,
+          lomo_1: true,
+          lomo_2: true,
+          lomoQuemado: true,
         }
       },
       freidora: {
@@ -249,6 +243,10 @@ export class Game extends Scene {
           milaPollo_0: true,
           milaPollo_1: true,
           milaPolloQuemado: true,
+
+          milaCarne_0: true,
+          milaCarne_1: true,
+          milaCarneQuemado: true,
 
           papaCortada_0: true,
           papaCortada_1: true,
@@ -265,23 +263,39 @@ export class Game extends Scene {
     }
 
     this.nivel1 = { pedidosDispo: ["polloAsado_2", "bife_2", "achicoriaPicada_0"], ingreNecesarios: ["polloCrudo_0", "bifeCrudo_0", "achicoriaCruda_0"] }
-    this.nivel2 = { pedidosDispo: ["polloAsado_2", "bife_2", "achicoriaPicada_0", "chorizo_2", "papaAsada_0", "papaCortada_1", "pancho"], ingreNecesarios: ["polloCrudo_0", "bifeCrudo_0", "achicoriaCruda_0", "chorizoCrudo_0", "papaCruda_0", "panCrudo_0"] }
-    this.nivel3 = { pedidosDispo: ["polloAsado_2", "bife_2", "achicoriaPicada_0", "chorizo_2", "papaAsada_0", "papaCortada_1", "pancho", "empaCarne_2", "empaPollo_2", "lomo_0", "sanBife_0", "sanLomo_0", "sanMila_0"], ingreNecesarios: ["polloCrudo_0", "bifeCrudo_0", "achicoriaCruda_0", "chorizoCrudo_0", "papaCruda_0", "panCrudo_0", "lomoCrudo_0", "tapaEmpanada_0"] }
-
+    this.nivel2 = { pedidosDispo: ["polloAsado_2", "bife_2", "achicoriaPicada_0", "papaAsada_0", "papaCortada_1"], ingreNecesarios: ["polloCrudo_0", "bifeCrudo_0", "achicoriaCruda_0", "papaCruda_0"] }
+    this.nivel3 = { pedidosDispo: ["polloAsado_2", "bife_2", "achicoriaPicada_0", "papaAsada_0", "papaCortada_1", "lomo_2", "chorizo_2"], ingreNecesarios: ["polloCrudo_0", "bifeCrudo_0", "achicoriaCruda_0", "papaCruda_0", "lomoCrudo_0", "chorizoCrudo_0"] }
+    this.nivel4 = { pedidosDispo: ["polloAsado_2", "bife_2", "achicoriaPicada_0", "papaAsada_0", "papaCortada_1", "lomo_0", "chorizo_2", "pancho", "sanBife_0"], ingreNecesarios: ["polloCrudo_0", "bifeCrudo_0", "achicoriaCruda_0", "papaCruda_0", "lomoCrudo_0", "chorizoCrudo_0", "panCrudo_0"] }
+    this.nivel5 = { pedidosDispo: ["polloAsado_2", "bife_2", "achicoriaPicada_0", "papaAsada_0", "papaCortada_1", "lomo_0", "chorizo_2", "pancho", "sanBife_0", "milaPollo_1", "milaCarne_1"], ingreNecesarios: ["polloCrudo_0", "bifeCrudo_0", "achicoriaCruda_0", "papaCruda_0", "lomoCrudo_0", "chorizoCrudo_0", "panCrudo_0"] }
+    this.nivel6 = { pedidosDispo: ["polloAsado_2", "bife_2", "achicoriaPicada_0", "papaAsada_0", "papaCortada_1", "lomo_0", "chorizo_2", "pancho", "sanBife_0", "milaPollo_1", "milaCarne_1", "sanMila_0", "sanMilaCarne_0"], ingreNecesarios: ["polloCrudo_0", "bifeCrudo_0", "achicoriaCruda_0", "papaCruda_0", "lomoCrudo_0", "chorizoCrudo_0", "panCrudo_0"] }
+    this.nivel7 = { pedidosDispo: ["polloAsado_2", "bife_2", "achicoriaPicada_0", "papaAsada_0", "papaCortada_1", "lomo_0", "chorizo_2", "pancho", "sanBife_0", "milaPollo_1", "milaCarne_1", "sanMila_0", "sanMilaCarne_0", "empaPollo_2", "empaCarne_2"], ingreNecesarios: ["polloCrudo_0", "bifeCrudo_0", "achicoriaCruda_0", "papaCruda_0", "lomoCrudo_0", "chorizoCrudo_0", "panCrudo_0", "tapaEmpanada_0"] }
     if (this.actualLevel === 1) {
       this.pedidosDisponibles = this.nivel1.pedidosDispo
       this.ingredientesNecesarios = this.nivel1.ingreNecesarios
     } else if (this.actualLevel === 2) {
       this.pedidosDisponibles = this.nivel2.pedidosDispo
       this.ingredientesNecesarios = this.nivel2.ingreNecesarios
-    } else if (this.actualLevel >= 3) {
+    } else if (this.actualLevel === 3) {
       this.pedidosDisponibles = this.nivel3.pedidosDispo
       this.ingredientesNecesarios = this.nivel3.ingreNecesarios
+    } else if (this.actualLevel === 4) {
+      this.pedidosDisponibles = this.nivel4.pedidosDispo
+      this.ingredientesNecesarios = this.nivel4.ingreNecesarios
+    } else if (this.actualLevel === 5) {
+      this.pedidosDisponibles = this.nivel5.pedidosDispo
+      this.ingredientesNecesarios = this.nivel5.ingreNecesarios
+    } else if (this.actualLevel === 6) {
+      this.pedidosDisponibles = this.nivel6.pedidosDispo
+      this.ingredientesNecesarios = this.nivel6.ingreNecesarios
+    } else if (this.actualLevel >= 7) {
+      this.pedidosDisponibles = this.nivel7.pedidosDispo
+      this.ingredientesNecesarios = this.nivel7.ingreNecesarios
     }
 
     this.randomIndexIngredientesNecesarios = Math.floor(Math.random() * this.ingredientesNecesarios.length)
     //CREAR SONIDOS ---------------------------------------------------
     this.musicaCumbia1 = this.sound.add("musica_cumbia_1", { loop: true, volume: .2 }).play()
+    this.ambienteCocina = this.sound.add("ambienteCocina", { loop: true, volume: 1 }).play()
     this.coccionAudio = this.sound.add("coccion", { loop: true })
     this.picarAudio = this.sound.add("picar", { loop: true })
     this.picarListoAudio = this.sound.add("picarListo", { loop: false })
@@ -365,7 +379,7 @@ export class Game extends Scene {
     this.libroRecetario = new LibroRecetario(this, 100, 260)
     this.Interactuables.push(this.libroRecetario)
 
-    this.arrayUbicacionesCajas = [{ x: 240, y: 80 }, { x: 290, y: 65 }, { x: 358, y: 74 }, { x: 260, y: 205 }, { x: 460, y: 190 }, { x: 340, y: 300 }, { x: 430, y: 280 }, { x: 525, y: 280 }, { x: 575, y: 275 }]
+    this.arrayUbicacionesCajas = [{ x: 240, y: 80 }, { x: 290, y: 65 }, { x: 358, y: 74 }, { x: 260, y: 205 }, { x: 460, y: 190 }, { x: 340, y: 280 }, { x: 430, y: 300 }, { x: 525, y: 300 }, { x: 575, y: 275 }]
 
     let cont = 0;
     this.ingredientesNecesarios.forEach(element => {
@@ -393,8 +407,8 @@ export class Game extends Scene {
       let x = 350 + (i % 2) * 25; // X 400, 425, 400, 425
       let y = 150 + (Math.floor(i / 2) * 25); // Y aumenta en 1 cada 2 iteraciones
       let tabla = Math.random() < 0.5 ? 0 : 1;
-      if (i === 0) tabla = 1; // proteccion para que no hayan tablas
-      if (i > 3) tabla = 0; // proteccion para que no sean todos los espacios tablas
+      if (i === 2) tabla = 1; // proteccion para que no hayan tablas
+      if (i > 2) tabla = 0; // proteccion para que no sean todos los espacios tablas
       let mesa = new KitchenBox(this, x, y, "mesa", 25, i, tabla);
       this.physics.add.collider(this.player, mesa);
       this.physics.add.collider(this.player2, mesa);
