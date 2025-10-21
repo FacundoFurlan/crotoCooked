@@ -375,11 +375,11 @@ class DeadState extends State {
       duration: 1000,
       onComplete: () => {
         this.boss.healthBar.destroy();
-        this.boss.destroy();ç
-        if(scene.registry.get("mode") === 1){
+        this.boss.destroy();
+        if (scene.registry.get("mode") === 1) {
           const actualPoints = scene.registry.get("coopPoints");
           scene.registry.set("coopPoints", actualPoints + 150);
-        } else if (scene.registry.get("mode") === 2){
+        } else if (scene.registry.get("mode") === 2) {
           const actualPoints = scene.registry.get(`vsPoints${this.boss.lastHittedBy}`)
           scene.registry.set(`vsPoints${this.boss.lastHittedBy}`, actualPoints + 150);
         }
