@@ -595,14 +595,25 @@ export class Game extends Scene {
     });
   }
 
-  onPlayerDeath(reason) {
-    this.registry.set("actualLevel", 1)
-    this.sound.stopAll();
-    this.scene.stop("HUD");
-    this.cameras.main.fadeOut(400);
-    this.cameras.main.once("camerafadeoutcomplete", () => {
-      this.scene.start("Defeat", { reason });
-    });
+  onPlayerDeath(reason, mode = 1) {
+
+    if(mode === 1){
+      this.registry.set("actualLevel", 1)
+      this.sound.stopAll();
+      this.scene.stop("HUD");
+      this.cameras.main.fadeOut(400);
+      this.cameras.main.once("camerafadeoutcomplete", () => {
+        this.scene.start("Defeat", { reason });
+      });
+    } else if(mode === 2){
+      this.registry.set("actualLevel", 1)
+      this.sound.stopAll();
+      this.scene.stop("HUD");
+      this.cameras.main.fadeOut(400);
+      this.cameras.main.once("camerafadeoutcomplete", () => {
+        this.scene.start("Victory", { reason });
+      });
+    }
   }
 
   spawnPedidos() {

@@ -154,7 +154,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     this.scene.physics.add.overlap(woosh, this.scene.boss, (hitbox, boss) => {
       if (boss.isAlive && !woosh.hasHit) {
-        boss.takeDamage(25);
+        boss.takeDamage(25, this.kind);
         woosh.hasHit = true;
       }
     });
