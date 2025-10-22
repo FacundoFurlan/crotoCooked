@@ -63,7 +63,7 @@ export class MainMenu extends Phaser.Scene {
 
         this.titleText1 = this.add.text(width / 2 - 186, height / 4, "POLLO, BIFES", { fontSize: "30px", color: "#fff", fontFamily: "MyFont" }).setOrigin(0.5);
         this.titleText1.angle = -5
-        this.titleText1 = this.add.text(width / 2 - 182, height / 4 + 20, "Y ACHICORIA", { fontSize: "30px", color: "#fff", fontFamily: "MyFont" }).setOrigin(0.5);
+        this.titleText1 = this.add.text(width / 2 - 182, height / 4 + 20, import.meta.env.VITE_TITLE, { fontSize: "30px", color: "#fff", fontFamily: "MyFont" }).setOrigin(0.5);
         this.titleText1.angle = -5
         this.coopText = this.add.text(width / 2 - 170, height / 2.3, "Coop", { fontSize: "30px", color: "#fff", fontFamily: "MyFont" }).setOrigin(0.5);
         this.versusText = this.add.text(width / 2 - 160, height / 1.8, "Versus", { fontSize: "30px", color: "#fff", fontFamily: "MyFont" }).setOrigin(0.5);
