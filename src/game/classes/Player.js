@@ -340,7 +340,7 @@ class HoldingIngredientState extends State {
 
     this.player.itemHolded.setDepth(9)
     this.player.itemHolded.setPosition(this.player.body.center.x, this.player.body.center.y - 10);
-    this.player.itemHolded.grabbed = true;
+    this.player.itemHolded.setGrabbed(true)
     this.player.itemHolded.setVisible(true)
     this.player.gameScene.agarrarAudio.play({
       volume: .1,
@@ -355,7 +355,7 @@ class HoldingIngredientState extends State {
     this.player.itemHolded.setDepth(7)
     this.player.holdingItem = false;
     this.player.itemHolded.setVisible(true);
-    this.player.itemHolded.grabbed = false;
+    this.player.itemHolded.setGrabbed(false)
     this.player.itemHolded = null;
     this.player.gameScene.agarrarAudio.play({
       volume: .1,

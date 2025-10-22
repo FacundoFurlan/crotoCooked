@@ -10,7 +10,6 @@ export class Interactuables extends Phaser.Physics.Arcade.Sprite {
         this.closestToPlayer = false;
         this.distToPlayer = Infinity;
         this.distForActivation = 7;
-        this.grabbed = false;
 
         this.fx = this.preFX.addColorMatrix();
         this.fx2 = this.preFX.addColorMatrix();

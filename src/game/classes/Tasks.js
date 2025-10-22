@@ -23,6 +23,7 @@ export class Task extends Interactuables {
             const randomIndexPedidosDisponibles = Math.floor(Math.random() * this.availableIngredients.length)
             const nextIngredient = new Ingredientes(this.scene, x + 5, y + (20 * i) - 15, this.availableIngredients[randomIndexPedidosDisponibles]);
             nextIngredient.done = false;
+            nextIngredient.setGrabbed(true)
             this.itemsHolded.push(nextIngredient);
             nextIngredient.setVisible(true)
         }
@@ -31,8 +32,8 @@ export class Task extends Interactuables {
 
         this.body.setCollideWorldBounds(true);
         this.body.setImmovable(true);
-        this.body.setSize(this.body.width + 37, this.body.height-50)
-        this.body.setOffset(this.body.offset.x + 50 / 2, this.body.offset.y)
+        this.body.setSize(this.body.width - 80, this.body.height-50)
+        this.body.setOffset(this.body.offset.x + 60, this.body.offset.y)
         this.timerText = this.scene.add.text(x, y - 32, "ORDEN", {
             fontFamily: "MyFont",
             fontSize: "18px",

@@ -52,7 +52,14 @@ export class Ingredientes extends Interactuables {
     }
 
     update(dt) {
-        console.log("grabbed:     ", this.grabbed)
+    }
+
+    setGrabbed(value){
+        this.grabbed = value;
+
+        if(this.body){
+            this.body.enable = !value;
+        }
     }
 
     onInteract(player) {
