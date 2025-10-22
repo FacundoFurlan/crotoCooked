@@ -81,6 +81,12 @@ export class Caceria extends Phaser.Scene {
     this.physics.add.collider(this.player, this.player2, () => {
       this.playersTouching = true;
     }, null, this);
+    this.physics.add.collider(this.boss, this.player, () => {
+      this.playersTouching = true;
+    }, null, this);
+    this.physics.add.collider(this.boss, this.player2, () => {
+      this.playersTouching = true;
+    }, null, this);
 
     //VIDAS
     this.player1Lives = 3;

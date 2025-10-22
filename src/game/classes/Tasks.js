@@ -27,7 +27,7 @@ export class Task extends Interactuables {
             nextIngredient.setVisible(true)
         }
 
-        this.taskDuration = 30000 * this.ingredientAmount;
+        this.taskDuration = 60000 * this.ingredientAmount;
 
         this.body.setCollideWorldBounds(true);
         this.body.setImmovable(true);

@@ -9,7 +9,7 @@ export class Interactuables extends Phaser.Physics.Arcade.Sprite {
         this.highlighted = false;
         this.closestToPlayer = false;
         this.distToPlayer = Infinity;
-        this.distForActivation = 15;
+        this.distForActivation = 7;
 
         this.fx = this.preFX.addColorMatrix();
         this.fx2 = this.preFX.addColorMatrix();
@@ -35,10 +35,12 @@ export class Interactuables extends Phaser.Physics.Arcade.Sprite {
     }
 
     getDistSqToPlayer(player) {
-        if (!player || !player.body) return Infinity;
-        const a = this._rectOf(this.body);
-        const b = this._rectOf(player.body);
-        return Interactuables.distSqAABB(a, b);
+        if (!this.body || !player?.body) return Infinity;
+
+        const dx = (this.body.x + this.body.width * 0.5) - (player.body.x + player.body.width * 0.5);
+        const dy = (this.body.y + this.body.height * 0.5) - (player.body.y + player.body.height * 0.5);
+
+        return Math.sqrt(dx * dx + dy * dy);
     }
 
     markAsClosest(closest, dist, playerID) {
