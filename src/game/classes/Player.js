@@ -388,7 +388,6 @@ class DashingState extends State {
       right: 28  // frame de dash hacia derecha
     };
     this.player.setFrame(dashFrames[dir]);
-    this.player.setTint(0xffff00); // feedback visual
     this.player.gameScene.dashAudio.play({
       volume: 0.5, // Ajusta el volumen
       rate: Phaser.Math.FloatBetween(1, 1.4)    // Ajusta el pitch

@@ -31,7 +31,8 @@ export class Asador extends KitchenBox {
     }
 
     onInteract(player) {
-        if (player.itemHolded && player.itemHolded.dataIngredient.index === 2 && this.coalFrame !== 4) {
+        console.log(`Index de dataIngredient:  ${player.itemHolded?.dataIngredient.index}`)
+        if (player.itemHolded && player.itemHolded.dataIngredient.index === 2) {
             console.log("%cIngresa Carbon al Asador", "color: red")
             this.hasCoal = true;
             this.coalFrame = Math.min(4, this.coalFrame + 2); //esto deberia sumarle 2 al nivel de carbon pero si es mayor de 4 lo pone en 4
@@ -51,7 +52,9 @@ export class Asador extends KitchenBox {
             player.holdingSM.changeState("none", { player: player })
 
             coalReference.destroy();
-            this.startCook();
+            if(!this.circleTimer.active){
+                this.startCook();
+            }
             this.iconoCarbon.setVisible(false);
 
         } else if (player.holdingItem && !this.holdingItem) { //si el jugador tiene algo y esto no
@@ -62,6 +65,7 @@ export class Asador extends KitchenBox {
             }
 
         } else if (!player.holdingItem && this.holdingItem === true) { //si el jugador no tiene nada y esto si
+            console.log("TERCERA ENTRADAAAAAAAAAAAAAAAAA")
             this.iconoCarbon.setVisible(false);
             this.checkIfItemCanGo(player);
 
@@ -77,7 +81,6 @@ export class Asador extends KitchenBox {
 
         // Si el aparato acepta el item
         if (this.aparatoAccepts[player.itemHolded.textureKey]) {
-            console.log("%cEntro por aca", "color: green");
             this.scene.tweens.killTweensOf(player.itemHolded);
             console.log("se intento poner algo: ", player.itemHolded.dataIngredient);
 
@@ -86,6 +89,7 @@ export class Asador extends KitchenBox {
             player.holdingSM.changeState("none", { player: player });
             this.itemHolded.setPosition(this.body.center.x, this.body.center.y);
             this.itemHolded.setVisible(true);
+            this.itemHolded.grabbed = true;
 
             // si es una mesa y no puede cortar entonces no se cocina
             if (this.textureKey === "mesa" && !this.cortar) return false;
@@ -110,6 +114,7 @@ export class Asador extends KitchenBox {
         this.numeroDeEtapas = 0;
         this.etapas = {};
         this.etapaActual = null;
+        console.log(`Item holded: ${this.itemHolded}`)
     }
 
     startCook() {

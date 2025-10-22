@@ -1,4 +1,3 @@
-import { State } from "../state/State";
 import { Interactuables } from "./Interactuables";
 
 export class Ingredientes extends Interactuables {
@@ -53,7 +52,7 @@ export class Ingredientes extends Interactuables {
     }
 
     update(dt) {
-
+        console.log("grabbed:     ", this.grabbed)
     }
 
     onInteract(player) {
@@ -66,18 +65,5 @@ export class Ingredientes extends Interactuables {
         this.textureKey = this.dataIngredient.next[cocina];
         this.dataIngredient = this.scene.ingredientesAtlas[this.textureKey];
         this.setTexture("ingredientesAtlas", this.dataIngredient.index);
-    }
-}
-
-class IdleState extends State {
-    init(params) {
-        this.ingrediente = params.ingrediente;
-    }
-
-    update(dt) {
-    }
-
-    finish() {
-
     }
 }

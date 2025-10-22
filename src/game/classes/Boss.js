@@ -25,12 +25,12 @@ export class Boss extends Phaser.Physics.Arcade.Sprite {
     this.barWidth = 60;
     this.barHeight = 8;
     this.gameScene = this.scene.scene.get("Game");
-
-
+    
+    
     //cosas del dash
     this.dashCooldown = 4000;
     this.lastDash = 0;
-
+    
     // Agregar a escena y sistema de físicas
     this.scene.add.existing(this);
     this.scene.physics.add.existing(this);
@@ -38,6 +38,7 @@ export class Boss extends Phaser.Physics.Arcade.Sprite {
     this.setCollideWorldBounds(true);
     this.setDepth(10);
     this.setScale(1)
+    this.body.setSize(this.width * .3, this.height)
 
     //Máquina de estados del boss
     this.behaviorSM = new StateMachine("appear");

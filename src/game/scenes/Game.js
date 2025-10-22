@@ -468,7 +468,7 @@ export class Game extends Scene {
     if (this.inputSystem.isJustPressed(INPUT_ACTIONS.WEST, "player1")) {
       if (this.nearestBox.activeBox) {
         this.nearestBox.onInteract(this.player)
-        console.log("Action key pressed!")
+        console.log(`Se presionó tecla de accion en: ${this.nearestBox}`)
       } else {
         if (this.player.holdingItem) {
           this.player.holdingSM.changeState("none", { player: this.player })
