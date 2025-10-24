@@ -17,6 +17,11 @@ export class Preloader extends Phaser.Scene {
 
         // Paso 1: cargar solo el ícono de carga
         this.load.image("campana", "SS_Campanilla.png");
+        this.add.text(width/2, height/1.35, "Este símbolo significa que está cargando!", {
+            fontFamily: "MyFont",
+            fontSize: "22px",
+            color: "#ffffff"
+        }).setOrigin(0.5);
 
         this.load.once("complete", () => {
             // Mostrar sprite animado
@@ -44,9 +49,6 @@ export class Preloader extends Phaser.Scene {
 
     loadRemainingAssets() {
         this.load.setPath("assets");
-
-        //para cargar la fuente
-        this.load.script('webfont', 'https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js');
 
         //IMAGENES ------------------------------------------
         this.load.image("background", "BG_Dia_01(1).png");
@@ -118,29 +120,12 @@ export class Preloader extends Phaser.Scene {
         });
     }
 
-    loadFont() {
-        WebFont.load({
-            custom: {
-                families: ['MyFont'],
-            },
-            active: () => {
-                this.fontReady = true;
-            }
-        });
-    }
-
     create() {
-        // Cargar fuente
-        if (typeof WebFont !== "undefined") {
-            this.loadFont();
-        } else {
-            this.time.delayedCall(100, () => this.create()); // reintenta hasta que esté disponible
-        }
     }
 
     update() {
         // Esperar que TODO esté listo antes de pasar
-        if (this.assetsReady && this.fontReady && this.timerReady) {
+        if (this.assetsReady && this.timerReady) {
 
             this.tweens.add({
                 targets: this.loaderSprite,
