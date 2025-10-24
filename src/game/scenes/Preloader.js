@@ -1,18 +1,52 @@
+
+
 export class Preloader extends Phaser.Scene {
     constructor() {
         super("Preloader")
-        this.assetsReady = false;
         this.fontReady = false;
+        this.ready = false;
+        this.timerReady = false;
     }
-
+    
     preload() {
         //PRELOAD
         this.currentCycle = "preload"
         this.load.setPath("assets");
+        const width = this.cameras.main.width;
+        const height = this.cameras.main.height;
+
+        // Paso 1: cargar solo el ícono de carga
+        this.load.image("campana", "SS_Campanilla.png");
+
+        this.load.once("complete", () => {
+            // Mostrar sprite animado
+            this.loaderSprite = this.add.sprite(width / 2, height / 2 + 130, "campana").setScale(2);
+            this.tweens.add({
+                targets: this.loaderSprite,
+                scale: 3,
+                duration: 200,
+                yoyo: true,
+                repeat: -1,
+                ease: "Sine.easeInOut"
+            });
+            
+            this.time.delayedCall(1000, () => {
+                this.timerReady = true;
+            });
+            
+            // Paso 2: cargar el resto de los assets
+            this.loadRemainingAssets();
+            this.load.start();
+        });
+
+        this.load.start(); // inicia el paso 1    
+    }
+
+    loadRemainingAssets() {
+        this.load.setPath("assets");
 
         //para cargar la fuente
         this.load.script('webfont', 'https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js');
-
 
         //IMAGENES ------------------------------------------
         this.load.image("background", "BG_Dia_01(1).png");
@@ -29,7 +63,6 @@ export class Preloader extends Phaser.Scene {
         this.load.image("backgroundCaceria", "BG_Noche_01.png");
         this.load.image("lobo", "Lobison pixelart.png")
         this.load.image("heart", "Heart.png");
-        this.load.image("campana", "SS_Campanilla.png");
         this.load.image("menuBG", "Menu Principal(1).png");
         this.load.image("hoja", "hoja.png");
         this.load.image("indicadorRecetario", "SS_indicador_recetario.png");
@@ -79,47 +112,47 @@ export class Preloader extends Phaser.Scene {
         this.load.spritesheet("recetario5", "SS_Recetario_lvl5.png", { frameWidth: 206, frameHeight: 102 })
         this.load.spritesheet("recetario6", "SS_Recetario_lvl6.png", { frameWidth: 206, frameHeight: 102 })
         this.load.spritesheet("recetario7", "SS_Recetario_lvl7.png", { frameWidth: 206, frameHeight: 102 })
-
-        //LOGICA DE CARGA
-        const width = this.cameras.main.width;
-        const height = this.cameras.main.height;
-
-        const progressBox = this.add.rectangle(width / 2, height / 2, 320, 50, 0x222222)
-        const progressBar = this.add.rectangle(width / 2 - 150, height / 2, 0, 30, 0xffffff).setOrigin(0, .5);
-
-        const loadingText = this.add.text(width / 2, height / 2 - 50, "Loading...", {
-            fontFamily: "MyFont",
-            fontSize: "20px",
-            color: "#ffffff"
-        }).setOrigin(.5)
-
-        this.load.on("progress", (value) => {
-            progressBar.width = 300 * value;
-        });
-
-
+    
         this.load.on("complete", () => {
-            progressBox.destroy();
-            progressBar.destroy();
-            loadingText.destroy();
             this.assetsReady = true;
-            this.tryStart();
-        })
+        });
     }
-    create() {
+
+    loadFont() {
         WebFont.load({
             custom: {
                 families: ['MyFont'],
             },
             active: () => {
                 this.fontReady = true;
-                this.tryStart();
             }
         });
     }
-    tryStart() {
-        if (this.assetsReady && this.fontReady) {
-            this.scene.start("MainMenu");
+
+    create() {
+        // Cargar fuente
+        if (typeof WebFont !== "undefined") {
+            this.loadFont();
+        } else {
+            this.time.delayedCall(100, () => this.create()); // reintenta hasta que esté disponible
+        }
+    }
+
+    update() {
+        // Esperar que TODO esté listo antes de pasar
+        if (this.assetsReady && this.fontReady && this.timerReady) {
+
+            this.tweens.add({
+                targets: this.loaderSprite,
+                scale: 5,
+                duration: 400,
+                yoyo: true,
+                ease: "Back.easeOut"
+            });
+
+            this.time.delayedCall(400, () => {
+                this.scene.start("MainMenu")
+            });
         }
     }
 }

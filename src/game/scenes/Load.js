@@ -35,7 +35,7 @@ export class Load extends Phaser.Scene {
         
         const sabiasQueText = this.add.text(width / 2, height / 2 - 150, "Sabías qué?", {
             fontFamily: "MyFont",
-            fontSize: "20px",
+            fontSize: "22px",
             color: "#ffffff"
         }).setOrigin(0.5);
         
@@ -51,7 +51,35 @@ export class Load extends Phaser.Scene {
             "Argentina fue campeona del primer Mundial de Básquet",
             "El Argentino Favaloro inventó el bypass, salvando millones de vidas",
             "El semaforo peatonal se inventó en Rosario",
-            "La birome o bolígrafo fue inventado por un argentino"
+            "La birome o bolígrafo fue inventado por un argentino",
+            "El pollo (alimento) viene del pollo (animal).",
+            "Sin fuego no hay asado.",
+            "La parrilla sin carbón es una mesa cara.",
+            "La achicoria es verde.",
+            "Si se quema, ya está demasiado hecho.",
+            "Las papas fritas se fríen con aceite caliente.",
+            "El cuchillo afilado corta mejor.",
+            "El cliente con hambre no espera.",
+            "El pan acompaña todo.",
+            "Si se cae al piso, pero por poco tiempo, todavía sirve.",
+            "Cuanto más carbón, más calor.",
+            "La salsa picante pica.",
+            "El agua apaga el fuego (y el asado).",
+            "Para cocinar, primero hay que prender la parrilla.",
+            "El que no cuida el fuego, come tarde.",
+            "La parrilla caliente quema (comprobado científicamente).",
+            "El humo perfuma la ropa del parrillero.",
+            "Si suena cumbia, algo se está cocinando bien.",
+            "La carne se da vuelta una sola vez… o ninguna.",
+            "El postre llega cuando ya no entra más.",
+            "Si no hay clientes, no hay pedidos.",
+            "El humo no respeta direcciones.",
+            "La parrilla no está sucia, está condimentada.",
+            "La música fuerte hace que cocines más rápido (mentira).",
+            "El parrillero sin delantal vive al límite.",
+            "El fernet va en culo de botella o no va.",
+            "La ensalada es opcional (pero necesaria para la conciencia).",
+            "Ante la duda, ponele chimi."
         ]
         
         const randomPhrase = arrayWierdPhrases[Math.floor(Math.random() * arrayWierdPhrases.length)];
@@ -61,13 +89,9 @@ export class Load extends Phaser.Scene {
 
         const randomPhraseText = this.add.text(width / 2, height / 2 - 120, randomPhrase, {
             fontFamily: "MyFont",
-            fontSize: "20px",
+            fontSize: "22px",
             color: "#ffffff"
         }).setOrigin(0.5);
-        // Tiempo total de la “carga”
-        this.totalTime = 5000; // 5 segundos
-        this.elapsed = 0;
-        this.ready = false;
 
         const loaderSprite = this.add.sprite(width / 2, (height / 2)+130 , "campana").setScale(2);
         this.tweens.add({
