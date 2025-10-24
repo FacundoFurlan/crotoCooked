@@ -45,6 +45,7 @@ export class Freidora extends KitchenBox {
             player.holdingSM.changeState("none", { player: player });
             this.itemHolded.setPosition(this.body.center.x, this.body.center.y);
             this.itemHolded.setVisible(true);
+            this.itemHolded.setGrabbed(true);
 
             // si es una mesa y no puede cortar entonces no se cocina
             if (this.textureKey === "mesa" && !this.cortar) return false;
