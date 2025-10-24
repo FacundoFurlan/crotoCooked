@@ -343,14 +343,10 @@ export class Game extends Scene {
     //FONDO Y PJ ---------------------------------------------------------
     this.add.image(320, 180, "background");
     this.add.image(565, 195, "cenizas");
-    const campana1 = this.add.image(100, 65, "campana");
-    campana1.setDepth(99)
-    const campana2 = this.add.image(100, 155, "campana");
-    campana2.setDepth(99)
-    const campana3 = this.add.image(100, 245, "campana");
-    campana3.setDepth(99)
-    const campana4 = this.add.image(100, 335, "campana");
-    campana4.setDepth(99)
+    for (let i = 0; i < 4; i++) {
+      let campana = this.add.image(100, 65 + (90*i), "campana")
+      campana.setDepth(99) 
+    }
     this.add.sprite(550, 180, "asador", 4);
     this.add.sprite(575, 180, "asador", 5);
     this.add.sprite(350, 225, "mesa", 6);
@@ -416,7 +412,6 @@ export class Game extends Scene {
     }
 
     if (this.actualLevel > 1) {
-      console.log('FREIDORA RAAAAAAAAAAAAAAAAAA')
       this.kitchenBox2 = new Freidora(this, 460, 80, 30, null)
       this.physics.add.collider(this.player, this.kitchenBox2)
       this.physics.add.collider(this.player2, this.kitchenBox2)
