@@ -32,57 +32,72 @@ export class Load extends Phaser.Scene {
 
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;
-
-        // Fondo barra
-        this.add.rectangle(width / 2, height / 2, 320, 50, 0x222222);
-        const progressBar = this.add.rectangle(width / 2 - 150, height / 2, 0, 30, 0xffffff).setOrigin(0, 0.5);
-
-
-        const loadingText = this.add.text(width / 2, height / 2 - 50, "Loading...", {
+        
+        const sabiasQueText = this.add.text(width / 2, height / 2 - 150, "Sabías qué?", {
             fontFamily: "MyFont",
             fontSize: "20px",
             color: "#ffffff"
         }).setOrigin(0.5);
+        
+        let arrayWierdPhrases = [
+            "El primer gol olímpico de la historia fue argentino",
+            "En Mendoza, hace más de 4.000 años cayó una lluvia de meteoritos gigantes",
+            "En la Patagonia se halló el Argentinosaurus, uno de los más grandes",
+            "El primer vehículo blindado de Latinoamérica fue argentino: el Yacaré",
+            "En Buenos Aires hay más psicólogos per cápita que en cualquier otra ciudad del mundo.",
+            "En Argentina se realizó la primera transmisión radial pública del mundo",
+            "El colectivo (bus urbano) fue inventado en Argentina en 1928",
+            "Argentina ganó tres Copas del Mundo en Fútbol (1978, 1986 y 2022)",
+            "Argentina fue campeona del primer Mundial de Básquet",
+            "El Argentino Favaloro inventó el bypass, salvando millones de vidas",
+            "El semaforo peatonal se inventó en Rosario",
+            "La birome o bolígrafo fue inventado por un argentino"
+        ]
+        
+        const randomPhrase = arrayWierdPhrases[Math.floor(Math.random() * arrayWierdPhrases.length)];
+        
+        
+        this.add.image(width, height, "hoja").setOrigin(1, 1)
 
-        const percentText = this.add.text(width / 2, height / 2 + 30, "0%", {
+        const randomPhraseText = this.add.text(width / 2, height / 2 - 120, randomPhrase, {
             fontFamily: "MyFont",
-            fontSize: "18px",
+            fontSize: "20px",
             color: "#ffffff"
         }).setOrigin(0.5);
-
-
-        this.add.image(width, height, "hoja").setOrigin(1, 1)
-        if (this.nextScene === "Caceria") {
-            this.westText = this.add.text(width / 2 + 210, height / 2 + 35, "atacar", { fontSize: "24px", color: "#303decff", fontFamily: "MyFont" }).setOrigin(0.5);
-            this.westText.angle = 25
-            this.southText = this.add.text(width / 2 + 260, height / 2 + 70, "dash", { fontSize: "24px", color: "#303decff", fontFamily: "MyFont" }).setOrigin(0.5);
-            this.southText.angle = -10
-            this.eastText = this.add.text(width / 2 + 280, height / 2 - 0, "", { fontSize: "24px", color: "#303decff", fontFamily: "MyFont" }).setOrigin(0.5);
-            this.eastText.angle = 10
-        } else if (this.nextScene === "Game") {
-            this.westText = this.add.text(width / 2 + 210, height / 2 + 40, "juntar", { fontSize: "24px", color: "#303decff", fontFamily: "MyFont" }).setOrigin(0.5);
-            this.westText.angle = 15
-            this.southText = this.add.text(width / 2 + 260, height / 2 + 70, "dash", { fontSize: "24px", color: "#303decff", fontFamily: "MyFont" }).setOrigin(0.5);
-            this.southText.angle = -10
-            this.eastText = this.add.text(width / 2 + 280, height / 2 - 0, "lanzar", { fontSize: "24px", color: "#303decff", fontFamily: "MyFont" }).setOrigin(0.5);
-            this.eastText.angle = 10
-        }
         // Tiempo total de la “carga”
         this.totalTime = 5000; // 5 segundos
         this.elapsed = 0;
         this.ready = false;
 
-        // Input de teclado
-        this.input.keyboard.on("keydown", () => {
-            if (this.ready) {
-                this.startNextScene();
-            }
+        const loaderSprite = this.add.sprite(width / 2, (height / 2)+130 , "campana").setScale(2);
+        this.tweens.add({
+            targets: loaderSprite,
+            scale: 3,
+            duration: 200,
+            yoyo: true,
+            repeat: -1,
+            ease: "Sine.easeInOut"
         });
 
+        // Variables de progreso
+        this.totalTime = 5000;
+        this.elapsed = 0;
+        this.ready = false;
+
+        // Input
+        this.input.keyboard.on("keydown", () => {
+            if (this.ready) this.startNextScene();
+        });
+
+        const loadingText = this.add.text(width/2, height/2, "", {
+            fontFamily: "MyFont",
+            fontSize: "20px",
+            color: "#ffffff"
+        }).setOrigin(0.5);
+
         // Guardamos referencias
-        this.progressBar = progressBar;
-        this.percentText = percentText;
         this.loadingText = loadingText;
+        this.loaderSprite = loaderSprite;
     }
 
     update(time, delta) {
@@ -90,17 +105,22 @@ export class Load extends Phaser.Scene {
             this.elapsed += delta;
             const progress = Phaser.Math.Clamp(this.elapsed / this.totalTime, 0, 1);
 
-            // Actualizar visual
-            this.progressBar.width = 300 * progress;
-            this.percentText.setText(Math.floor(progress * 100) + "%");
 
-            // Al terminar el tiempo
             if (progress >= 1) {
                 this.ready = true;
                 this.loadingText.setText("Presiona cualquier tecla para continuar");
+
+                // Al finalizar, podés hacer que el sprite “celebre”
+                this.tweens.add({
+                    targets: this.loaderSprite,
+                    scale: 5,
+                    duration: 400,
+                    yoyo: true,
+                    ease: "Back.easeOut"
+                });
             }
         }
-        // Si está listo, también aceptar acciones de InputSystem
+
         if (this.ready) {
             if (
                 this.inputSystem.isJustPressed(INPUT_ACTIONS.SOUTH, "player1") ||
