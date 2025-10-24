@@ -7,7 +7,8 @@ export class LibroRecetario extends Interactuables{
         this.scene = scene;
         this.recetario = scene.recetario;
 
-        this.indicador = this.scene.add.image(x, y-30,"libroReceta")
+        this.indicador = this.scene.add.image(x, y-20,"indicadorRecetario")
+        this.indicador.setDepth(100)
     }
 
     onInteract(){
