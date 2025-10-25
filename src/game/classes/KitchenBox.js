@@ -34,7 +34,7 @@ export class KitchenBox extends Interactuables {
             this.textureOn = "freidoraOn"
         }
 
-        this.circleTimer = new CircularTimer(scene, x, y, 16, this.cookDuration, () => { this.finishCook() })
+        this.circleTimer = new CircularTimer(scene, x, y, 16, this.cookDuration, () => { this.finishCook() }, 3)
     }
 
     onInteract(player) {

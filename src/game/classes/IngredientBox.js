@@ -64,7 +64,7 @@ class AnimationState extends State {
         });
 
         this.elapsed = 0;
-        this.duration = 2000;
+        this.duration = 1000;
     }
 
     update(dt) {

@@ -93,6 +93,46 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.refreshBody()
     this.setPushable(false)
     this.body.setCollideWorldBounds(true)
+
+    //particulas
+    this.emitterPolvo = this.scene.add.particles(0, 0, 'particlePolvo', { // particulas dash
+      //al usar emitParticle se le suma las x e y dadas a las del emitter, 
+      // por eso la posicion del emitter tiene que ser 0,0
+      frame: [0, 1, 2],
+      speedX: { min: -10, max: 10 },
+      speedY: { min: -10, max: -10 },
+      lifespan: 500,
+      quantity: 2,
+      frequency: -1,
+      scale: 1,
+      // scale: { start: 1, end: 0 },
+      alpha: { start: 1, end: 0 },
+      // blendMode: 'DARKEN',
+      follow: null,
+      depth: 12,
+      emitZone: {
+        source: new Phaser.Geom.Rectangle(-10, -10, 20, 20), // Área de emisión
+        type: "random", // Las partículas se emiten desde posiciones aleatorias dentro del área
+      },
+    });
+    this.emitterPolvo2 = this.scene.add.particles(0, 0, 'particlePolvo2', { //particulas caminar
+      frame: [0, 1, 2, 3],
+      speedX: { min: -10, max: 10 },
+      speedY: { min: -10, max: -10 },
+      lifespan: 500,
+      quantity: 1,
+      frequency: -1,
+      scale: 1,
+      // scale: { start: 1, end: 0 },
+      alpha: { start: 1, end: 0 },
+      // blendMode: 'DARKEN',
+      follow: null,
+      depth: 12,
+      emitZone: {
+        source: new Phaser.Geom.Rectangle(-5, -5, 10, 10), // Área de emisión
+        type: "random", // Las partículas se emiten desde posiciones aleatorias dentro del área
+      },
+    });
   }
 
   attack() {
@@ -270,7 +310,11 @@ class MovingState extends State {
         volume: .2,
         rate: Phaser.Math.FloatBetween(.8, 1.2)
       })
+      this.player.emitterPolvo2.emitParticle(2, this.player.x, this.player.y + 20);
+      // la x e y de esto se le suma a la posicion del emitter por eso la posicion del emitter tiene que ser 0,0
     }
+
+
   }
   handleInput(dt) {
     const speed = 200;
@@ -396,7 +440,7 @@ class DashingState extends State {
 
   update(dt) {
     this.elapsed += dt;
-
+    this.player.emitterPolvo.emitParticle(1, this.player.x, this.player.y + 20);
     if (this.elapsed >= this.dashDuration) {
       if (
         this.player.inputSystem.isPressed(INPUT_ACTIONS.UP, this.player.inputId) ||

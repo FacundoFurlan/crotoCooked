@@ -344,8 +344,8 @@ export class Game extends Scene {
     this.add.image(320, 180, "background");
     this.add.image(565, 195, "cenizas");
     for (let i = 0; i < 4; i++) {
-      let campana = this.add.image(100, 65 + (90*i), "campana")
-      campana.setDepth(99) 
+      let campana = this.add.image(100, 65 + (90 * i), "campana")
+      campana.setDepth(99)
     }
     this.add.sprite(550, 180, "asador", 4);
     this.add.sprite(575, 180, "asador", 5);
