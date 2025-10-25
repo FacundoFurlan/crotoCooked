@@ -7,7 +7,7 @@ export class Preloader extends Phaser.Scene {
         this.ready = false;
         this.timerReady = false;
     }
-    
+
     preload() {
         //PRELOAD
         this.currentCycle = "preload"
@@ -17,7 +17,7 @@ export class Preloader extends Phaser.Scene {
 
         // Paso 1: cargar solo el ícono de carga
         this.load.image("campana", "SS_Campanilla.png");
-        this.add.text(width/2, height/1.35, "Este símbolo significa que está cargando!", {
+        this.add.text(width / 2, height / 1.35, "Este símbolo significa que está cargando!", {
             fontFamily: "MyFont",
             fontSize: "22px",
             color: "#ffffff"
@@ -34,11 +34,11 @@ export class Preloader extends Phaser.Scene {
                 repeat: -1,
                 ease: "Sine.easeInOut"
             });
-            
+
             this.time.delayedCall(1000, () => {
                 this.timerReady = true;
             });
-            
+
             // Paso 2: cargar el resto de los assets
             this.loadRemainingAssets();
             this.load.start();
@@ -114,7 +114,11 @@ export class Preloader extends Phaser.Scene {
         this.load.spritesheet("recetario5", "SS_Recetario_lvl5.png", { frameWidth: 206, frameHeight: 102 })
         this.load.spritesheet("recetario6", "SS_Recetario_lvl6.png", { frameWidth: 206, frameHeight: 102 })
         this.load.spritesheet("recetario7", "SS_Recetario_lvl7.png", { frameWidth: 206, frameHeight: 102 })
-    
+        this.load.spritesheet("particleHumo", "SS_Particulas_Humo.png", { frameWidth: 20, frameHeight: 20 })
+        this.load.spritesheet("particleHumo2", "SS_Particulas_Humo2.png", { frameWidth: 10, frameHeight: 10 })
+        this.load.spritesheet("particlePolvo", "SS_Particulas_Polvo.png", { frameWidth: 20, frameHeight: 20 })
+        this.load.spritesheet("particlePolvo2", "SS_Particulas_Polvo2.png", { frameWidth: 10, frameHeight: 10 })
+
         this.load.on("complete", () => {
             this.assetsReady = true;
         });

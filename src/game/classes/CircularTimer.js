@@ -21,7 +21,7 @@ export class CircularTimer {
     }
 
     start(duration = null) {
-        duration? this.duration = duration : false;
+        duration ? this.duration = duration : false;
         this.progress = 0;
         this.active = true;
         this.circle.setVisible(true)
@@ -52,29 +52,43 @@ export class CircularTimer {
         this.circle.lineStyle(4, 0xffffff);
         this.circle.strokeCircle(this.x, this.y, this.radius);
 
-        if (this.active && this.kind === 1) {
+        if (this.active && this.kind === 1) { //kind de orden
             let angle = (this.progress / this.duration) * Phaser.Math.PI2;
             if ((this.progress * 100) / this.duration < 50) {
-                this.circle.lineStyle(4, 0x00ff00);
+                this.circle.lineStyle(4, 0x00ff00); // "#00ff00"
             } else if ((this.progress * 100) / this.duration < 80) {
-                this.circle.lineStyle(4, 0xffbf00);
+                this.circle.lineStyle(4, 0xffbf00); // "#ffbf00"
             } else {
-                this.circle.lineStyle(4, 0xff0000);
+                this.circle.lineStyle(4, 0xff0000); // "#ff0000"
             }
             this.circle.beginPath();
             this.circle.arc(this.x, this.y, this.radius, -Math.PI / 2, -Math.PI / 2 + angle, false);
             this.circle.strokePath();
-        } else if(this.active && this.kind === 2){
+        } else if (this.active && this.kind === 2) { //kind de asador y parrilla
             let angle = (this.progress / this.duration) * Phaser.Math.PI2;
-            if (this.progress >= (this.duration - 3000)) {
-                this.circle.lineStyle(4, 0xff0000);
+            if (this.progress >= (this.duration - 1500)) {
+                this.circle.lineStyle(4, 0xff0000); // "#ff0000"
+            } else if (this.progress >= (this.duration - 3000)) {
+                this.circle.lineStyle(4, 0x00ff00); // "#00ff00"
             } else {
-                this.circle.lineStyle(4, 0x00ff00);
+                this.circle.lineStyle(4, 0xffbf00); // "#ffbf00"
             }
             this.circle.beginPath();
             this.circle.arc(this.x, this.y, this.radius, -Math.PI / 2, -Math.PI / 2 + angle, false);
             this.circle.strokePath();
 
+        } else if (this.active && this.kind === 3) { //kind de mesa
+            let angle = (this.progress / this.duration) * Phaser.Math.PI2;
+            if ((this.progress * 100) / this.duration < 50) {
+                this.circle.lineStyle(4, 0xff0000); // "#ff0000"
+            } else if ((this.progress * 100) / this.duration < 80) {
+                this.circle.lineStyle(4, 0xffbf00); // "#ffbf00"
+            } else {
+                this.circle.lineStyle(4, 0x00ff00); // "#00ff00"
+            }
+            this.circle.beginPath();
+            this.circle.arc(this.x, this.y, this.radius, -Math.PI / 2, -Math.PI / 2 + angle, false);
+            this.circle.strokePath();
         }
     }
 }

@@ -27,7 +27,46 @@ export class Asador extends KitchenBox {
         this.actionSound = this.scene.coccionAudio
         this.actionFinish = this.scene.coccionListoAudio
 
-        this.circleTimer = new CircularTimer(scene, x+13, y+13, 6, this.cookDuration, () => { this.finishCook() }, 2)
+        this.emitterHumo = this.scene.add.particles(x, y, 'particleHumo', { // humo grande
+            frame: [0, 1, 2],
+            speedX: { min: -10, max: 10 },
+            speedY: { min: -20, max: -40 },
+            lifespan: 1500,
+            quantity: 1,
+            frequency: -1,
+            scale: 1,
+            // scale: { start: 1, end: 0 },
+            alpha: { start: 1, end: 0 },
+            // blendMode: 'DARKEN',
+            follow: null,
+            depth: 12,
+            emitZone: {
+                source: new Phaser.Geom.Rectangle(-5, -5, 10, 10), // Área de emisión
+                type: "random", // Las partículas se emiten desde posiciones aleatorias dentro del área
+            },
+        });
+
+        this.emitterHumo2 = this.scene.add.particles(x, y, 'particleHumo2', { // humo chico
+            frame: [0, 1, 2, 3],
+            speedX: { min: -10, max: 10 },
+            speedY: { min: -20, max: -40 },
+            lifespan: 1500,
+            quantity: 1,
+            frequency: -1,
+            scale: 1,
+            // scale: { start: 1, end: 0 },
+            alpha: { start: 1, end: 0 },
+            // blendMode: 'DARKEN',
+            follow: null,
+            depth: 12,
+            emitZone: {
+                source: new Phaser.Geom.Rectangle(-12.5, -12.5, 25, 25), // Área de emisión
+                type: "random", // Las partículas se emiten desde posiciones aleatorias dentro del área
+            },
+        });
+
+
+        this.circleTimer = new CircularTimer(scene, x + 13, y + 13, 6, this.cookDuration, () => { this.finishCook() }, 2)
     }
 
     onInteract(player) {
@@ -52,7 +91,7 @@ export class Asador extends KitchenBox {
             player.holdingSM.changeState("none", { player: player })
 
             coalReference.destroy();
-            if(!this.circleTimer.active){
+            if (!this.circleTimer.active) {
                 this.startCook();
             }
             this.iconoCarbon.setVisible(false);
@@ -107,6 +146,7 @@ export class Asador extends KitchenBox {
             if (this.actionSound) {
                 this.actionSound.stop();
             }
+            this.emitterHumo.frequency = -1
         }
         player.holdingSM.changeState("ingredient", { player: player, ingredient: this.itemHolded });
         this.itemHolded = null;
@@ -125,13 +165,13 @@ export class Asador extends KitchenBox {
                 let data = this.itemHolded.dataIngredient
                 console.log("data    ", data)
 
-                while( data.next && data.next[this.textureKey]){
+                while (data.next && data.next[this.textureKey]) {
                     numeroDeEtapas++;
-                    
+
                     let nextTexture = data.next[this.textureKey];
                     this.etapas[numeroDeEtapas] = nextTexture;
                     console.log("next texture:    ", nextTexture)
-                    
+
                     data = this.scene.ingredientesAtlas[nextTexture];
                 }
 
@@ -143,6 +183,7 @@ export class Asador extends KitchenBox {
                 if (this.actionSound) {
                     this.actionSound.play();
                 }
+                this.emitterHumo.frequency = 500 //empieza el humo grande al cocinar comida
                 this.textureCoal.setVisible(true);
             }
         }
@@ -165,11 +206,13 @@ export class Asador extends KitchenBox {
         this.circleTimer.update(dt);
         if (this.hasCoal) {
             this.timerCoal += dt;
+            if (this.coalFrame >= 1) {
+                this.emitterHumo2.frequency = 500
+            }
 
             // Si ha pasado más de un periodo, manejarlo en bucle (por si dt grande)
             while (this.timerCoal >= this.durationCoal) {
                 this.timerCoal -= this.durationCoal;
-
                 // decrementa el frame una unidad (no bajar de 0)
                 this.coalFrame = Math.max(0, this.coalFrame - 1);
                 this.textureCoal.setFrame(this.coalFrame);
@@ -178,6 +221,8 @@ export class Asador extends KitchenBox {
                 if (this.coalFrame === 0) {
                     this.textureCoal.setVisible(false);
                     this.hasCoal = false;
+                    this.emitterHumo.frequency = -1 //si se acaba el carbon se paran los 2 humos
+                    this.emitterHumo2.frequency = -1
                     if (this.circleTimer.active) {
                         this.circleTimer.stop();
                         if (this.actionSound) this.actionSound.stop();
@@ -186,12 +231,16 @@ export class Asador extends KitchenBox {
                 }
             }
 
-            if(this.circleTimer.active){
+            if (this.circleTimer.active) {
                 const progress = this.circleTimer.progress;
-                if(Math.floor(progress/3000) > this.etapaActual){
-                    this.etapaActual = Math.floor(progress/3000);
+                if (Math.floor(progress / 3000) > this.etapaActual) {
+                    this.etapaActual = Math.floor(progress / 3000);
                     this.itemHolded.cook(this.textureKey)
                 }
+            } else {
+                this.emitterHumo.frequency = -1
+                // si el circle timer no esta activo
+                // entonces la comida o no esta o esta quemada
             }
         }
     }
