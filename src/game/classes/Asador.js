@@ -1,3 +1,4 @@
+import { BlendModes } from "phaser";
 import { CircularTimer } from "./CircularTimer";
 import { KitchenBox } from "./KitchenBox";
 
@@ -40,12 +41,13 @@ export class Asador extends KitchenBox {
             // blendMode: 'DARKEN',
             follow: null,
             depth: 12,
+            BlendMode: Phaser.BlendModes.ADD,
             emitZone: {
                 source: new Phaser.Geom.Rectangle(-5, -5, 10, 10), // Área de emisión
                 type: "random", // Las partículas se emiten desde posiciones aleatorias dentro del área
             },
         });
-
+        
         this.emitterHumo2 = this.scene.add.particles(x, y, 'particleHumo2', { // humo chico
             frame: [0, 1, 2, 3],
             speedX: { min: -10, max: 10 },
@@ -59,13 +61,16 @@ export class Asador extends KitchenBox {
             // blendMode: 'DARKEN',
             follow: null,
             depth: 12,
+            BlendMode: Phaser.BlendModes.ADD,
             emitZone: {
                 source: new Phaser.Geom.Rectangle(-12.5, -12.5, 25, 25), // Área de emisión
                 type: "random", // Las partículas se emiten desde posiciones aleatorias dentro del área
             },
         });
-
-
+        this.emitterHumo.setDepth(200)
+        this.emitterHumo2.setDepth(200)
+        
+        
         this.circleTimer = new CircularTimer(scene, x + 13, y + 13, 6, this.cookDuration, () => { this.finishCook() }, 2)
     }
 
