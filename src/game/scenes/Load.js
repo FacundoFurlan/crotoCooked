@@ -104,7 +104,7 @@ export class Load extends Phaser.Scene {
         });
 
         // Variables de progreso
-        this.totalTime = 5000;
+        this.totalTime = 1000;
         this.elapsed = 0;
         this.ready = false;
 
