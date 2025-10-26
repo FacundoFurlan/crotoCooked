@@ -8,7 +8,7 @@ export class HUD extends Phaser.Scene {
 
         this.currentMode = this.registry.get("mode");
         if (this.currentMode === 1) {
-            if(!this.registry.has("coopPoints")){
+            if (!this.registry.has("coopPoints")) {
                 this.registry.set("coopPoints", 0)
             }
             this.pointsText = this.add.text(width - 100, 20, `Puntos: ${this.registry.get("coopPoints")}`, {
@@ -19,20 +19,20 @@ export class HUD extends Phaser.Scene {
                 stroke: "#000000ff"
             }).setOrigin(.5);
         } else if (this.currentMode === 2) {
-            if(!this.registry.has("vsPoints1")){
+            if (!this.registry.has("vsPoints1")) {
                 this.registry.set("vsPoints1", 0)
             }
-            if(!this.registry.has("vsPoints2")){
+            if (!this.registry.has("vsPoints2")) {
                 this.registry.set("vsPoints2", 0)
             }
-            this.pointsText1 = this.add.text(width - 100, 20, `Puntos: ${this.registry.get("vsPoints1")}`, {
+            this.pointsText1 = this.add.text(width - 100, 20, `Puntos P1: ${this.registry.get("vsPoints1")}`, {
                 fontFamily: "MyFont",
                 fontSize: "25px",
                 color: "#E3C0A1",
                 strokeThickness: 2,
                 stroke: "#000000ff"
             }).setOrigin(.5);
-            this.pointsText2 = this.add.text(width - 100, 40, `Puntos: ${this.registry.get("vsPoints2")}`, {
+            this.pointsText2 = this.add.text(width - 100, 40, `Puntos P2: ${this.registry.get("vsPoints2")}`, {
                 fontFamily: "MyFont",
                 fontSize: "25px",
                 color: "#59493F",

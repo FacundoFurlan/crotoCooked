@@ -4,6 +4,7 @@ import { IngredientBox } from "../classes/IngredientBox.js";
 import { KitchenBox } from "../classes/KitchenBox.js";
 import { Task } from "../classes/Tasks.js";
 import { Asador } from "../classes/Asador.js";
+import { Brasero } from "../classes/Brasero.js";
 import InputSystem, { INPUT_ACTIONS } from "../../utils/InputSystem.js";
 import { Recetario } from "../classes/Recetario.js";
 import { LibroRecetario } from "../classes/LibroRecetario.js";
@@ -47,17 +48,17 @@ export class Game extends Scene {
       polloAsado_0: { index: 29, next: { asador: "polloAsado_1" } },
       polloAsado_1: { index: 30, next: { asador: "polloAsado_2" } },
       polloAsado_2: { index: 31, next: { asador: "polloQuemado" } },
-      polloQuemado: { index: 32 },
+      polloQuemado: { index: 32, next: { brasero: "carbon_1" } },
       polloLonja_0: { index: 36, next: { mesa: "polloPicado_0" }, fusion: { panRallado_0: "milaPollo_0" } },
       polloPicado_0: { index: 35, fusion: { tapaEmpanada_0: "empaPollo_0" } },
 
       //MILANESAS --------------
       milaPollo_0: { index: 37, next: { freidora: "milaPollo_1" } },
       milaPollo_1: { index: 38, next: { freidora: "milaPolloQuemado" }, fusion: { panCortado_0: "milaPolloPan_0", panAchicoria_0: "sanMila_0" } },
-      milaPolloQuemado: { index: 39 },
+      milaPolloQuemado: { index: 39, next: { brasero: "carbon_1" } },
       milaCarne_0: { index: 7, next: { freidora: "milaCarne_1" } },
       milaCarne_1: { index: 8, next: { freidora: "milaCarneQuemado" }, fusion: { panCortado_0: "milaCarnePan_0", panAchicoria_0: "sanMilaCarne_0" } },
-      milaCarneQuemado: { index: 9 },
+      milaCarneQuemado: { index: 9, next: { brasero: "carbon_1" } },
       sanMila_0: { index: 41 },
       sanMilaCarne_0: { index: 11 },
       milaCarnePan_0: { index: 10, fusion: { achicoriaPicada_0: "sanMilaCarne_0" } },
@@ -68,7 +69,7 @@ export class Game extends Scene {
       lomo_0: { index: 22, next: { asador: "lomo_1" } },
       lomo_1: { index: 23, next: { asador: "lomo_2" } },
       lomo_2: { index: 24, next: { asador: "lomoQuemado", mesa: "lomoPicado" } },
-      lomoQuemado: { index: 25 },
+      lomoQuemado: { index: 25, next: { brasero: "carbon_1" } },
       lomoPicado: { index: 26, fusion: { tapaEmpanada_0: "empaCarne_0" } },
 
       //Empanadas
@@ -76,11 +77,11 @@ export class Game extends Scene {
       empaPollo_0: { index: 57, next: { mesa: "empaPollo_1" } },
       empaPollo_1: { index: 59, next: { freidora: "empaPollo_2" } },
       empaPollo_2: { index: 61, next: { freidora: "empaPolloQuemado" } },
-      empaPolloQuemado: { index: 33 },
+      empaPolloQuemado: { index: 33, next: { brasero: "carbon_1" } },
       empaCarne_0: { index: 58, next: { mesa: "empaCarne_1" } },
       empaCarne_1: { index: 60, next: { freidora: "empaCarne_2" } },
       empaCarne_2: { index: 62, next: { freidora: "empaCarneQuemado" } },
-      empaCarneQuemado: { index: 34 },
+      empaCarneQuemado: { index: 34, next: { brasero: "carbon_1" } },
 
       //ACHICORIA ----------
       achicoriaCruda_0: { index: 0, next: { mesa: "achicoriaPicada_0" } },
@@ -93,22 +94,23 @@ export class Game extends Scene {
       panRallado_0: { index: 5, fusion: { polloLonja_0: "milaPollo_0", bifeCrudo_0: "milaCarne_0" } },
 
       //CARBON -----------
-      carbon_0: { index: 2 },
+      carbon_0: { index: 2, next: { brasero: "carbon_1" } },
+      carbon_1: { index: 12 },
 
       //PAPAS --------------
       papaCruda_0: { index: 49, next: { mesa: "papaCortada_0", asador: "papaAsada_0" } },
       papaCortada_0: { index: 50, next: { freidora: "papaCortada_1" } },
       papaCortada_1: { index: 51, next: { freidora: "papaCortadaQuemada" } },
-      papaCortadaQuemada: { index: 53 },
+      papaCortadaQuemada: { index: 53, next: { brasero: "carbon_1" } },
       papaAsada_0: { index: 52, next: { asador: "papaAsadaQuemada" } },
-      papaAsadaQuemada: { index: 54 },
+      papaAsadaQuemada: { index: 54, next: { brasero: "carbon_1" } },
 
       //Chorizo
       chorizoCrudo_0: { index: 42, next: { asador: "chorizo_0" } },
       chorizo_0: { index: 43, next: { asador: "chorizo_1" } },
       chorizo_1: { index: 44, next: { asador: "chorizo_2" } },
       chorizo_2: { index: 45, next: { asador: "chorizoQuemado" }, fusion: { panCortado_0: "panChorizo_0", panAchicoria_0: "pancho" } },
-      chorizoQuemado: { index: 46 },
+      chorizoQuemado: { index: 46, next: { brasero: "carbon_1" } },
       panChorizo_0: { index: 47, fusion: { achicoriaPicada_0: "pancho" } },
       pancho: { index: 48 },
 
@@ -117,7 +119,7 @@ export class Game extends Scene {
       bife_0: { index: 15, next: { asador: "bife_1" } },
       bife_1: { index: 16, next: { asador: "bife_2" } },
       bife_2: { index: 17, next: { asador: "bifeQuemado" }, fusion: { panCortado_0: "panBife_0", panAchicoria_0: "sanBife_0" } },
-      bifeQuemado: { index: 18 },
+      bifeQuemado: { index: 18, next: { brasero: "carbon_1" } },
       panBife_0: { index: 19, fusion: { achicoriaPicada_0: "sanBife_0" } },
       sanBife_0: { index: 20 },
 
@@ -258,6 +260,33 @@ export class Game extends Scene {
           empaCarne_1: true,
           empaCarne_2: true,
           empaCarneQuemado: true,
+        }
+      },
+      brasero: {
+        accepts: {
+
+          carbon_0: true,
+
+          polloQuemado: true,
+
+          milaPolloQuemado: true,
+
+          milaCarneQuemado: true,
+
+          lomoQuemado: true,
+
+          empaPolloQuemado: true,
+
+          empaCarneQuemado: true,
+
+          papaCortadaQuemada: true,
+
+          papaAsadaQuemada: true,
+
+          bifeQuemado: true,
+
+          chorizoQuemado: true,
+
         }
       },
     }
@@ -427,6 +456,13 @@ export class Game extends Scene {
       this.physics.add.collider(this.player2, asador);
       this.Interactuables.push(asador);
     }
+    //Creacion del brasero
+    let brasero = new Brasero(this, 480, 80, 25);
+    this.physics.add.collider(this.player, brasero);
+    this.physics.add.collider(this.player2, brasero);
+    this.Interactuables.push(brasero);
+
+
     console.log(this.Interactuables)
     this.spawnPedidos();
     this.spawnPedidos();
@@ -604,7 +640,7 @@ export class Game extends Scene {
     });
   }
 
-  onPlayerDeath(reason, mode = 1) {
+  onPlayerDeath(reason, mode = 1, empate = false) {
 
     if (mode === 1) {
       this.registry.set("actualLevel", 1)
@@ -620,7 +656,7 @@ export class Game extends Scene {
       this.scene.stop("HUD");
       this.cameras.main.fadeOut(400);
       this.cameras.main.once("camerafadeoutcomplete", () => {
-        this.scene.start("Victory", { reason });
+        this.scene.start("Victory", { reason, empate });
       });
     }
   }

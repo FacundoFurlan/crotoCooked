@@ -378,6 +378,8 @@ class HoldingIngredientState extends State {
   init(params) {
     this.player = params.player;
     this.ingredient = params.ingredient;
+    // const ingredintes = Array.isArray(params.ingredient)? params.ingredient:[params.ingredient]
+
 
     this.player.holdingItem = true;
     this.player.itemHolded = this.ingredient;
