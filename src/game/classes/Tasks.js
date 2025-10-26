@@ -15,7 +15,7 @@ export class Task extends Interactuables {
         this.ordersLeft = this.ingredientAmount;
         this.itemsHolded = []
 
-        this.zoneLayout = this.scene.add.image(x+84, y, "zonaEntrega")
+        this.zoneLayout = this.scene.add.image(x + 84, y, "zonaEntrega")
         this.zoneLayout.setDepth(7)
         this.zoneLayout.setBlendMode(Phaser.BlendModes.LIGHTEN)
 
@@ -28,11 +28,11 @@ export class Task extends Interactuables {
             nextIngredient.setVisible(true)
         }
 
-        this.taskDuration = 60000 * this.ingredientAmount;
+        this.taskDuration = 30000 * this.ingredientAmount;
 
         this.body.setCollideWorldBounds(true);
         this.body.setImmovable(true);
-        this.body.setSize(this.body.width - 80, this.body.height-50)
+        this.body.setSize(this.body.width - 80, this.body.height - 50)
         this.body.setOffset(this.body.offset.x + 60, this.body.offset.y)
         this.timerText = this.scene.add.text(x, y - 32, "ORDEN", {
             fontFamily: "MyFont",
@@ -88,7 +88,7 @@ export class Task extends Interactuables {
         if (this.scene.currentMode === 1) {
             let points = this.scene.registry.get("coopPoints");
             points -= 10;
-            this.scene.registry.set("coopPoints", points < 0 ? 0: points);
+            this.scene.registry.set("coopPoints", points < 0 ? 0 : points);
             this.scene.scene.get("HUD").updatePoints();
             if (points < 0) {
                 this.scene.onPlayerDeath("failed to cook")
@@ -98,16 +98,20 @@ export class Task extends Interactuables {
             let points2 = this.scene.registry.get("vsPoints2");
             points1 -= 10;
             points2 -= 10;
+            console.log(`los puntos del player 1 son${points1}`)
+            console.log(`los puntos del player 2 son${points2}`)
             this.scene.registry.set("vsPoints1", points1 < 0 ? 0 : points1);
-            this.scene.registry.set("vsPoints2", points1 < 0 ? 0 : points1);
+            this.scene.registry.set("vsPoints2", points2 < 0 ? 0 : points2);
             this.scene.scene.get("HUD").updatePoints();
-            if(points1 < 0 && points2 < 0){
-                this.scene.onPlayerDeath("A los dos les falto calle", 2)
+            console.log(`los puntos del player 1 des son${this.scene.registry.get("vsPoints1")}`)
+            console.log(`los puntos del player 2 des son${this.scene.registry.get("vsPoints2")}`)
+            if (points1 < 0 && points2 < 0) {
+                this.scene.onPlayerDeath("A los dos les falto calle", 2, true)
+            } else if (points1 < 0 || points2 < 0) {
+                this.scene.onPlayerDeath(`Al jugador ${points1 < 0 ? 1 : 2} le falta calle`, 2, false)
             }
 
-            if (points1 < 0 || points2 < 0) {
-                this.scene.onPlayerDeath(`Al jugador ${points1 < 0 ? 1 : 2} le falta calle`, 2)
-            }
+
         }
 
         this.clearTask();
@@ -119,10 +123,10 @@ export class Task extends Interactuables {
 
     completeTask(playerId) {
         if (this.scene.currentMode === 1) {
-            this.scene.registry.set("coopPoints", this.scene.registry.get("coopPoints") + 20);
+            this.scene.registry.set("coopPoints", this.scene.registry.get("coopPoints") + 20 * this.ingredientAmount);
             this.scene.scene.get("HUD").updatePoints()
         } else if (this.scene.currentMode === 2) {
-            this.scene.registry.set(`vsPoints${playerId}`, this.scene.registry.get(`vsPoints${playerId}`) + 20);
+            this.scene.registry.set(`vsPoints${playerId}`, this.scene.registry.get(`vsPoints${playerId}`) + 20 * this.ingredientAmount);
             this.scene.scene.get("HUD").updatePoints()
         }
         this.scene.dineroAudio.play({
@@ -133,7 +137,7 @@ export class Task extends Interactuables {
         this.clearTask();
     }
 
-    clearTask(){
+    clearTask() {
         this.scene.Interactuables = this.scene.Interactuables.filter(i => i !== this);
         this.setVisible(false);
         this.setPosition(300, 300);

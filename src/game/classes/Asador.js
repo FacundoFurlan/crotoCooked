@@ -17,7 +17,7 @@ export class Asador extends KitchenBox {
         this.etapaActual = null;
 
         this.hasCoal = false;
-        this.iconoCarbon = scene.add.image(x, y - 10, "iconoCarbon");
+        this.iconoCarbon = scene.add.image(x, y - 10, "iconoCarbonActivado");
         this.iconoCarbon.setDepth(10);
         this.iconoCarbon.setVisible(false);
         this.coalFrame = coalFrame;
@@ -71,7 +71,7 @@ export class Asador extends KitchenBox {
 
     onInteract(player) {
         console.log(`Index de dataIngredient:  ${player.itemHolded?.dataIngredient.index}`)
-        if (player.itemHolded && player.itemHolded.dataIngredient.index === 2) {
+        if (player.itemHolded && player.itemHolded.dataIngredient.index === 12) {
             console.log("%cIngresa Carbon al Asador", "color: red")
             this.hasCoal = true;
             this.coalFrame = Math.min(4, this.coalFrame + 2); //esto deberia sumarle 2 al nivel de carbon pero si es mayor de 4 lo pone en 4

@@ -59,6 +59,7 @@ export class Preloader extends Phaser.Scene {
         this.load.image("tabla", "SS_Tablones.png");
         this.load.image("cenizas", "SS_Asador_Cenizas.png");
         this.load.image("iconoCarbon", "SS_Icono_Carbon.png");
+        this.load.image("iconoCarbonActivado", "SS_Icono_Carbon_Activado.png");
         this.load.image("tablaCortar", "SS_Tabla.png");
         this.load.image("zonaEntrega", "SS_Layout Zona Entrega(1).png");
         this.load.image("libroReceta", "SS_LibroReceta.png");
@@ -68,6 +69,7 @@ export class Preloader extends Phaser.Scene {
         this.load.image("menuBG", "Menu Principal(1).png");
         this.load.image("hoja", "hoja.png");
         this.load.image("indicadorRecetario", "SS_indicador_recetario.png");
+        this.load.image("brasero", "SS_Brasero.png");
 
         //AUDIO----------------------------------------
         this.load.audio("caminar_pasto", "./audio/PByA_PJ_Caminar_Pasto.mp3");
@@ -118,6 +120,7 @@ export class Preloader extends Phaser.Scene {
         this.load.spritesheet("particleHumo2", "SS_Particulas_Humo2.png", { frameWidth: 10, frameHeight: 10 })
         this.load.spritesheet("particlePolvo", "SS_Particulas_Polvo.png", { frameWidth: 20, frameHeight: 20 })
         this.load.spritesheet("particlePolvo2", "SS_Particulas_Polvo2.png", { frameWidth: 10, frameHeight: 10 })
+        this.load.spritesheet("nivelCarbon", "SS_Nivel de Carbon.png", { frameWidth: 40, frameHeight: 31 })
 
         this.load.on("complete", () => {
             this.assetsReady = true;
