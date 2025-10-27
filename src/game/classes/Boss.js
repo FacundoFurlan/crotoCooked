@@ -25,12 +25,12 @@ export class Boss extends Phaser.Physics.Arcade.Sprite {
     this.barWidth = 60;
     this.barHeight = 8;
     this.gameScene = this.scene.scene.get("Game");
-    
-    
+
+
     //cosas del dash
     this.dashCooldown = 4000;
     this.lastDash = 0;
-    
+
     // Agregar a escena y sistema de físicas
     this.scene.add.existing(this);
     this.scene.physics.add.existing(this);
@@ -201,7 +201,7 @@ class BossIdleState extends State {
       if (dist < 120 && this.boss.lastAttack >= this.boss.attackCooldown && !this.boss.isDashing) {
         this.boss.behaviorSM.changeState("attack", { boss: this.boss });
       }
-      if (dist < 300 && this.boss.lastDash >= this.boss.dashCooldown && !this.boss.isAttacking) {
+      if (dist < 300 && dist > 50 && this.boss.lastDash >= this.boss.dashCooldown && !this.boss.isAttacking) {
         this.boss.behaviorSM.changeState("dash", { boss: this.boss });
       }
     }
@@ -306,9 +306,16 @@ class AttackState extends State {
     if (this.boss.scene.player) players.push(this.boss.scene.player);
     if (this.boss.scene.player2) players.push(this.boss.scene.player2);
 
+
+
     players.forEach(player => {
       this.boss.scene.physics.add.overlap(this.hitbox, player, () => {
         this.boss.scene.damagePlayer(player.kind);
+        const dx = player.x - this.boss.x;
+        const dy = player.y - this.boss.y;
+        const angle = Math.atan2(dy, dx);
+
+        this._pushPlayers(angle, player)
       });
     });
 
@@ -316,6 +323,14 @@ class AttackState extends State {
     this.boss.scene.time.delayedCall(200, () => {
       if (this.hitbox) this.hitbox.destroy();
     });
+  }
+
+  _pushPlayers(angle, player) {
+    const force = 1000;
+
+    player.pushed = true;
+    player.pushedTime = 0;
+    player.body.setVelocity(Math.cos(angle) * force, Math.sin(angle) * force);
   }
 
   finishAttack() {

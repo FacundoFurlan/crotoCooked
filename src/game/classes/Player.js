@@ -255,6 +255,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 class IdleState extends State {
   init(params) {
     this.player = params.player;
+    this.player?.body?.setVelocity(0);
   }
   update(dt) {
     if (
@@ -269,7 +270,6 @@ class IdleState extends State {
       const dir = this.player.lastDirection ? this.player.getDirectionFromVector(this.player.lastDirection) : 'down';
       this.player.setFrame(this.player.idleFrames[dir]);
       this.player.anims.stop(); // Esto corta cualquier animación que estuviera corriendo
-      this.player.body.setVelocity(0);
     }
   }
   finish() {
@@ -443,6 +443,7 @@ class DashingState extends State {
   update(dt) {
     this.elapsed += dt;
     this.player.emitterPolvo.emitParticle(1, this.player.x, this.player.y + 20);
+
     if (this.elapsed >= this.dashDuration) {
       if (
         this.player.inputSystem.isPressed(INPUT_ACTIONS.UP, this.player.inputId) ||

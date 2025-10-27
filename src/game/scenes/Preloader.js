@@ -70,6 +70,7 @@ export class Preloader extends Phaser.Scene {
         this.load.image("hoja", "hoja.png");
         this.load.image("indicadorRecetario", "SS_indicador_recetario.png");
         this.load.image("brasero", "SS_Brasero.png");
+        this.load.image("icono", "SS_Icono_Admiracion.png");
 
         //AUDIO----------------------------------------
         this.load.audio("caminar_pasto", "./audio/PByA_PJ_Caminar_Pasto.mp3");
@@ -94,6 +95,8 @@ export class Preloader extends Phaser.Scene {
         this.load.audio("ambienteBoss", "./audio/PByA_Boss_Lobizon_Ambiente.mp3");
         this.load.audio("musica_cumbia_1", "./audio/music/cumbiesita_1.mp3");
         this.load.audio("musica_boss_1", "./audio/music/boss musica.mp3");
+        this.load.audio("musicaCuarteto", "./audio/music/Ultimate_Cuarteto.mp3");
+        this.load.audio("musicaChacarera", "./audio/music/Ultimate_Chacarera.mp3");
         this.load.audio("ambienteCaceria", "./audio/PByA_Ambiente_Caceria_01.mp3");
         this.load.audio("ambienteCocina", "./audio/PByA_Ambiente_Cocina_01.mp3");
 

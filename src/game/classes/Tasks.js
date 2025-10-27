@@ -18,7 +18,7 @@ export class Task extends Interactuables {
         this.zoneLayout = this.scene.add.image(x + 84, y, "zonaEntrega")
         this.zoneLayout.setDepth(7)
         this.zoneLayout.setBlendMode(Phaser.BlendModes.LIGHTEN)
-
+        this.taskDuration = 0
         for (let i = 0; i < this.ingredientAmount; i++) {
             const randomIndexPedidosDisponibles = Math.floor(Math.random() * this.availableIngredients.length)
             const nextIngredient = new Ingredientes(this.scene, x + 5, y + (20 * i) - 15, this.availableIngredients[randomIndexPedidosDisponibles]);
@@ -26,9 +26,21 @@ export class Task extends Interactuables {
             nextIngredient.setGrabbed(true)
             this.itemsHolded.push(nextIngredient);
             nextIngredient.setVisible(true)
+            let duration = 40000
+            if (nextIngredient.textureKey === "sanMilaCarne_0" ||
+                nextIngredient.textureKey === "sanMila" ||
+                nextIngredient.textureKey === "pancho" ||
+                nextIngredient.textureKey === "sanBife_0"
+            ) {
+
+                this.taskDuration += duration * 2;
+            } else {
+                this.taskDuration += duration
+            }
         }
 
-        this.taskDuration = 30000 * this.ingredientAmount;
+
+
 
         this.body.setCollideWorldBounds(true);
         this.body.setImmovable(true);
