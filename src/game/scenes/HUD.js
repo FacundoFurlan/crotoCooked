@@ -63,13 +63,13 @@ export class HUD extends Phaser.Scene {
 
         this.pedidosEnCola = 0;
 
-        this.pedidosText = this.add.text(125, 9, `Pedidos: ${this.pedidosEnCola}`, {
-            fontSize: "25px",
-            color: "#fff",
-            fontFamily: "MyFont",
-            strokeThickness: 2,
-            stroke: "#000000ff"
-        });
+        // this.pedidosText = this.add.text(125, 9, `Pedidos: ${this.pedidosEnCola}`, {
+        //     fontSize: "25px",
+        //     color: "#fff",
+        //     fontFamily: "MyFont",
+        //     strokeThickness: 2,
+        //     stroke: "#000000ff"
+        // });
         this.scene.bringToTop("HUD");
     }
 
@@ -110,21 +110,25 @@ export class HUD extends Phaser.Scene {
 
     addPedidosEnCola(amount) {
         this.pedidosEnCola += amount;
-        this.pedidosText.setText(`Pedidos: ${this.pedidosEnCola}`)
+        // this.pedidosText.setText(`Pedidos: ${this.pedidosEnCola}`)
     }
 
     updatePoints() {
         if (this.currentMode === 1) {
-            this.pointsText.setText(`Puntos: ${this.registry.get("coopPoints")}`)
+            if (this.pointsText) {
+                this.pointsText.setText(`Puntos: ${this.registry.get("coopPoints")}`)
+            }
         } else if (this.currentMode === 2) {
-            this.pointsText1.setText(`Puntos P1: ${this.registry.get("vsPoints1")}`)
-            this.pointsText2.setText(`Puntos P2: ${this.registry.get("vsPoints2")}`)
+            if (this.pointsText1 && this.pointsText2) {
+                this.pointsText1.setText(`Puntos P1: ${this.registry.get("vsPoints1")}`)
+                this.pointsText2.setText(`Puntos P2: ${this.registry.get("vsPoints2")}`)
+            }
         }
     }
 
     subsPedidosEnCola(amount) {
         this.pedidosEnCola -= amount;
-        this.pedidosText.setText(`Pedidos: ${this.pedidosEnCola}`)
+        // this.pedidosText.setText(`Pedidos: ${this.pedidosEnCola}`)
     }
 
     getPedidosEnCola() {

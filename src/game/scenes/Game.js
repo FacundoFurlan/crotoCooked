@@ -323,7 +323,7 @@ export class Game extends Scene {
 
     this.randomIndexIngredientesNecesarios = Math.floor(Math.random() * this.ingredientesNecesarios.length)
     //CREAR SONIDOS ---------------------------------------------------
-    this.musicaCumbia1 = this.sound.add("musica_cumbia_1", { loop: true, volume: .2 }).play()
+    this.musicaCumbia1 = this.sound.add("musicaCuarteto", { loop: true, volume: .5 }).play()
     this.ambienteCocina = this.sound.add("ambienteCocina", { loop: true, volume: 1 }).play()
     this.coccionAudio = this.sound.add("coccion", { loop: true })
     this.picarAudio = this.sound.add("picar", { loop: true })
@@ -457,7 +457,7 @@ export class Game extends Scene {
       this.Interactuables.push(asador);
     }
     //Creacion del brasero
-    let brasero = new Brasero(this, 480, 80, 25);
+    let brasero = new Brasero(this, 540, 70, 25);
     this.physics.add.collider(this.player, brasero);
     this.physics.add.collider(this.player2, brasero);
     this.Interactuables.push(brasero);
@@ -582,6 +582,18 @@ export class Game extends Scene {
         this._pushPlayers(this.player2, this.player);
       }
       this.playersTouching = false; // reset para la siguiente frame
+
+      if (this.player.isDashing) {
+        if (this.player2 && this.player2.holdingItem) {
+          this.player2.holdingSM.changeState("none", { player: this.player2 })
+        }
+      }
+      if (this.player2.isDashing) {
+        if (this.player && this.player.holdingItem) {
+          this.player.holdingSM.changeState("none", { player: this.player })
+        }
+      }
+
     }
   }
 
