@@ -1,0 +1,68 @@
+{
+  "title": "Dynamic Soundscapes",
+  "description": "Create dynamic soundscapes and manage your sounds with a simple UI.",
+  "id": "dynamic-soundscapes",
+  "version": "3.0.3",
+  "authors": [
+    {
+      "name": "theripper93",
+      "email": "tsplab@gmail.com",
+      "url": "https://www.patreon.com/theripper93"
+    }
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "languages/en.json"
+    },
+    {
+      "lang": "ja",
+      "name": "\u65e5\u672c\u8a9e",
+      "path": "languages/ja.json"
+    },
+    {
+      "lang": "de",
+      "name": "Deutsch",
+      "path": "languages/de.json"
+    },
+    {
+      "lang": "fr",
+      "name": "Fran\u00e7ais",
+      "path": "languages/fr.json"
+    },
+    {
+      "lang": "es",
+      "name": "Espa\u00f1ol",
+      "path": "languages/es.json"
+    },
+    {
+      "lang": "pt-br",
+      "name": "Portugu\u00eas (Brasil)",
+      "path": "languages/pt-br.json"
+    },
+    {
+      "lang": "it",
+      "name": "Italiano",
+      "path": "languages/it.json"
+    }
+  ],
+  "scripts": [],
+  "esmodules": [
+    "scripts/main.js"
+  ],
+  "styles": [
+    "styles/module.css"
+  ],
+  "packs": [],
+  "url": "https://theripper93.com/",
+  "manifest": "https://r2.foundryvtt.com/packages-public/dynamic-soundscapes/module.json",
+  "relationships": {
+    "requires": []
+  },
+  "compatibility": {
+    "minimum": "13",
+    "verified": "13"
+  },
+  "protected": false
+}
