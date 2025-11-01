@@ -3,7 +3,6 @@ import { AUTO, Scale, Game, Physics } from 'phaser';
 import { MainMenu } from './scenes/MainMenu';
 import { HUD } from './scenes/HUD';
 import { Victory } from './scenes/Victory';
-import { Defeat } from './scenes/Defeat';
 import { Caceria } from './scenes/Caceria';
 import { Preloader } from './scenes/Preloader';
 import { Load } from './scenes/Load';
@@ -42,7 +41,6 @@ const config = {
         MainGame,
         HUD,
         Victory,
-        Defeat,
         Caceria,
         Load
     ]

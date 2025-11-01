@@ -40,7 +40,7 @@ export class HUD extends Phaser.Scene {
                 stroke: "#000000ff"
             }).setOrigin(.5);
         }
-        this.timeTotal = 120000;
+        this.timeTotal = 240000;
         this.timeLeft = this.timeTotal;
         this.critico = true;
 
@@ -100,7 +100,7 @@ export class HUD extends Phaser.Scene {
             this.timeLeft = 0;
             this.timerEvent.remove(false)
 
-            if (this.gameScene && this.gameScene.onPlayerDeath) {
+            if (this.gameScene) {
                 this.gameScene.finishLevel()
             }
         }

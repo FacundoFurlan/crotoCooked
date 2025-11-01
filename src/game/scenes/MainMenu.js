@@ -51,7 +51,7 @@ export class MainMenu extends Phaser.Scene {
 
         const { width, height } = this.scale;
 
-        this.registry.set("actualLevel", 5);
+        this.registry.set("actualLevel", 1);
 
         this.add.image(320, 180, "menuBG")
         this.westText = this.add.text(width / 1.2, height / 1.65, "juntar", {
