@@ -477,7 +477,7 @@ export class Game extends Scene {
 
     //Cursors
     this.victoryKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.N);
-    this.DefeatKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M);
+
     this.CaceriaKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.B);
     this.recetarioKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
   }
@@ -556,9 +556,6 @@ export class Game extends Scene {
 
     if (Phaser.Input.Keyboard.JustDown(this.victoryKey)) {
       this.finishLevel();
-    }
-    if (Phaser.Input.Keyboard.JustDown(this.DefeatKey)) {
-      this.onPlayerDeath();
     }
     if (Phaser.Input.Keyboard.JustDown(this.recetarioKey)) {
       this.recetario.onInput()
@@ -642,35 +639,48 @@ export class Game extends Scene {
 
   finishLevel() {
     this.sound.stopAll();
-    this.registry.set("actualLevel", this.actualLevel + 1)
-    // Detenemos el HUD y lanzamos la escena de victoria
     this.scene.stop("HUD");
-    // Opcional: animación de cámara antes de cambiar (fade)
     this.cameras.main.fadeOut(500, 0, 0, 0);
-    this.cameras.main.once("camerafadeoutcomplete", () => {
-      this.scene.start("Load", { nextScene: "Caceria" });
-    });
-  }
 
-  onPlayerDeath(reason, mode = 1, empate = false) {
+    let mode = this.currentMode;
+    let reason = "continue";
+    let empate = false;
+    let completado = false;
 
     if (mode === 1) {
+      let points = this.registry.get("coopPoints");
+      if (points < 0) {
+        reason = "Demasiados pedidos sin entregar!";
+        if (this.actualLevel >= 8) {
+          reason = "Pudieron aprender todas las recetas!"
+          completado = true;
+        }
+      }
+    }
+    if (mode === 2) {
+      let points1 = this.registry.get("vsPoints1");
+      let points2 = this.registry.get("vsPoints2");
+      if (points1 < 0 && points2 < 0) {
+        reason = "A los dos les falto calle";
+        empate = true;
+      } else if (points1 < 0 || points2 < 0) {
+        reason = `Al jugador ${points1 < 0 ? 1 : 2} le falta calle`;
+      }
+    }
+
+
+    if (reason != "continue") { // Termina la Partida
       this.registry.set("actualLevel", 1)
-      this.sound.stopAll();
-      this.scene.stop("HUD");
-      this.cameras.main.fadeOut(400);
       this.cameras.main.once("camerafadeoutcomplete", () => {
-        this.scene.start("Defeat", { reason });
+        this.scene.start("Victory", { reason, empate, completado });
       });
-    } else if (mode === 2) {
-      this.registry.set("actualLevel", 1)
-      this.sound.stopAll();
-      this.scene.stop("HUD");
-      this.cameras.main.fadeOut(400);
+    } else { // Continua la partida a caceria
+      this.registry.set("actualLevel", this.actualLevel + 1)
       this.cameras.main.once("camerafadeoutcomplete", () => {
-        this.scene.start("Victory", { reason, empate });
+        this.scene.start("Load", { nextScene: "Caceria" });
       });
     }
+
   }
 
   spawnPedidos() {

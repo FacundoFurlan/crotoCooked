@@ -169,7 +169,7 @@ export class Caceria extends Phaser.Scene {
         // Esperar 2 segundos y volver al menú
         this.time.delayedCall(2000, () => {
           this.sound.stopAll();
-          this.scene.start("Defeat", { reason: "Failed to dodge" }); // <-- Cambiá por el nombre real de tu escena de menú
+          this.scene.start("Victory", { reason: "La criatura destruyó la parrilla", empate: false, completado: false, boss: true }); // <-- Cambiá por el nombre real de tu escena de menú
         });
       }
     }

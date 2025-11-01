@@ -100,30 +100,17 @@ export class Task extends Interactuables {
         if (this.scene.currentMode === 1) {
             let points = this.scene.registry.get("coopPoints");
             points -= 10;
-            this.scene.registry.set("coopPoints", points < 0 ? 0 : points);
+            this.scene.registry.set("coopPoints", points);
             this.scene.scene.get("HUD").updatePoints();
-            if (points < 0) {
-                this.scene.onPlayerDeath("failed to cook")
-            }
+
         } else if (this.scene.currentMode === 2) {
             let points1 = this.scene.registry.get("vsPoints1");
             let points2 = this.scene.registry.get("vsPoints2");
             points1 -= 10;
             points2 -= 10;
-            console.log(`los puntos del player 1 son${points1}`)
-            console.log(`los puntos del player 2 son${points2}`)
-            this.scene.registry.set("vsPoints1", points1 < 0 ? 0 : points1);
-            this.scene.registry.set("vsPoints2", points2 < 0 ? 0 : points2);
+            this.scene.registry.set("vsPoints1", points1);
+            this.scene.registry.set("vsPoints2", points2);
             this.scene.scene.get("HUD").updatePoints();
-            console.log(`los puntos del player 1 des son${this.scene.registry.get("vsPoints1")}`)
-            console.log(`los puntos del player 2 des son${this.scene.registry.get("vsPoints2")}`)
-            if (points1 < 0 && points2 < 0) {
-                this.scene.onPlayerDeath("A los dos les falto calle", 2, true)
-            } else if (points1 < 0 || points2 < 0) {
-                this.scene.onPlayerDeath(`Al jugador ${points1 < 0 ? 1 : 2} le falta calle`, 2, false)
-            }
-
-
         }
 
         this.clearTask();

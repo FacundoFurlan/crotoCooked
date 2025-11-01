@@ -8,7 +8,9 @@ export class Victory extends Phaser.Scene {
   init(data) {
     // recibe datos opcionales desde Game (ej: score, time)
     this.reason = data.reason ?? null;
-    this.empate = data.empate
+    this.empate = data.empate || false
+    this.completado = data.completado || false
+    this.boss = data.boss || false
   }
 
   create() {
@@ -40,21 +42,46 @@ export class Victory extends Phaser.Scene {
     if (this.reason) {
       this.add.text(width / 2, height / 2 - 10, `Motivo: ${this.reason}`, { fontFamily: "MyFont", fontSize: "18px" }).setOrigin(0.5);
     }
-    let text = ""
-    this.empate ? text = "EMPATE" : text = "¡VICTORIA!";
-    console.log(text)
     // texto grande
-    this.add.text(width / 2, height / 2 - 60, text, {
+    this.titulo = this.add.text(width / 2, height / 2 - 60, "", {
       fontFamily: "MyFont",
       fontSize: "48px",
       color: "#ffff00",
       align: "center"
     }).setOrigin(0.5);
 
-    // detalles / puntaje
-    if (this.registry.get("mode") === 1) {
+
+    if (this.registry.get("mode") === 1) { // COOP
+
+      let text = ""
+      if (this.completado) {
+        text = "¡CONTRATADOS!";
+      }
+      else {
+        text = "¡DESPEDIDOS!";
+        this.titulo.setColor("#ff5555");
+      }
+
+      this.titulo.setText(text)
+
+      //Puntos
       this.add.text(width / 2, height / 2 + 20, `Puntaje: ${this.registry.get("coopPoints")}`, { fontFamily: "MyFont", fontSize: "20px" }).setOrigin(0.5);
-    } else if (this.registry.get("mode") === 2) {
+
+    } else if (this.registry.get("mode") === 2) { // VERSUS
+
+      let text = ""
+      if (this.boss) { // si boss = true entonces perdieron en la caceria y nadie gana, si boss = false y no hay empate entonces gana uno y pierde el otro
+        text = "¡DESPEDIDOS!";
+        this.titulo.setColor("#ff5555");
+      } else if (this.empate) {
+        text = "EMPATE";
+      } else {
+        text = "¡VICTORIA!";
+      }
+
+      this.titulo.setText(text)
+
+      //Puntos VS
       this.add.text(width / 2, height / 2 + 20, `Puntaje: ${this.registry.get("vsPoints1")}`, { fontFamily: "MyFont", fontSize: "20px", color: "#E3C0A1" }).setOrigin(0.5);
       this.add.text(width / 2, height / 2 + 40, `Puntaje: ${this.registry.get("vsPoints2")}`, { fontFamily: "MyFont", fontSize: "20px", color: "#59493F" }).setOrigin(0.5);
     }
